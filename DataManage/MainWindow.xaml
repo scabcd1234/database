@@ -15,7 +15,7 @@
                     
                     <!--两行一列-->
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="0.3*"/>
+                        <RowDefinition Height="0.15*"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -23,13 +23,18 @@
                     </Grid.ColumnDefinitions>
 
                     <!--搜索栏-->
-                    <Grid Grid.Row="0" Grid.Column="1">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="30">
-                            <Button Content="增加" Width="60"/>
-                            <Button Content="删除" Width="60" Margin="10,0,10,0"/>
-                            <Button Content="修改" Width="60" />
+                    <Grid Grid.Row="0" Grid.Column="1" >
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="left" Height="30" Margin="20,20,20,20">
+                            <Label Content="请输入名称:" Name="input" Margin="0,0,20,0"></Label>
+                            <TextBox Text="" Name="text" Width="450" ></TextBox>
+                            <Button Content="查询" Width="60" Margin="20,0,20,0" Click="BtnSelect"/>
+                            <Button Content="刷新" Width="60" Margin="0,0,0,0" Click="BtnRefresh"/>
+                            <Button Content="增加" Width="60" Margin="20,0,20,0" Click="BtnAdd"/>
+                            <Button Content="删除" Width="60" Margin="0,0,0,0" Click="BtnDelete"/>
+                            <Button Content="修改" Width="60" Margin="20,0,0,0" Click="BtnUpdate"/>
                         </StackPanel>
                     </Grid>
+
 
                     <!--显示栏-->
                     <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
