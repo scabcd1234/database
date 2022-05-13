@@ -43,9 +43,10 @@ namespace DataManage
             string sql = "SELECT * FROM casedata";
             string connStr = @"Data Source=" + @"E:\c#study\mydb.db;Initial Catalog=sqlite;";
             SQLiteConnection conn = new SQLiteConnection(connStr);
-            conn.Open();
+            
             try
-            {
+            {   
+                conn.Open();
                 SQLiteCommand command = new SQLiteCommand(sql, conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
