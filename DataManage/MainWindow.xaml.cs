@@ -21,12 +21,6 @@ namespace DataManage
     /// </summary>
     public partial class MainWindow : Window
     {
-        public class Student
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public int Age { get; set; }
-        }
         public class CaseData
         {
             public int Id { get; set; }
@@ -79,9 +73,33 @@ namespace DataManage
 
         private void dg1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Student student= (sender as DataGrid).SelectedItem as Student;
-            MessageBox.Show(student.Name, "");
+            CaseData selected_case= (sender as DataGrid).SelectedItem as CaseData;
+            MessageBox.Show(selected_case.UserName, "");
         }
-        
+
+        private void BtnSelect(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnRefresh(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnAdd(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnDelete(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnUpdate(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
