@@ -18,7 +18,6 @@ namespace DataManage
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    /// 测试
     public partial class MainWindow : Window
     {
         public class Student
