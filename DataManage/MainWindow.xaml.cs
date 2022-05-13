@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data.SQLite;
 
 namespace DataManage
 {
@@ -26,6 +27,17 @@ namespace DataManage
             public string Name { get; set; }
             public int Age { get; set; }
         }
+        public class CaseData
+        {
+            public int Id { get; set; }
+            public string UserName { get; set; }
+            public string Rank { get; set; }
+            public string  Content { get; set; }
+            public string PostDate { get; set; }
+            public string Forward { get; set; }
+            public string Comment { get; set; }
+            public string Likes { get; set; }       
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -33,17 +45,36 @@ namespace DataManage
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            List<Student> list = new List<Student>();
-            Student student1 = new Student { Id = 1, Name = "yy", Age = 22 };
-            Student student2 = new Student { Id = 2, Name = "zz", Age = 22 };
-            Student student3 = new Student { Id = 3, Name = "xxx", Age = 22 };
-            Student student4 = new Student { Id = 4, Name = "ttt", Age = 22 };
-            list.Add(student1);
-            list.Add(student2);
-            list.Add(student3);
-            list.Add(student4);
-
+            List<CaseData> list = new List<CaseData>();
+            string sql = "SELECT * FROM casedata";
+            string connStr = @"Data Source=" + @"E:\c#study\mydb.db;Initial Catalog=sqlite;";
+            SQLiteConnection conn = new SQLiteConnection(connStr);
+            conn.Open();
+            try
+            {
+                SQLiteCommand command = new SQLiteCommand(sql, conn);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    CaseData casedata = new CaseData();
+                    casedata.Id = (int)reader["id"];
+                    casedata.UserName = reader["username"].ToString();
+                    casedata.Rank = reader["rank"].ToString();
+                    casedata.Content = reader["content"].ToString();
+                    casedata.PostDate = reader["postDate"].ToString();
+                    casedata.Forward = reader["forwarding"].ToString();
+                    casedata.Comment = reader["comment"].ToString();
+                    casedata.Likes = reader["likes"].ToString();                 
+                    list.Add(casedata);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("查询数据失败：" + ex.Message);
+            }
+            conn.Close();
             dg1.ItemsSource = list;
+
         }
 
         private void dg1_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -51,5 +82,6 @@ namespace DataManage
             Student student= (sender as DataGrid).SelectedItem as Student;
             MessageBox.Show(student.Name, "");
         }
+        
     }
 }

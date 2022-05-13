@@ -51,9 +51,13 @@
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Id}" Header="编号"  Width="50"/>
-                            <DataGridTextColumn Binding="{Binding Name}" Header="姓名" Width="150"/>
-                            <DataGridTextColumn Binding="{Binding Age}" Header="年龄" Width="150"/>
-
+                            <DataGridTextColumn Binding="{Binding UserName}" Header="姓名" Width="150"/>
+                            <DataGridTextColumn Binding="{Binding Rank}" Header="等级" Width="150"/>
+                            <DataGridTextColumn Binding="{Binding Content}" Header="微博内容"  Width="100"/>
+                            <DataGridTextColumn Binding="{Binding PostDate}" Header="发布日期"  Width="100"/>
+                            <DataGridTextColumn Binding="{Binding Forward}" Header="转发数"  Width="100"/>
+                            <DataGridTextColumn Binding="{Binding Comment}" Header="评论数"  Width="100"/>
+                            <DataGridTextColumn Binding="{Binding Likes}" Header="点赞数"  Width="100"/>
                         </DataGrid.Columns>
 
                     </DataGrid>
