@@ -9,8 +9,8 @@
         WindowStartupLocation="CenterScreen">
     <Grid>
         <TabControl TabStripPlacement="Left">
-  
-            <TabItem Header="数据展示">
+
+            <TabItem Header="数据展示" FontSize="18" Height="40">
                 <Grid Background="#FFE5E5E5">
                     
                     <!--两行一列-->
@@ -60,7 +60,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="选项卡2">
+            <TabItem Header="选项卡2" FontSize="18" Height="40">
                 <Grid Background="#FFE5E5E5">
                 </Grid>
             </TabItem>
