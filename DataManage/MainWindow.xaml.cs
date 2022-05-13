@@ -41,7 +41,8 @@ namespace DataManage
         {
             List<CaseData> list = new List<CaseData>();
             string sql = "SELECT * FROM casedata";
-            string connStr = @"Data Source=" + @"E:\c#study\mydb.db;Initial Catalog=sqlite;";
+            string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"\mydb.db";                
+            string connStr = @"Data Source=" + dbpath+@";Initial Catalog=sqlite;";         
             SQLiteConnection conn = new SQLiteConnection(connStr);
             
             try
