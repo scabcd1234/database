@@ -50,7 +50,7 @@
 
                             <!--显示栏-->
                             <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
-                              Margin="20,10,20,20" HorizontalAlignment="Center" SelectionChanged="dg1_SelectionChanged"
+                              Margin="20,10,20,20" HorizontalAlignment="Center"
                               Grid.Row="1" Grid.Column="1" IsReadOnly="True">
 
                                 <DataGrid.RowStyle>

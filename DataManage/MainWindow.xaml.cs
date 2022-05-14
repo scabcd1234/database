@@ -23,9 +23,7 @@ namespace DataManage
     {
         public class CaseData
         {
-            public  int Id { get; set; }
-            public static int cid;
-            public static string name;
+            public  int Id { get; set; }                       
             public string UserName { get; set; }
             public string Rank { get; set; }
             public string  Content { get; set; }
@@ -41,28 +39,26 @@ namespace DataManage
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.BtnSelect(sender, e);
+            SQLiteConnection conn = getConn();
+            ShowAllData(conn);
 
         }
 
-        private void dg1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        // 获得数据库连接
+        private SQLiteConnection getConn()
         {
-            CaseData selected_case = (sender as DataGrid).SelectedItem as CaseData;
-            MessageBox.Show(selected_case.UserName, "");
-            CaseData.cid = selected_case.Id;
+            string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
+            string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;";
+            SQLiteConnection conn = new SQLiteConnection(connStr);
+            return conn;
         }
 
-        private void BtnSelect(object sender, RoutedEventArgs e)
+        // 显示所有数据
+        private void ShowAllData(SQLiteConnection conn)
         {
-            MessageBox.Show("搜索数据", "");
             List<CaseData> list = new List<CaseData>();
             string sql = "SELECT * FROM casedata";
-            string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
-
-            string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;";
-
-            SQLiteConnection conn = new SQLiteConnection(connStr);
-
+            
             try
             {
                 conn.Open();
@@ -87,7 +83,32 @@ namespace DataManage
                 throw new Exception("查询数据失败：" + ex.Message);
             }
             conn.Close();
+            dg1.ItemsSource = null;
             dg1.ItemsSource = list;
+        }
+
+        // 增加数据
+        void Add_TransfEvent(string value)
+        {
+            MessageBox.Show(value);
+            SQLiteConnection conn = getConn();
+            try
+            {
+                string sql = "insert into casedata (name, score) values (,,)";
+                SQLiteCommand command = new SQLiteCommand(sql, conn);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("插入数据失败：" + ex.Message);
+            }
+            ShowAllData(conn);
+        }
+
+        private void BtnSelect(object sender, RoutedEventArgs e)
+        {
+            SQLiteConnection conn = getConn();
+            ShowAllData(conn);
         }
 
         private void BtnRefresh(object sender, RoutedEventArgs e)
@@ -97,16 +118,23 @@ namespace DataManage
 
         private void BtnAdd(object sender, RoutedEventArgs e)
         {
-
+           AddData adddata=new AddData();
+           adddata.TransfEvent += Add_TransfEvent;
+           adddata.ShowDialog();          
         }
 
         private void BtnDelete(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("进来删除了");
-            string sql = "delete from casedata where CaseData.Id = " + CaseData.cid;
-            string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
-            string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;";
-            SQLiteConnection conn = new SQLiteConnection(connStr);
+            
+            int count = dg1.SelectedItems.Count;
+            string sql = "delete from casedata where CaseData.Id = "+ (dg1.SelectedItems[0] as CaseData).Id;
+            for (int i = 1; i < count; i++)
+            {
+                sql=sql+ " or CaseData.Id =" + (dg1.SelectedItems[i] as CaseData).Id;
+            }
+            MessageBox.Show(sql);
+                    
+            SQLiteConnection conn = getConn();
             try
             {
                 conn.Open();
@@ -119,7 +147,7 @@ namespace DataManage
                 throw new Exception("删除数据：" + "失败：" + ex.Message);
             }
             conn.Close();
-            this.BtnSelect(sender,e);
+            ShowAllData(conn);
 
         }
 
