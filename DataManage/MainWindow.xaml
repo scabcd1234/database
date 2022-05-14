@@ -5,82 +5,120 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DataManage"
         mc:Ignorable="d"
-        Title="数据管理平台" Height="623" Width="500" Loaded="Window_Loaded" 
-        WindowStartupLocation="CenterScreen" >
+        Title="数据管理平台"  Loaded="Window_Loaded" 
+        WindowStartupLocation="CenterScreen"  WindowState="Maximized">
     <!--WindowState="Maximized" -->
+
+    <Window.Resources>
+        <XmlDataProvider x:Key="AllItem" />
+        <Style x:Key="dgCell" TargetType="{x:Type TextBlock}">
+            <Setter Property="TextAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+    
+    
     <Grid>
-        <TabControl TabStripPlacement="Left">
+        <Viewbox Stretch="Fill" >
+            <Grid>
+                <TabControl TabStripPlacement="Left">
 
-            <TabItem Header="数据展示" FontSize="18" Height="40">
-                <Grid Background="#FFE5E5E5">
-                    
-                    <!--两行一列-->
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="0.15*"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
+                    <TabItem Header="数据展示" FontSize="18" Height="40">
+                        
+                        <Grid Background="#FFE5E5E5">
+                            <!--两行一列-->
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
 
-                    <!--搜索栏-->
-                    <Grid Grid.Row="0" Grid.Column="1" >
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="30" Margin="20,20,20,20">
-                            <Label Content="请输入名称:" Name="input" Margin="0,0,20,0"></Label>
-                            <TextBox Text="" Name="text" Width="450" ></TextBox>
-                            <Button Content="查询" Width="60" Margin="20,0,20,0" Click="BtnSelect"/>
-                            <Button Content="刷新" Width="60" Margin="0,0,0,0" Click="BtnRefresh"/>
-                            <Button Content="增加" Width="60" Margin="20,0,20,0" Click="BtnAdd"/>
-                            <Button Content="删除" Width="60" Margin="0,0,0,0" Click="BtnDelete"/>
-                            <Button Content="修改" Width="60" Margin="20,0,0,0" Click="BtnUpdate"/>
-                        </StackPanel>
-                    </Grid>
+                            <!--搜索栏-->
+                            <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top" >
+                                <StackPanel Orientation="Horizontal"  Margin="20,20,20,20">
+                                    <Label Content="请输入名称:" Name="input"  HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+                                    <TextBox Text="" Name="text" MinWidth="300" Margin="10,0,20,0" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
+                                    <Button Content="查询" MinWidth="60" Margin="0,0,0,0" FontSize="18" Click="BtnSelect" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    <Button Content="刷新" MinWidth="60" Margin="20,0,20,0" Click="BtnRefresh" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    <Button Content="增加" MinWidth="60" Margin="0,0,0,0" Click="BtnAdd" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    <Button Content="删除" MinWidth="60" Margin="20,0,20,0" Click="BtnDelete" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    <Button Content="修改" MinWidth="60" Margin="0,0,0,0" Click="BtnUpdate" HorizontalAlignment="Right" VerticalContentAlignment="Center" RenderTransformOrigin="3.169,0.845"/>
+                                </StackPanel>
+                            </Grid>
 
 
-                    <!--显示栏-->
-                    <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
-                              Margin="0,115,0,77" HorizontalAlignment="Center" SelectionChanged="dg1_SelectionChanged"
-                              Grid.Row="1" Grid.Column="1">
+                            <!--显示栏-->
+                            <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
+                              Margin="20,10,20,20" HorizontalAlignment="Center" SelectionChanged="dg1_SelectionChanged"
+                              Grid.Row="1" Grid.Column="1" IsReadOnly="True">
 
-                        <DataGrid.RowStyle>
-                            <Style TargetType="DataGridRow">
-                                <Style.Triggers>
-                                    <Trigger Property="ItemsControl.AlternationIndex" Value="0">
-                                        <Setter Property="Background" Value="#DDDDDD"/>
-                                    </Trigger>
-                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                                        <Setter Property="Background" Value="White"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.RowStyle>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                                <Setter Property="Background" Value="#DDDDDD"/>
+                                            </Trigger>
+                                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                                <Setter Property="Background" Value="White"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
 
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding Id}" Header="编号"  Width="50">
-                                <DataGridTextColumn.HeaderTemplate>
-                                    <DataTemplate>
-                                        <Label Content="{Binding Id}" HorizontalContentAlignment="Center"></Label>
-                                    </DataTemplate>
-                                </DataGridTextColumn.HeaderTemplate>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Binding="{Binding UserName}" Header="姓名" Width="150"/>
-                            <DataGridTextColumn Binding="{Binding Rank}" Header="等级" Width="150"/>
-                            <DataGridTextColumn Binding="{Binding Content}" Header="微博内容"  Width="100"/>
-                            <DataGridTextColumn Binding="{Binding PostDate}" Header="发布日期"  Width="100"/>
-                            <DataGridTextColumn Binding="{Binding Forward}" Header="转发数"  Width="100"/>
-                            <DataGridTextColumn Binding="{Binding Comment}" Header="评论数"  Width="100"/>
-                            <DataGridTextColumn Binding="{Binding Likes}" Header="点赞数"  Width="100"/>
-                        </DataGrid.Columns>
+                                <DataGrid.ColumnHeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center">
+                                        </Setter>
+                                        <Setter Property="Background" Value="#f5f5f5"></Setter>
+                                        <Setter Property="Foreground" Value="Black"></Setter>
+                                        <Setter Property="BorderThickness" Value="0.5" />
+                                        <Setter Property="BorderBrush" Value="Gray" />
+                                    </Style>
+                                </DataGrid.ColumnHeaderStyle>
+                                
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn  Header="编号" Binding="{Binding Id}" Width="50" >
+                                        <!-- ElementStyle="{StaticResource ResourceKey=dgCell}" 在每一个DataGridTextColumn后面加上这个，使得表格的每一行都居中-->
+                                        <!-- 
+                                        <DataGridTextColumn.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" ></TextBlock>
+                                            </DataTemplate>
+                                        </DataGridTextColumn.HeaderTemplate>
+                                        -->
+                                        
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding UserName}" Header="姓名" Width="150" />
+                                    <DataGridTextColumn Binding="{Binding Rank}" Header="等级" Width="150"/>
+                                    <DataGridTextColumn Binding="{Binding Content}" Header="微博内容"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding PostDate}" Header="发布日期"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Forward}" Header="转发数"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Comment}" Header="评论数"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Likes}" Header="点赞数"  Width="100">
+                                        <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                <Setter Property="TextWrapping" Value="Wrap"/>
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                <Setter Property="Height" Value="auto"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    
+                                </DataGrid.Columns>
 
-                    </DataGrid>
-                </Grid>
-            </TabItem>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
 
-            <TabItem Header="选项卡2" FontSize="18" Height="40">
-                <Grid Background="#FFE5E5E5">
-                </Grid>
-            </TabItem>
-        </TabControl>
+                    <TabItem Header="选项卡2" FontSize="18" Height="40">
+                        <Grid Background="#FFE5E5E5">
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+
+            </Grid>
+        </Viewbox>
         
         
         

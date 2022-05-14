@@ -23,7 +23,9 @@ namespace DataManage
     {
         public class CaseData
         {
-            public int Id { get; set; }
+            public  int Id { get; set; }
+            public static int cid;
+            public static string name;
             public string UserName { get; set; }
             public string Rank { get; set; }
             public string  Content { get; set; }
@@ -39,14 +41,30 @@ namespace DataManage
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            this.BtnSelect(sender, e);
+
+        }
+
+        private void dg1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CaseData selected_case = (sender as DataGrid).SelectedItem as CaseData;
+            MessageBox.Show(selected_case.UserName, "");
+            CaseData.cid = selected_case.Id;
+        }
+
+        private void BtnSelect(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("搜索数据", "");
             List<CaseData> list = new List<CaseData>();
             string sql = "SELECT * FROM casedata";
-            string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"\mydb.db";                
-            string connStr = @"Data Source=" + dbpath+@";Initial Catalog=sqlite;";         
+            string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
+
+            string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;";
+
             SQLiteConnection conn = new SQLiteConnection(connStr);
-            
+
             try
-            {   
+            {
                 conn.Open();
                 SQLiteCommand command = new SQLiteCommand(sql, conn);
                 SQLiteDataReader reader = command.ExecuteReader();
@@ -60,7 +78,7 @@ namespace DataManage
                     casedata.PostDate = reader["postDate"].ToString();
                     casedata.Forward = reader["forwarding"].ToString();
                     casedata.Comment = reader["comment"].ToString();
-                    casedata.Likes = reader["likes"].ToString();                 
+                    casedata.Likes = reader["likes"].ToString();
                     list.Add(casedata);
                 }
             }
@@ -70,18 +88,6 @@ namespace DataManage
             }
             conn.Close();
             dg1.ItemsSource = list;
-
-        }
-
-        private void dg1_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            CaseData selected_case= (sender as DataGrid).SelectedItem as CaseData;
-            MessageBox.Show(selected_case.UserName, "");
-        }
-
-        private void BtnSelect(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void BtnRefresh(object sender, RoutedEventArgs e)
@@ -96,6 +102,24 @@ namespace DataManage
 
         private void BtnDelete(object sender, RoutedEventArgs e)
         {
+            MessageBox.Show("进来删除了");
+            string sql = "delete from casedata where CaseData.Id = " + CaseData.cid;
+            string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
+            string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;";
+            SQLiteConnection conn = new SQLiteConnection(connStr);
+            try
+            {
+                conn.Open();
+                SQLiteCommand command = new SQLiteCommand(sql, conn);
+                command.ExecuteNonQuery();
+                MessageBox.Show("删除成功","");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("删除数据：" + "失败：" + ex.Message);
+            }
+            conn.Close();
+            this.BtnSelect(sender,e);
 
         }
 
