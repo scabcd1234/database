@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SQLite;
+using System.Data;
 
 namespace DataManage
 {
@@ -125,14 +126,20 @@ namespace DataManage
 
         private void BtnDelete(object sender, RoutedEventArgs e)
         {
-            
-            int count = dg1.SelectedItems.Count;
-            string sql = "delete from casedata where CaseData.Id = "+ (dg1.SelectedItems[0] as CaseData).Id;
-            for (int i = 1; i < count; i++)
+            string sql = "delete from casedata where 1 = 2";
+            for (int i = 0; i < dg1.Items.Count; i++)
             {
-                sql=sql+ " or CaseData.Id =" + (dg1.SelectedItems[i] as CaseData).Id;
-            }
-            MessageBox.Show(sql);
+                //获取行
+                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
+
+                //获取该行的某列
+                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+                if (cb.IsChecked == true)
+                {
+                    sql = sql + " or CaseData.Id =" + cb.Tag;                  
+                }
+            }         
+            // MessageBox.Show(sql);
                     
             SQLiteConnection conn = getConn();
             try
@@ -147,13 +154,63 @@ namespace DataManage
                 throw new Exception("删除数据：" + "失败：" + ex.Message);
             }
             conn.Close();
-            ShowAllData(conn);
-
+            ShowAllData(conn);            
         }
 
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
 
         }
+
+        // 全选
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            CheckBox headercb = (CheckBox)sender;
+
+            for (int i = 0; i < dg1.Items.Count; i++)
+            {
+                //获取行
+                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
+
+                //获取该行的某列
+                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+
+                cb.IsChecked = headercb.IsChecked;
+            }
+        }
+
+      
+
+        private void dg1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {            
+            //if (dg1.SelectedIndex != -1)
+            //{
+            //    //获取行
+            //    DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(dg1.SelectedIndex);
+
+            //    //获取该行的某列
+            //    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+
+            //    cb.IsChecked = !cb.IsChecked;
+            //}
+            
+        }
+
+        private void Item_GotFocus(object sender, RoutedEventArgs e)
+        {
+            
+                //获取行
+                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(dg1.SelectedIndex);
+
+                if (neddrow != null)
+                {
+                    //获取该行的某列
+                    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+
+                    cb.IsChecked = !cb.IsChecked;
+                }                                 
+        }
+
+
     }
 }
