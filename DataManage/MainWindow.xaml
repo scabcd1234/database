@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DataManage"
         mc:Ignorable="d"
         Title="数据管理平台"  Loaded="Window_Loaded" 
-        WindowStartupLocation="CenterScreen"  WindowState="Maximized">
+        WindowStartupLocation="CenterScreen">
     <!--WindowState="Maximized" -->
 
     <Window.Resources>
@@ -25,32 +25,34 @@
                     <TabItem Header="数据展示" FontSize="18" Height="40">
                         
                         <Grid Background="#FFE5E5E5">
-                            <!--两行一列-->
+                            <!--三行一列-->
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
+                                
                             </Grid.ColumnDefinitions>
 
                             <!--搜索栏-->
                             <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top" >
-                                <StackPanel Orientation="Horizontal"  Margin="20,20,20,20">
-                                    <Label Content="请输入名称:" Name="input"  HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
-                                    <TextBox Text="" Name="text" MinWidth="300" Margin="10,0,20,0" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
+                                <StackPanel Orientation="Horizontal"  Margin="20,20,20,10">
+                                    <Label Content="请输入名称:" Name="text"  HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+                                    <TextBox Text="" Name="SearchField" MinWidth="300" Margin="10,0,30,0" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
                                     <Button Content="查询" MinWidth="60" Margin="0,0,0,0" FontSize="18" Click="BtnSelect" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                                    <Button Content="刷新" MinWidth="60" Margin="20,0,20,0" Click="BtnRefresh" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    <Button Content="刷新" MinWidth="60" Margin="32,0,32,0" Click="BtnRefresh" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
                                     <Button Content="增加" MinWidth="60" Margin="0,0,0,0" Click="BtnAdd" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                                    <Button Content="删除" MinWidth="60" Margin="20,0,20,0" Click="BtnDelete" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                                    <Button Content="修改" MinWidth="60" Margin="0,0,0,0" Click="BtnUpdate" HorizontalAlignment="Right" VerticalContentAlignment="Center" RenderTransformOrigin="3.169,0.845"/>
+                                    <Button Content="删除" MinWidth="60" Margin="32,0,32,0" Click="BtnDelete" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    <Button Content="修改" MinWidth="60" Margin="0,0,0,0" Click="BtnUpdate" VerticalContentAlignment="Center" HorizontalAlignment="Right"/>
                                 </StackPanel>
                             </Grid>
 
 
                             <!--显示栏-->
                             <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
-                              Margin="20,10,20,20" HorizontalAlignment="Center"
+                              Margin="20,10,20,10" HorizontalAlignment="Center"
                               Grid.Row="1" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow">
 
                                 <DataGrid.RowStyle>
@@ -111,15 +113,15 @@
                                             </DataTemplate>
                                         </DataGridTextColumn.HeaderTemplate>
                                         -->
-                                        
+
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding UserName}" Header="姓名" Width="150" />
-                                    <DataGridTextColumn Binding="{Binding Rank}" Header="等级" Width="150"/>
-                                    <DataGridTextColumn Binding="{Binding Content}" Header="微博内容"  Width="100"/>
-                                    <DataGridTextColumn Binding="{Binding PostDate}" Header="发布日期"  Width="100"/>
-                                    <DataGridTextColumn Binding="{Binding Forward}" Header="转发数"  Width="100"/>
-                                    <DataGridTextColumn Binding="{Binding Comment}" Header="评论数"  Width="100"/>
-                                    <DataGridTextColumn Binding="{Binding Likes}" Header="点赞数"  Width="100">
+                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="150" />
+                                    <DataGridTextColumn Binding="{Binding Phase_ratio}" Header="相比例（%）" Width="150"/>
+                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Diff_plane}" Header="衍射面"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Ehkl}" Header="衍射弹性常数Ehkl（GPa）"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Vhkl}" Header="衍射弹性常数vhkl"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Distance}" Header="晶面间距d"  Width="100">
                                         <DataGridTextColumn.ElementStyle>
                                                 <Style TargetType="TextBlock">
                                                 <Setter Property="TextWrapping" Value="Wrap"/>
@@ -132,6 +134,27 @@
                                 </DataGrid.Columns>
 
                             </DataGrid>
+                            
+                            <!--分页-->
+                            
+                            <Grid Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom">
+                                <StackPanel Orientation="Horizontal"  Margin="20,10,20,10">
+                                    <Button Content="上一页"  Click="BtnUp_Click" IsEnabled="False" Name="BtnUp" HorizontalAlignment="Left" Margin="125,2,0,2"></Button>
+                                    <Button Content="下一页" Click="BtnNext_Click" Name="BtnNext" HorizontalAlignment="Left" Margin="10,2,0,2"></Button>
+                                    <Label Content="第" HorizontalAlignment="Left" Margin="10,2,0,2"></Label>
+                                    <Label Name="CurrentPage" Content="" HorizontalAlignment="Left" Margin="0,2,0,2"></Label>
+                                    <Label Content="页" HorizontalAlignment="Left" Margin="0,2,2,2"></Label>
+
+                                    <Label Content="共" HorizontalAlignment="Left" Margin="2,2,0,2"></Label>
+                                    <Label Name="AllPage" Content="" HorizontalAlignment="Left" Margin="0,0,0,2"></Label>
+                                    <Label Content="页" HorizontalAlignment="Left" Margin="0,2,2,2"></Label>
+
+                                    <TextBox Text="" Name="InputNumber" Width="380" Margin="10,2,10,2" HorizontalAlignment="Left" VerticalContentAlignment="Center" ></TextBox>
+                                    <Button Content="跳转" MinWidth="60" VerticalContentAlignment="Center" Click="Skip" HorizontalAlignment="Left" Margin="10,2,0,2"/>
+                                </StackPanel>
+                            </Grid>
+                            
+                            
                         </Grid>
                     </TabItem>
 
