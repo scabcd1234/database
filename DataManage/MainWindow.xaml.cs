@@ -206,19 +206,14 @@ namespace DataManage
             ShowAllData();
         }
 
-        // 刷新
-        private void BtnRefresh(object sender, RoutedEventArgs e)
+       
+         // 增加数据
+         private void BtnAdd(object sender, RoutedEventArgs e)
         {
-            
-        }
-
-        // 增加数据
-        private void BtnAdd(object sender, RoutedEventArgs e)
-        {
-            AddData adddata = new AddData();
-            adddata.TransfEvent += Add_TransfEvent;
+             AddData adddata = new AddData();
+             adddata.TransfEvent += Add_TransfEvent;
             adddata.ShowDialog();
-        }
+         }
 
         // 删除数据
         private void BtnDelete(object sender, RoutedEventArgs e)
@@ -236,8 +231,6 @@ namespace DataManage
                     sql = sql + " or data.Id =" + cb.Tag;                  
                 }
             }
-
-
 
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
@@ -258,13 +251,7 @@ namespace DataManage
             }
             ShowAllData();            
         }
-
-        // 修改数据
-        private void BtnUpdate(object sender, RoutedEventArgs e)
-        {
-            //ImportCsv("E:\\c#study", "test.csv");
-        }
-
+        
         // 全选数据
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
@@ -281,9 +268,7 @@ namespace DataManage
                 cb.IsChecked = headercb.IsChecked;
             }
         }
-
-       
-        
+              
         // 点击事件触发
         private void Item_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -383,6 +368,16 @@ namespace DataManage
                 MessageBox.Show("插入失败");
                 throw ex;
             }
+        }
+
+        private void BtnRefresh(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnUpdate(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
