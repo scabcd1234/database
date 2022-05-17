@@ -1,0 +1,81 @@
+﻿<Window x:Class="DataManage.UpdateData"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DataManage"
+        mc:Ignorable="d"
+        Title="修改数据"  WindowStartupLocation="CenterScreen"  Width="1000" Height="900">
+        <Grid>
+            <Viewbox Stretch="Fill">
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="500"/>
+                    </Grid.ColumnDefinitions>
+                    <!--
+                    <DataGrid Name="Form" Grid.Row="0" Grid.Column="1">
+                        <Label Content="Label" HorizontalAlignment="Left" Margin="118,56,0,0" VerticalAlignment="Top"/>
+                    </DataGrid>
+                    -->
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="Width" Value="200"/>
+                            <Setter Property="Block.TextAlignment" Value="Right"/>
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="Margin" Value="0,5,10,0"/>
+
+                        </Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="Width" Value="150"/>
+                            <Setter Property="Margin" Value="211,5,0,0"/>
+                        </Style>
+
+                    </Grid.Resources>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="相:" Margin="-20,5,0,0" VerticalAlignment="Top"/>
+                    <TextBox Grid.Row="0" Name="Phase" Margin="211,5,0,0" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="相比例（%）:" Margin="-20,5,0,0"/>
+                    <TextBox Grid.Row="1" Grid.Column="1"   Name="Phase_ratio" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="温度（℃）:" Margin="-20,5,0,0"/>
+                    <TextBox Grid.Row="2" Grid.Column="1"   Name="Temperature" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="衍射面:" Margin="-20,5,0,0"/>
+                    <TextBox Grid.Row="3" Grid.Column="1"   Name="Diff_plane" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="衍射弹性常数Ehkl（GPa）:" Margin="-20,5,0,0"/>
+                    <TextBox Grid.Row="4" Grid.Column="1"   Name="Ehkl" />
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="衍射弹性常数vhkl:" Margin="-20,5,0,0"/>
+                    <TextBox Grid.Row="5"  Grid.Column="1" Name="Vhkl"  />
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="晶面间距d:" Margin="-20,5,0,0"/>
+                    <TextBox Grid.Row="6" Grid.Column="1"   Name="Distance" />
+
+                    <Button Content="确认修改" Name="add"  Grid.Row="7" VerticalAlignment="Center" 
+                            HorizontalAlignment="Left" Width="100" Height="30" 
+                                Click="Button_Click" Margin="211,5,0,5"  HorizontalContentAlignment="Center" />
+
+
+
+
+                </Grid>
+            </Viewbox>
+
+        </Grid>
+        
+</Window>
