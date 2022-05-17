@@ -22,10 +22,10 @@ namespace DataManage
     public partial class AddData : Window
     {
 
-        public class Add {
-            /* 
+        /*public class Add {
+            *//* 
              Phase，Phase_ratio，Temperature，Diff_plane，Ehkl，Vhkl，Distance
-             */
+             *//*
             public static string Phase;
             public static int Phase_ratio;
             public static int Temperature;
@@ -33,26 +33,27 @@ namespace DataManage
             public static int Ehkl;
             public static double Vhkl;
             public static double Distance;
-        }
+        }*/
 
         public AddData()
         {
             InitializeComponent();
         }
-        public delegate void TransfDelegate(string value1,int value2, int value3, string value4, int value5, double value6, double value7);
+        public delegate void TransfDelegate(caseData caseData);
 
         public event TransfDelegate TransfEvent;
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Add.Phase = Phase.Text.Trim() ;
-            Add.Phase_ratio = Convert.ToInt32(Phase_ratio.Text.Trim());
-            Add.Temperature = Convert.ToInt32(Temperature.Text.Trim());
-            Add.Diff_plane = Diff_plane.Text.Trim();
-            Add.Ehkl = Convert.ToInt32(Ehkl.Text.Trim());
-            Add.Vhkl = Convert.ToDouble(Vhkl.Text.Trim()) ;
-            Add.Distance = Convert.ToDouble(Distance.Text.Trim());
-            TransfEvent(Add.Phase, Add.Phase_ratio, Add.Temperature, Add.Diff_plane, Add.Ehkl, Add.Vhkl, Add.Distance);//触发事件
+            caseData caseData = new caseData();
+            caseData.Phase = Phase.Text.Trim() ;
+            caseData.Phase_ratio = Convert.ToInt32(Phase_ratio.Text.Trim());
+            caseData.Temperature = Convert.ToInt32(Temperature.Text.Trim());
+            caseData.Diff_plane = Diff_plane.Text.Trim();
+            caseData.Ehkl = Convert.ToInt32(Ehkl.Text.Trim());
+            caseData.Vhkl = Convert.ToDouble(Vhkl.Text.Trim()) ;
+            caseData.Distance = Convert.ToDouble(Distance.Text.Trim());
+            TransfEvent(caseData);//触发事件
             this.Close();
         }
 
