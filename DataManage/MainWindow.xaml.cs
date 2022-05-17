@@ -238,24 +238,23 @@ namespace DataManage
             }
             object lockThis = new object();
             
-                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                 {
-                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    try
                     {
-                        try
-                        {
-                            conn.Open();
-                            command.ExecuteNonQuery();
-                            MessageBox.Show("删除成功", "");
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception("删除数据：" + "失败：" + ex.Message);
-                        }
-                        conn.Close();
+                         conn.Open();
+                         command.ExecuteNonQuery();
+                         MessageBox.Show("删除成功", "");
                     }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("删除数据：" + "失败：" + ex.Message);
+                    }
+                    conn.Close();
                 }
-            
+            }            
             ShowAllData();            
         }
         
@@ -353,36 +352,35 @@ namespace DataManage
                 throw ex;
             }
             
-
-                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
                 {
-                    try
+                    conn.Open();
+                    //开始导入数据库
+                    foreach (DataRow row in ds.Tables[0].Rows)
                     {
-                        conn.Open();
-                        //开始导入数据库
-                        foreach (DataRow row in ds.Tables[0].Rows)
+                        string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
+                        foreach (DataColumn column in ds.Tables[0].Columns)
                         {
-                            string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
-                            foreach (DataColumn column in ds.Tables[0].Columns)
-                            {
-                                sql = sql + row[column].ToString() + "','";
-                            }
-                            sql = sql.Substring(0, sql.Length - 2);
-                            sql = sql + ");";
-                            using (SQLiteCommand command = new SQLiteCommand(sql, conn))
-                            {
-                                command.ExecuteNonQuery();
-                            }
-                            MessageBox.Show("插入成功");
+                             sql = sql + row[column].ToString() + "','";
                         }
+                        sql = sql.Substring(0, sql.Length - 2);
+                        sql = sql + ");";
+                        using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        MessageBox.Show("插入成功");
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("插入失败");
-                        throw ex;
-                    }
-                    conn.Close();
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("插入失败");
+                    throw ex;
+                }
+                conn.Close();
+            }
             
         }
 
