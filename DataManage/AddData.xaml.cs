@@ -20,40 +20,23 @@ namespace DataManage
     /// AddData.xaml 的交互逻辑
     /// </summary>
     public partial class AddData : Window
-    {
-
-        /*public class Add {
-            *//* 
-             Phase，Phase_ratio，Temperature，Diff_plane，Ehkl，Vhkl，Distance
-             *//*
-            public static string Phase;
-            public static int Phase_ratio;
-            public static int Temperature;
-            public static string Diff_plane;
-            public static int Ehkl;
-            public static double Vhkl;
-            public static double Distance;
-        }*/
+    {     
 
         public AddData()
         {
             InitializeComponent();
         }
-        public delegate void TransfDelegate(caseData caseData);
+        public delegate void TransfDelegate(String sql);
 
         public event TransfDelegate TransfEvent;
 
         private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            caseData caseData = new caseData();
-            caseData.Phase = Phase.Text.Trim() ;
-            caseData.Phase_ratio = Convert.ToInt32(Phase_ratio.Text.Trim());
-            caseData.Temperature = Convert.ToInt32(Temperature.Text.Trim());
-            caseData.Diff_plane = Diff_plane.Text.Trim();
-            caseData.Ehkl = Convert.ToInt32(Ehkl.Text.Trim());
-            caseData.Vhkl = Convert.ToDouble(Vhkl.Text.Trim()) ;
-            caseData.Distance = Convert.ToDouble(Distance.Text.Trim());
-            TransfEvent(caseData);//触发事件
+        {                     
+            string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
+                    + Phase.Text.Trim() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + Diff_plane.Text.Trim() + "','"
+                    + Ehkl.Text.Trim() + "','" + Vhkl.Text.Trim() + "','" + Distance.Text.Trim() + "');";
+            MessageBox.Show(sql);
+            TransfEvent(sql);//触发事件
             this.Close();
         }
 

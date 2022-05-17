@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SQLite;
 using System.Data;
+using System.Data.Odbc;
+using System.Data.SqlClient;
 
 
 namespace DataManage
@@ -31,6 +33,9 @@ namespace DataManage
         //页大小
         public static int pageSize = 4;
 
+        public static string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
+
+        public static string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;Version=3;";
         public MainWindow()
         {
             InitializeComponent();
@@ -39,25 +44,26 @@ namespace DataManage
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SQLiteConnection conn = getConn();
-            ShowAllData(conn);      
+            ShowAllData(conn);
+            
+       
         }
 
         // 获得数据库连接
-        private SQLiteConnection getConn()
-        {
             string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
             string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;";
+        {
+            
             SQLiteConnection conn = new SQLiteConnection(connStr);
             return conn;
         }
 
         // 分页查询数据
-        private void ShowAllData(SQLiteConnection conn)
+        private void ShowAllData()
         {
             List<caseData> list = new List<caseData>();
-
-            SQLiteConnection conn1 = getConn();
-            int Count = selectData(conn1);
+        
+            int Count = selectData();
             totalPage = Count % pageSize == 0 ? Count / pageSize : Count / pageSize + 1;
             if (pageIndex > totalPage)
             {
@@ -79,42 +85,44 @@ namespace DataManage
                 sql2 += " and diff_plane like '" + SearchField.Text.Trim() + "%' ";
             }
             string sql = sql1 + sql2 + sql3;
-            
-            try
-            {
-                conn.Open();
-                
-                SQLiteCommand command = new SQLiteCommand(sql, conn);
-                SQLiteDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                       
+            using(SQLiteConnection conn = new SQLiteConnection(connStr))
+            {                    
+                using(SQLiteCommand command = new SQLiteCommand(sql, conn))
                 {
-                    caseData casedata = new caseData();
-                    casedata.Id = Convert.ToInt32(reader["id"]);
-                    casedata.Phase = reader["phase"].ToString();
-                    casedata.Phase_ratio = (int)reader["phase_ratio"];
-                    casedata.Temperature = (int)reader["temperature"];
-                    casedata.Diff_plane = reader["diff_plane"].ToString();
-                    casedata.Ehkl = (int)reader["ehkl"];
-                    casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);                  
-                    if (reader["distance"].ToString() == "")
+                    try
                     {
-                        
-                        casedata.Distance = 0.00;
+                        conn.Open();
+                        SQLiteDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            caseData casedata = new caseData();
+                            casedata.Id = Convert.ToInt32(reader["id"]);
+                            casedata.Phase = reader["phase"].ToString();
+                            casedata.Phase_ratio = (int)reader["phase_ratio"];
+                            casedata.Temperature = (int)reader["temperature"];
+                            casedata.Diff_plane = reader["diff_plane"].ToString();
+                            casedata.Ehkl = (int)reader["ehkl"];
+                            casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
+                            if (reader["distance"].ToString() == "")
+                            {
+                                casedata.Distance = 0.00;
+                            }
+                            else
+                            {
+                                casedata.Distance = Convert.ToDouble(reader["distance"]);
+                            }
+                            list.Add(casedata);
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        casedata.Distance = Convert.ToDouble(reader["distance"]);
+                        throw new Exception("查询数据失败：" + ex.Message);
                     }
-                    
-                    list.Add(casedata);
-                }
+                    conn.Close();               
+                }                                                                            
             }
-            catch (Exception ex)
-            {
-                throw new Exception("查询数据失败：" + ex.Message);
-            }
-
-            conn.Close();
+            
             dg1.ItemsSource = null;
             dg1.ItemsSource = list;
  
@@ -142,7 +150,7 @@ namespace DataManage
         }
 
         // 查询所有数据
-        private int selectData(SQLiteConnection conn)
+        private int selectData()
         {
             List<caseData> listAll = new List<caseData>();
             string sql1 = "select count(*) from data ";
@@ -151,64 +159,69 @@ namespace DataManage
             {
                 sql2 += " and diff_plane like '" + SearchField.Text.Trim() + "%'";
             }           
-            string sqlAll = sql1 + sql2;
-            int count = 0;
-            try
-            {                
-                conn.Open();
-                SQLiteCommand command = new SQLiteCommand(sqlAll, conn);
-                SQLiteDataReader reader = command.ExecuteReader();               
-                if (reader.Read())
-                {                    
-                    count = Convert.ToInt32(reader[0].ToString());                    
-                }                           
-            }
-            catch (Exception ex)
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
-                MessageBox.Show("查询失败","");
+                using (SQLiteCommand command = new SQLiteCommand(sqlAll, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        SQLiteDataReader reader = command.ExecuteReader();
+                        if (reader.Read())
+                        {
+                            count = Convert.ToInt32(reader[0].ToString());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("查询失败", "");
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                }
+            }
                 throw new Exception("查询数据失败：" + ex.Message);
             }
             return count;
+        // 增加数据
+        void Add_TransfEvent(String sql)
+        {
 
-        }
-        
-        // 增加数据事件
-        void Add_TransfEvent(caseData caseData)
-        {            
-            SQLiteConnection conn = getConn();
-            try
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
-                conn.Open();
-                /*insert into casedata(id, username, rank) values(70, '10', '生成2')*/
-                /*字符串需要用单引号包起来*/
-                /*string sql = "insert into data (id,username,rank) values (" + a + ",'" + value1 + "','" +  value2 + "')";*/
-                string sql = "insert into data (diff_plane) values ("  + caseData.Diff_plane + ")";
-                SQLiteCommand command = new SQLiteCommand(sql, conn);
-                command.ExecuteNonQuery();
-                
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        command.ExecuteNonQuery();
+                        MessageBox.Show("插入成功");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("插入数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                }
             }
-            catch (Exception ex)
-            {
-                throw new Exception("插入数据失败：" + ex.Message);
-            }
+            ShowAllData();
             conn.Close();
             ShowAllData(conn);
             
         }
 
         private void BtnSelect(object sender, RoutedEventArgs e)
-        {
+        {           
             
-            SQLiteConnection conn = getConn();
-            ShowAllData(conn);
+            ShowAllData();
         }
 
         // 刷新
-        private void BtnRefresh(object sender, RoutedEventArgs e)
-        {
             SearchField.Text = "";
             SQLiteConnection conn = getConn();
             ShowAllData(conn);
+
+        {
 
         }
 
@@ -217,9 +230,9 @@ namespace DataManage
         {
             AddData adddata = new AddData();
             adddata.TransfEvent += Add_TransfEvent;
-            adddata.ShowDialog();
-        }
-        
+
+        // 删除数据
+
         // 删除
         private void BtnDelete(object sender, RoutedEventArgs e)
         {
@@ -235,28 +248,31 @@ namespace DataManage
                 {
                     sql = sql + " or data.Id =" + cb.Tag;                  
                 }
-            }         
-           
-                    
-            SQLiteConnection conn = getConn();
-            try
-            {
-                conn.Open();
-                SQLiteCommand command = new SQLiteCommand(sql, conn);
-                command.ExecuteNonQuery();
-                MessageBox.Show("删除成功","");
             }
-            catch (Exception ex)
+
+
+
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
-                throw new Exception("删除数据：" + "失败：" + ex.Message);
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        command.ExecuteNonQuery();
+                        MessageBox.Show("删除成功", "");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("删除数据：" + "失败：" + ex.Message);
+                    }
+                    conn.Close();
+                }
             }
-            conn.Close();
-            ShowAllData(conn);            
+            ShowAllData();            
         }
 
         // 修改数据
-        private void BtnUpdate(object sender, RoutedEventArgs e)
-        {
             //获取行
             DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(0);
             //获取该行的某列
@@ -339,6 +355,8 @@ namespace DataManage
             return casedata;
         }
 
+        }
+
         // 全选数据
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
@@ -379,12 +397,9 @@ namespace DataManage
         {
             if(pageIndex > 1 )
             {
-                pageIndex -= 1;
-                           
-            }
-    
-            SQLiteConnection conn = getConn();
-            ShowAllData(conn);
+                pageIndex -= 1;                          
+            }               
+            ShowAllData();
         }
 
         // 下一页
@@ -394,9 +409,7 @@ namespace DataManage
             {              
                 pageIndex += 1;                               
             }
-            SQLiteConnection conn = getConn();
-            ShowAllData(conn);
-
+            ShowAllData();
         }
 
         // 跳转
@@ -417,8 +430,51 @@ namespace DataManage
             {
                 pageIndex = inputNumber;               
             }
-            SQLiteConnection conn = getConn();
-            ShowAllData(conn);
+            
+            ShowAllData();
+        }
+
+        // 向数据库中插入csv文件
+        public void ImportCsv(string filePath, string fileName)
+        {        
+            string strConn = @"Driver={Microsoft Text Driver (*.txt; *.csv)};Dbq=";
+            strConn += filePath;
+            strConn += ";Extensions=asc,csv,tab,txt;";
+            OdbcConnection objConn = new OdbcConnection(strConn);
+            DataSet ds = new DataSet();
+            try
+            {              
+                string strSQL = "select * from " + fileName;//文件名，不要带目录
+                OdbcDataAdapter da = new OdbcDataAdapter(strSQL, objConn);
+                da.Fill(ds);
+
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    conn.Open();
+                    //开始导入数据库
+                    foreach (DataRow row in ds.Tables[0].Rows)
+                    {
+                        string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
+                        foreach (DataColumn column in ds.Tables[0].Columns)
+                        {
+                            sql = sql + row[column].ToString() + "','";
+                        }
+                        sql = sql.Substring(0, sql.Length - 2);
+                        sql = sql + ");";
+                        using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        MessageBox.Show("插入成功");
+                    }
+                    conn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("插入失败");
+                throw ex;
+            }
         }
     }
 }
