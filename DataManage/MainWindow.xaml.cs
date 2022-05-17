@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SQLite;
 using System.Data;
+using System.Data.Odbc;
+using System.Data.SqlClient;
 
 namespace DataManage
 {
@@ -159,7 +161,7 @@ namespace DataManage
 
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
-
+            ImportCsv("E:\\c#study", "数据库表格.csv");
         }
 
         // 全选
@@ -211,6 +213,41 @@ namespace DataManage
                 }                                 
         }
 
+        // 向数据库中插入csv文件
+        public void ImportCsv(string filePath, string fileName)
+        {
+                SQLiteConnection conn = getConn();
+                
+                string strConn = @"Driver={Microsoft Text Driver (*.txt; *.csv)};Dbq=";
+                strConn += filePath;                                                      
+                strConn += ";Extensions=asc,csv,tab,txt;";
+                OdbcConnection objConn = new OdbcConnection(strConn);
+                DataSet ds = new DataSet();
+                try
+                {
+                    string strSQL = "select * from " + fileName;//文件名，不要带目录
+                    OdbcDataAdapter da = new OdbcDataAdapter(strSQL, objConn);
+                    da.Fill(ds);
+                                            
+                    //开始导入数据库
+                    foreach (DataRow row in ds.Tables[0].Rows)
+                    {
+                        foreach (DataColumn column in ds.Tables[0].Columns)
+                        {
+                            MessageBox.Show(row[column].ToString());
+                            string sql = String.Format("insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) " +
+                                       "values ({0},{1})",[row[column].ToString(), row[column].ToString()]);
+                            SQLiteCommand command = new SQLiteCommand(sql, conn);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                        
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+        }
 
     }
 }
