@@ -81,27 +81,30 @@ namespace DataManage
                     try
                     {
                         conn.Open();
-                        SQLiteDataReader reader = command.ExecuteReader();
-                        while (reader.Read())
+                        using (SQLiteDataReader reader = command.ExecuteReader())
                         {
-                            caseData casedata = new caseData();
-                            casedata.Id = Convert.ToInt32(reader["id"]);
-                            casedata.Phase = reader["phase"].ToString();
-                            casedata.Phase_ratio = (int)reader["phase_ratio"];
-                            casedata.Temperature = (int)reader["temperature"];
-                            casedata.Diff_plane = reader["diff_plane"].ToString();
-                            casedata.Ehkl = (int)reader["ehkl"];
-                            casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
-                            if (reader["distance"].ToString() == "")
+                            while (reader.Read())
                             {
-                                casedata.Distance = 0.00;
+                                caseData casedata = new caseData();
+                                casedata.Id = Convert.ToInt32(reader["id"]);
+                                casedata.Phase = reader["phase"].ToString();
+                                casedata.Phase_ratio = (int)reader["phase_ratio"];
+                                casedata.Temperature = (int)reader["temperature"];
+                                casedata.Diff_plane = reader["diff_plane"].ToString();
+                                casedata.Ehkl = (int)reader["ehkl"];
+                                casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
+                                if (reader["distance"].ToString() == "")
+                                {
+                                    casedata.Distance = 0.00;
+                                }
+                                else
+                                {
+                                    casedata.Distance = Convert.ToDouble(reader["distance"]);
+                                }
+                                list.Add(casedata);
                             }
-                            else
-                            {
-                                casedata.Distance = Convert.ToDouble(reader["distance"]);
-                            }
-                            list.Add(casedata);
                         }
+                        
                     }
                     catch (Exception ex)
                     {
@@ -158,11 +161,14 @@ namespace DataManage
                     try
                     {
                         conn.Open();
-                        SQLiteDataReader reader = command.ExecuteReader();
-                        if (reader.Read())
+                        using (SQLiteDataReader reader = command.ExecuteReader())
                         {
-                            count = Convert.ToInt32(reader[0].ToString());
+                            if (reader.Read())
+                            {
+                                count = Convert.ToInt32(reader[0].ToString());
+                            }
                         }
+                            
                     }
                     catch (Exception ex)
                     {
@@ -178,7 +184,6 @@ namespace DataManage
         // 增加数据
         void Add_TransfEvent(String sql)
         {
-
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 using (SQLiteCommand command = new SQLiteCommand(sql, conn))
@@ -212,7 +217,7 @@ namespace DataManage
         {
              AddData adddata = new AddData();
              adddata.TransfEvent += Add_TransfEvent;
-            adddata.ShowDialog();
+             adddata.ShowDialog();
          }
 
         // 删除数据
@@ -231,24 +236,26 @@ namespace DataManage
                     sql = sql + " or data.Id =" + cb.Tag;                  
                 }
             }
-
-            using (SQLiteConnection conn = new SQLiteConnection(connStr))
-            {
-                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+            object lockThis = new object();
+            
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
                 {
-                    try
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                     {
-                        conn.Open();
-                        command.ExecuteNonQuery();
-                        MessageBox.Show("删除成功", "");
+                        try
+                        {
+                            conn.Open();
+                            command.ExecuteNonQuery();
+                            MessageBox.Show("删除成功", "");
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("删除数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
                     }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("删除数据：" + "失败：" + ex.Message);
-                    }
-                    conn.Close();
                 }
-            }
+            
             ShowAllData();            
         }
         
@@ -336,38 +343,47 @@ namespace DataManage
             OdbcConnection objConn = new OdbcConnection(strConn);
             DataSet ds = new DataSet();
             try
-            {              
+            {
                 string strSQL = "select * from " + fileName;//文件名，不要带目录
                 OdbcDataAdapter da = new OdbcDataAdapter(strSQL, objConn);
                 da.Fill(ds);
-
-                using (SQLiteConnection conn = new SQLiteConnection(connStr))
-                {
-                    conn.Open();
-                    //开始导入数据库
-                    foreach (DataRow row in ds.Tables[0].Rows)
-                    {
-                        string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
-                        foreach (DataColumn column in ds.Tables[0].Columns)
-                        {
-                            sql = sql + row[column].ToString() + "','";
-                        }
-                        sql = sql.Substring(0, sql.Length - 2);
-                        sql = sql + ");";
-                        using (SQLiteCommand command = new SQLiteCommand(sql, conn))
-                        {
-                            command.ExecuteNonQuery();
-                        }
-                        MessageBox.Show("插入成功");
-                    }
-                    conn.Close();
-                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("插入失败");
                 throw ex;
             }
+            
+
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    try
+                    {
+                        conn.Open();
+                        //开始导入数据库
+                        foreach (DataRow row in ds.Tables[0].Rows)
+                        {
+                            string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
+                            foreach (DataColumn column in ds.Tables[0].Columns)
+                            {
+                                sql = sql + row[column].ToString() + "','";
+                            }
+                            sql = sql.Substring(0, sql.Length - 2);
+                            sql = sql + ");";
+                            using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+                            MessageBox.Show("插入成功");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("插入失败");
+                        throw ex;
+                    }
+                    conn.Close();
+                }
+            
         }
 
         private void BtnRefresh(object sender, RoutedEventArgs e)
@@ -377,7 +393,7 @@ namespace DataManage
 
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
-
+            ImportCsv("E:\\c#study", "test.csv");
         }
     }
 }
