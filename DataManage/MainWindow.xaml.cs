@@ -46,14 +46,6 @@ namespace DataManage
             ShowAllData();          
         }
 
-        // 获得数据库连接
-        private SQLiteConnection getConn()
-        {
-            
-            SQLiteConnection conn = new SQLiteConnection(connStr);
-            return conn;
-        }
-
         // 分页查询数据
         private void ShowAllData()
         {
@@ -270,7 +262,7 @@ namespace DataManage
         // 修改数据
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
-            ImportCsv("E:\\c#study", "test.csv");
+            //ImportCsv("E:\\c#study", "test.csv");
         }
 
         // 全选数据
