@@ -22,7 +22,7 @@
             <Grid>
                 <TabControl TabStripPlacement="Left">
 
-                    <TabItem Header="数据展示" FontSize="18" Height="40">
+                    <TabItem Header="数据展示" FontSize="14" Height="40">
                         
                         <Grid Background="#FFE5E5E5">
                             <!--三行一列-->
@@ -115,12 +115,12 @@
                                         -->
 
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="150" />
-                                    <DataGridTextColumn Binding="{Binding Phase_ratio}" Header="相比例（%）" Width="150"/>
+                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="60" />
+                                    <DataGridTextColumn Binding="{Binding Phase_ratio}" Header="相比例（%）" Width="120"/>
                                     <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="100"/>
-                                    <DataGridTextColumn Binding="{Binding Diff_plane}" Header="衍射面"  Width="100"/>
-                                    <DataGridTextColumn Binding="{Binding Ehkl}" Header="衍射弹性常数Ehkl（GPa）"  Width="100"/>
-                                    <DataGridTextColumn Binding="{Binding Vhkl}" Header="衍射弹性常数vhkl"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Diff_plane}" Header="衍射面"  Width="80"/>
+                                    <DataGridTextColumn Binding="{Binding Ehkl}" Header="衍射弹性常数Ehkl（GPa）"  Width="160"/>
+                                    <DataGridTextColumn Binding="{Binding Vhkl}" Header="衍射弹性常数vhkl"  Width="160"/>
                                     <DataGridTextColumn Binding="{Binding Distance}" Header="晶面间距d"  Width="100">
                                         <DataGridTextColumn.ElementStyle>
                                                 <Style TargetType="TextBlock">

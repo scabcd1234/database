@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataManage
 {
-    internal class CaseData
+    public class caseData
     {
         public int Id { get; set; }
         public string Phase { get; set; }

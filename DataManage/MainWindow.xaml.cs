@@ -25,21 +25,6 @@ namespace DataManage
     /// </summary>
     public partial class MainWindow : Window
     {
-        /*public class CaseData
-        {
-          
-            public  int Id { get; set; }                       
-            public string Phase { get; set; }
-            public int Phase_ratio { get; set; }
-            public int Temperature { get; set; }
-            public string Diff_plane { get; set; }
-            public int Ehkl { get; set; }
-            public double Vhkl { get; set; }
-            public double Distance { get; set; }
-
-            
-        }*/
-
 
         //当前页
         public static int pageIndex = 1;
@@ -73,7 +58,7 @@ namespace DataManage
         // 分页查询数据
         private void ShowAllData(SQLiteConnection conn)
         {
-            List<CaseData> list = new List<CaseData>();
+            List<caseData> list = new List<caseData>();
 
             SQLiteConnection conn1 = getConn();
             int Count = selectData(conn1);
@@ -106,9 +91,8 @@ namespace DataManage
                 SQLiteCommand command = new SQLiteCommand(sql, conn);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
-                {                   
-
-                    CaseData casedata = new CaseData();
+                {
+                    caseData casedata = new caseData();
                     casedata.Id = Convert.ToInt32(reader["id"]);
                     casedata.Phase = reader["phase"].ToString();
                     casedata.Phase_ratio = (int)reader["phase_ratio"];
@@ -164,7 +148,7 @@ namespace DataManage
         // 查询所有数据
         private int selectData(SQLiteConnection conn)
         {
-            List<CaseData> listAll = new List<CaseData>();
+            List<caseData> listAll = new List<caseData>();
             string sql1 = "select count(*) from data ";
             string sql2 = "where 1 = 1 ";
             
@@ -201,7 +185,7 @@ namespace DataManage
         }
         
         // 增加数据
-        void Add_TransfEvent(string value1, int value2, int value3, string value4, int value5, double value6, double value7)
+        void Add_TransfEvent(caseData caseData)
         {
             
             SQLiteConnection conn = getConn();
@@ -212,7 +196,7 @@ namespace DataManage
                 /*insert into casedata(id, username, rank) values(70, '10', '生成2')*/
                 /*字符串需要用单引号包起来*/
                 /*string sql = "insert into data (id,username,rank) values (" + a + ",'" + value1 + "','" +  value2 + "')";*/
-                string sql = "insert into data (diff_plane) values ("  + value4 + ")";
+                string sql = "insert into data (diff_plane) values ("  + caseData.Diff_plane + ")";
                 SQLiteCommand command = new SQLiteCommand(sql, conn);
                 command.ExecuteNonQuery();
                 
