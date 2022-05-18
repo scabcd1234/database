@@ -634,7 +634,7 @@ namespace DataManage
         {
             
             MessageBox.Show(inputPhase.SelectedValue.ToString());
-            if(inputPhase.SelectedValue.ToString() == "")
+            /*if(inputPhase.SelectedValue.ToString() == "")
             {
                 inputPhase.Items.Clear();
             }
@@ -645,8 +645,12 @@ namespace DataManage
                 {
                     inputDiff_plane.Items.Add(phase);
                 }
+            }*/
+            List<String> phases = selectDiff_planeALL(inputPhase.SelectedValue.ToString());
+            foreach (String phase in phases)
+            {
+                inputDiff_plane.Items.Add(phase);
             }
-            
         }
     }
 }
