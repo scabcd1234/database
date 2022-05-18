@@ -16,7 +16,7 @@ using System.Data.SQLite;
 using System.Data;
 using System.Data.Odbc;
 using System.Data.SqlClient;
-
+using NPOI.SS.UserModel;
 
 namespace DataManage
 {
@@ -380,8 +380,53 @@ namespace DataManage
                     throw ex;
                 }
                 conn.Close();
-            }
+            }           
+        }
+
+        // 向数据库中插入excel文件
+        public void ImportXls(string filePath)
+        {           
+            IWorkbook workbook = WorkbookFactory.Create(filePath);
+            ISheet sheet = workbook.GetSheetAt(0);//获取第一个工作簿            
             
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    //开始导入数据库
+                    for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
+                    {
+                        IRow row = (IRow)sheet.GetRow(i);//获取第i行
+                        string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
+                        for (int j = 0; j <= row.LastCellNum; j++)
+                        {
+                            if (sheet.GetRow(i).GetCell(j) != null)
+                            {
+                                sql = sql + sheet.GetRow(i).GetCell(j).ToString() + "','";
+                            }
+                            else
+                            {
+                                sql = sql + ""+ "','";
+                            }                           
+                        }
+                        sql = sql.Substring(0, sql.Length - 2);
+                        sql = sql + ");";
+                        MessageBox.Show(sql);
+                        using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        MessageBox.Show("插入成功");
+                    }                   
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("插入失败");
+                    throw ex;
+                }
+                conn.Close();
+            }
         }
 
         private void BtnRefresh(object sender, RoutedEventArgs e)
@@ -391,7 +436,8 @@ namespace DataManage
 
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
-            ImportCsv("E:\\c#study", "test.csv");
+            //ImportCsv("E:\\c#study", "test.csv");
+            ImportXls("E:\\c#study\\数据库表格.xlsx");
         }
     }
 }
