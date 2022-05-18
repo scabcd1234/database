@@ -37,10 +37,20 @@
                             </Grid.ColumnDefinitions>
 
                             <!--搜索栏-->
-                            <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top"  >
-                                <StackPanel Orientation="Horizontal"  Margin="20,20,20,10" >
-                                    <Label Content="请输入名称:" Name="text"  HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
-                                    <TextBox Text="" Name="SearchField" MinWidth="300" Margin="10,0,30,0" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
+                            <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top">
+                                
+                                <StackPanel Orientation="Horizontal"  Margin="20,20,20,10">
+                                    <Label Content="请选择相:"  HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+                                    <ComboBox Name="inputPhase" Width="50" SelectionChanged="inputPhase_SelectionChanged" ></ComboBox>
+                                    
+                                    <Label Content="请输入相比例:"  HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+                                    <TextBox Text="" Name="inputPhase_ratio" MinWidth="50" Margin="0,0,5,0" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
+                                    
+                                    <Label Content="请输入温度:"  HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="-10"></Label>
+                                    <TextBox Text="" Name="inputTemperature" MinWidth="50" Margin="0,0,5,0" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
+                                   
+                                    <Label Content="请选择衍射面:"  HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+                                    <ComboBox Name="inputDiff_plane" Width="80" Margin="0,0,10,0"></ComboBox>
                                     <Button Content="查询" MinWidth="60" Margin="0,0,0,0" FontSize="14" Click="BtnSelect" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
                                     <Button Content="刷新" MinWidth="60" Margin="32,0,32,0" Click="BtnRefresh" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
                                     <Button Content="增加" MinWidth="60" Margin="0,0,0,0" Click="BtnAdd" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>

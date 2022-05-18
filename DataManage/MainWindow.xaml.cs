@@ -31,7 +31,7 @@ namespace DataManage
         //总页数
         public static int totalPage = 0;
         //页大小
-        public static int pageSize = 4;
+        public static int pageSize = 10;
 
         public static string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
 
@@ -43,7 +43,15 @@ namespace DataManage
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {            
-            ShowAllData();          
+            ShowAllData();
+            List<String> phases = selectPhaseALL();
+            inputPhase.Items.Add("");
+            foreach (String phase in phases){              
+                inputPhase.Items.Add(phase);
+            }
+            
+            inputPhase.SelectedIndex = 0;
+
         }
 
         // 分页查询数据
@@ -52,6 +60,7 @@ namespace DataManage
             List<caseData> list = new List<caseData>();
         
             int Count = selectData();
+            
             totalPage = Count % pageSize == 0 ? Count / pageSize : Count / pageSize + 1;
             if (pageIndex > totalPage)
             {
@@ -68,12 +77,13 @@ namespace DataManage
             string sql2 = "where 1 = 1 ";
             string sql3 = "limit " + index + "," + pageSize;
             
-            if (SearchField.Text.Trim() != "")
+            /*if (inputPhase.Text.Trim() != "")
             {
-                sql2 += " and diff_plane like '" + SearchField.Text.Trim() + "%' ";
-            }
+                sql2 += " and phase like '" + inputPhase.Text.Trim() + "%' ";
+            }*/
             string sql = sql1 + sql2 + sql3;
-                       
+
+            /*MessageBox.Show(sql);*/
             using(SQLiteConnection conn = new SQLiteConnection(connStr))
             {                    
                 using(SQLiteCommand command = new SQLiteCommand(sql, conn))
@@ -102,7 +112,9 @@ namespace DataManage
                                     casedata.Distance = Convert.ToDouble(reader["distance"]);
                                 }
                                 list.Add(casedata);
+                               
                             }
+                            /*MessageBox.Show("进来了");*/
                         }
                         
                     }
@@ -116,7 +128,7 @@ namespace DataManage
             
             dg1.ItemsSource = null;
             dg1.ItemsSource = list;
- 
+            
             if (totalPage <= 1)
             {
                 BtnNext.IsEnabled = false;
@@ -140,16 +152,16 @@ namespace DataManage
             CurrentPage.Content = pageIndex.ToString();      
         }
 
-        // 查询所有数据
+        // 查询所有数据条数
         private int selectData()
         {
             List<caseData> listAll = new List<caseData>();
             string sql1 = "select count(*) from data ";
             string sql2 = "where 1 = 1 ";
             
-            if(SearchField.Text.Trim() != "")
+            if(inputPhase.Text.Trim() != "")
             {
-                sql2 += " and diff_plane like '" + SearchField.Text.Trim() + "%'";
+                sql2 += " and phase like '" + inputPhase.Text.Trim() + "%'";
             }
             
             string sqlAll = sql1 + sql2;
@@ -205,9 +217,18 @@ namespace DataManage
             
         }
 
+        // 多个搜索字段查询
         private void BtnSelect(object sender, RoutedEventArgs e)
-        {           
-            
+        {
+
+            /*if (inputDiff_plane.SelectedValue.ToString() != "" )
+            {
+                
+            }
+
+            inputTemperature.Text.ToString();
+            inputPhase.SelectedValue.ToString();
+            inputDiff_plane.SelectedValue.ToString();*/
             ShowAllData();
         }
 
@@ -234,8 +255,9 @@ namespace DataManage
                 if (cb.IsChecked == true)
                 {
                     sql = sql + " or data.Id =" + cb.Tag;                  
-                }
+                }         
             }
+            
             object lockThis = new object();
             
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
@@ -294,6 +316,7 @@ namespace DataManage
         // 上一页
         private void BtnUp_Click(object sender, RoutedEventArgs e)
         {
+            
             if(pageIndex > 1 )
             {
                 pageIndex -= 1;                          
@@ -304,6 +327,7 @@ namespace DataManage
         // 下一页
         private void BtnNext_Click(object sender, RoutedEventArgs e)
         {
+            
             if (pageIndex < totalPage)
             {              
                 pageIndex += 1;                               
@@ -314,23 +338,27 @@ namespace DataManage
         // 跳转
         private void Skip(object sender, RoutedEventArgs e)
         {
-            int inputNumber = Convert.ToInt32(InputNumber.Text);
+            if(InputNumber.Text != "")
+            {
+                int inputNumber = Convert.ToInt32(InputNumber.Text);
             
-            if(inputNumber > totalPage)
-            {
-                pageIndex = totalPage;
+                if(inputNumber > totalPage)
+                {
+                    pageIndex = totalPage;
                 
-            }else if (inputNumber < 1)
-            {
-                pageIndex = 1;
+                }else if (inputNumber < 1)
+                {
+                    pageIndex = 1;
                 
-            }
-            else
-            {
-                pageIndex = inputNumber;               
+                }
+                else
+                {
+                    pageIndex = inputNumber;               
+                }
+            
+                ShowAllData();
             }
             
-            ShowAllData();
         }
 
         // 向数据库中插入csv文件
@@ -387,7 +415,7 @@ namespace DataManage
         // 刷新
         private void BtnRefresh(object sender, RoutedEventArgs e)
         {
-            SearchField.Text = "";
+            inputPhase.Text = "";
             ShowAllData();
 
         }
@@ -395,20 +423,24 @@ namespace DataManage
         // 修改
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
-            //获取行
-            DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(0);
-            //获取该行的某列
-            CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
-            int updateId = Convert.ToInt32(cb.Tag);
+            for (int i = 0; i < dg1.Items.Count; i++)
+            {
+                //获取行
+                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
 
-            // 获取当前行的Id，可能存在一些问题
-            MessageBox.Show(cb.Tag.ToString());
-
-            caseData caseData = selectDataById(updateId);
-
-            UpdateData updateData = new UpdateData(caseData);
-            updateData.TransfEvent += Update_TransfEvent;
-            updateData.ShowDialog();
+                //获取该行的某列
+                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+                if (cb.IsChecked == true)
+                {
+                    int updateId = Convert.ToInt32(cb.Tag);                    
+                    caseData caseData = selectDataById(updateId);
+                    UpdateData updateData = new UpdateData(caseData);
+                    updateData.TransfEvent += Update_TransfEvent;
+                    updateData.ShowDialog();
+                    return ;
+                }
+            }
+             
 
         }
 
@@ -418,18 +450,21 @@ namespace DataManage
 
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
-                string sql = "insert into data (diff_plane) values (" + caseData.Diff_plane + ")";
+                string sql = "update data  set phase = '" + caseData.Phase + "' , phase_ratio = " + caseData.Phase_ratio + ", temperature = " +
+                    caseData.Temperature + ", diff_plane = '" + caseData.Diff_plane + "', ehkl = '" + caseData.Ehkl + "', vhkl = " +
+                    caseData.Vhkl + ", distance = " + caseData.Distance + " where 1 = 1 and id = " + caseData.Id;
+         
                 using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                 {
                     try
                     {
                         conn.Open();
                         command.ExecuteNonQuery();
-                        MessageBox.Show("插入成功");
+                        MessageBox.Show("修改成功");
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("插入数据失败：" + ex.Message);
+                        throw new Exception("修改数据失败：" + ex.Message);
                     }
                     conn.Close();
                 }
@@ -443,6 +478,7 @@ namespace DataManage
         {
             caseData casedata = new caseData();
             string sql = "select * from data  where id = " + id;
+            
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {               
                 using (SQLiteCommand command = new SQLiteCommand(sql, conn))
@@ -453,6 +489,7 @@ namespace DataManage
                         SQLiteDataReader reader = command.ExecuteReader();
                         if (reader.Read())
                         {
+                            casedata.Id = Convert.ToInt32(reader["id"]);
                             casedata.Phase = reader["phase"].ToString();
                             casedata.Phase_ratio = (int)reader["phase_ratio"];
                             casedata.Temperature = (int)reader["temperature"];
@@ -471,7 +508,7 @@ namespace DataManage
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("查询失败", "");
+                        MessageBox.Show("查询失败123", "");
                         throw new Exception("查询数据失败：" + ex.Message);
                     }
                     conn.Close();
@@ -481,6 +518,91 @@ namespace DataManage
             
         }
 
+        // 搜索所有的相字段
+        private List<String> selectPhaseALL()
+        {
+            
+            string sql = "select phase from data group by phase ";
+            List<String> strs = new List<string>();
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {                        
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {                           
+                            while (reader.Read())
+                            {
+                                strs.Add(reader["phase"].ToString());                              
+                            }
+                        }                                                                        
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("查询失败123", "");
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                    return strs;
+                }
+            }
+        }
 
+
+        // 搜索所有的衍射面
+        private List<string>  selectDiff_planeALL(string phase)
+        {
+
+            string sql = "select diff_plane from data where phase = '" + phase + "' group by diff_plane";
+            MessageBox.Show(sql);
+            List<String> strs = new List<string>();
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {              
+                            while (reader.Read())
+                            {
+                                
+                                strs.Add(reader["diff_plane"].ToString());
+                            }
+                        }                           
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("查询失败123", "");
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                    return strs;
+
+                }
+            }
+        }
+
+        private void inputPhase_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+            MessageBox.Show(inputPhase.SelectedValue.ToString());
+            if(inputPhase.SelectedValue.ToString() == "")
+            {
+                inputPhase.Items.Clear();
+            }
+            else
+            {
+                List<String> phases = selectDiff_planeALL(inputPhase.SelectedValue.ToString());           
+                foreach (String phase in phases)
+                {
+                    inputDiff_plane.Items.Add(phase);
+                }
+            }
+            
+        }
     }
 }

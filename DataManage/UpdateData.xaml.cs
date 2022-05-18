@@ -19,8 +19,8 @@ namespace DataManage
     /// </summary>
     public partial class UpdateData : Window
     {
-        
 
+        private static int id;
         public UpdateData(caseData caseData)
         {
             InitializeComponent();
@@ -30,7 +30,7 @@ namespace DataManage
         public void show(caseData caseData)
 
         {
-
+            id = caseData.Id;
             Phase.Text = caseData.Phase;
             Phase_ratio.Text = caseData.Phase_ratio.ToString();
             Temperature.Text = caseData.Temperature.ToString();
@@ -47,6 +47,7 @@ namespace DataManage
         {
 
             caseData caseData = new caseData();
+            caseData.Id = id;
             caseData.Phase = Phase.Text.Trim();
             caseData.Phase_ratio = Convert.ToInt32(Phase_ratio.Text.Trim());
             caseData.Temperature = Convert.ToInt32(Temperature.Text.Trim());
