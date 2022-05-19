@@ -35,7 +35,7 @@ namespace DataManage
             string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
                     + Phase.Text.Trim() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + Diff_plane.Text.Trim() + "','"
                     + Ehkl.Text.Trim() + "','" + Vhkl.Text.Trim() + "','" + Distance.Text.Trim() + "');";
-            MessageBox.Show(sql);
+            //MessageBox.Show(sql);
             TransfEvent(sql);//触发事件
             this.Close();
         }

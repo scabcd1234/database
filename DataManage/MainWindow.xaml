@@ -11,9 +11,33 @@
 
     <Window.Resources>
         <XmlDataProvider x:Key="AllItem" />
+        <!--TextBlock样式设定-->
         <Style x:Key="dgCell" TargetType="{x:Type TextBlock}">
-            <Setter Property="TextAlignment" Value="Center"/>
         </Style>
+        
+        <!--输入框(TextBox)样式设定-->
+        <Style x:Key="inputBox" TargetType="{x:Type TextBox}">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+        </Style>
+
+        <!--输入框(Label)样式设定-->
+        <Style x:Key="Label" TargetType="{x:Type TextBox}">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+        </Style>
+
+        <!--Button样式设定-->
+        <Style x:Key="textButton" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent"></Setter>
+            <Setter Property="BorderThickness" Value="0.5"></Setter>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="FontWeight" Value="Heavy"/>
+            <Setter Property="FontFamily" Value="Arial,SimSun"/>
+        </Style>
+        <!---->
     </Window.Resources>
     
     
@@ -21,49 +45,55 @@
         <Viewbox Stretch="Fill" >
             <Grid>
                 <TabControl TabStripPlacement="Left">
-
                     <TabItem Header="数据展示" FontSize="14" Height="40">
-                        
                         <Grid Background="#FFE5E5E5">
                             <!--三行一列-->
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
-                                
+                               
                             </Grid.ColumnDefinitions>
 
                             <!--搜索栏-->
                             <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top">
                                 
-                                <StackPanel Orientation="Horizontal"  Margin="20,20,20,10">
-                                    <Label Content="请选择相:"  HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
-                                    <ComboBox Name="inputPhase" Width="50" SelectionChanged="inputPhase_SelectionChanged" ></ComboBox>
+                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                    <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="70,0,0,0"></Label>
+                                    <ComboBox Name="inputPhase" Width="50" SelectionChanged="inputPhase_SelectionChanged" Margin="0,0,10,0" ></ComboBox>
+
+                                    <Label Content="请输入相比例:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" ></Label>
+                                    <TextBox Text="" Name="inputPhase_ratio" MinWidth="50" Margin="0,0,10,0" Style="{StaticResource inputBox}" ></TextBox>
                                     
-                                    <Label Content="请输入相比例:"  HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
-                                    <TextBox Text="" Name="inputPhase_ratio" MinWidth="50" Margin="0,0,5,0" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
-                                    
-                                    <Label Content="请输入温度:"  HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="-10"></Label>
-                                    <TextBox Text="" Name="inputTemperature" MinWidth="50" Margin="0,0,5,0" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
+                                    <Label Content="请输入温度:"  Panel.ZIndex="-10"></Label>
+                                    <TextBox Text="" Name="inputTemperature" MinWidth="50" Margin="0,0,10,0" Style="{StaticResource inputBox}"></TextBox>
                                    
-                                    <Label Content="请选择衍射面:"  HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+                                    <Label Content="请选择衍射面:" ></Label>
                                     <ComboBox Name="inputDiff_plane" Width="80" Margin="0,0,10,0"></ComboBox>
-                                    <Button Content="查询" MinWidth="60" Margin="0,0,0,0" FontSize="14" Click="BtnSelect" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                                    <Button Content="刷新" MinWidth="60" Margin="32,0,32,0" Click="BtnRefresh" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                                    <Button Content="增加" MinWidth="60" Margin="0,0,0,0" Click="BtnAdd" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                                    <Button Content="删除" MinWidth="60" Margin="32,0,32,0" Click="BtnDelete" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                                    <Button Content="修改" MinWidth="60" Margin="0,0,0,0" Click="BtnUpdate" VerticalContentAlignment="Center" HorizontalAlignment="Right"/>
+                                    <Button Content="查询" MinWidth="60" Margin="10,0,10,0"  Click="BtnSelect" Style="{StaticResource textButton}"/>
+                                    <Button Content="刷新" MinWidth="60" Margin="10,0,20,0" Click="BtnRefresh" Style="{StaticResource textButton}"/>
                                 </StackPanel>
                             </Grid>
-
+                            
+                            <!--操作栏-->
+                            <Grid Grid.Row="1" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                    <TextBox Width="300" Name="FilePath" Margin="190,0,0,0" Style="{StaticResource inputBox}"></TextBox>
+                                    <Button Content="上传文件" Name="Upload" MinWidth="100" Margin="20,0,0,0" Click="UploadFile" Style="{StaticResource textButton}"/>
+                                    <Button Content="增加" MinWidth="60" Margin="20,0,0,0" Click="BtnAdd"  Style="{StaticResource textButton}" />
+                                    <Button Content="删除" MinWidth="60" Margin="20,0,20,0" Click="BtnDelete" Style="{StaticResource textButton}" />
+                                    <Button Content="修改" MinWidth="60" Margin="0,0,0,0" Click="BtnUpdate"  Style="{StaticResource textButton}" />
+                                </StackPanel>
+                            </Grid>
 
                             <!--显示栏-->
                             <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
                               Margin="20,10,20,10" HorizontalAlignment="Center"
-                              Grid.Row="1" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow">
+                              Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow">
 
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">
@@ -147,10 +177,10 @@
                             
                             <!--分页-->
                             
-                            <Grid Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom">
+                            <Grid Grid.Row="3" Grid.Column="1" VerticalAlignment="Bottom">
                                 <StackPanel Orientation="Horizontal"  Margin="20,10,20,10">
-                                    <Button Content="上一页"  Click="BtnUp_Click" IsEnabled="False" Name="BtnUp" HorizontalAlignment="Left" Margin="125,2,0,2"></Button>
-                                    <Button Content="下一页" Click="BtnNext_Click" Name="BtnNext" HorizontalAlignment="Left" Margin="10,2,0,2"></Button>
+                                    <Button Content="上一页"  Click="BtnUp_Click" IsEnabled="False" Name="BtnUp" HorizontalAlignment="Left" Margin="125,2,0,2" Style="{StaticResource textButton}"></Button>
+                                    <Button Content="下一页" Click="BtnNext_Click" Name="BtnNext" HorizontalAlignment="Left" Margin="10,2,0,2" Style="{StaticResource textButton}"></Button>
                                     <Label Content="第" HorizontalAlignment="Left" Margin="10,2,0,2"></Label>
                                     <Label Name="CurrentPage" Content="" HorizontalAlignment="Left" Margin="0,2,0,2"></Label>
                                     <Label Content="页" HorizontalAlignment="Left" Margin="0,2,2,2"></Label>
@@ -159,8 +189,8 @@
                                     <Label Name="AllPage" Content="" HorizontalAlignment="Left" Margin="0,0,0,2"></Label>
                                     <Label Content="页" HorizontalAlignment="Left" Margin="0,2,2,2"></Label>
 
-                                    <TextBox Text="" Name="InputNumber" Width="380" Margin="10,2,10,2" HorizontalAlignment="Left" VerticalContentAlignment="Center" ></TextBox>
-                                    <Button Content="跳转" MinWidth="60" VerticalContentAlignment="Center" Click="Skip" HorizontalAlignment="Left" Margin="10,2,0,2"/>
+                                    <TextBox Text="" Name="InputNumber" Width="380" Margin="10,2,10,2"  Style="{StaticResource inputBox}" ></TextBox>
+                                    <Button Content="跳转" MinWidth="60" VerticalContentAlignment="Center" Click="Skip"  Margin="10,2,0,2" Style="{StaticResource textButton}"/>
                                 </StackPanel>
                             </Grid>
                             

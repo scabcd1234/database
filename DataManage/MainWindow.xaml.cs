@@ -17,6 +17,7 @@ using System.Data;
 using System.Data.Odbc;
 using System.Data.SqlClient;
 using NPOI.SS.UserModel;
+/*using System.Windows.Forms;*/
 
 namespace DataManage
 {
@@ -477,8 +478,8 @@ namespace DataManage
                     for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
                     {
                         IRow row = (IRow)sheet.GetRow(i);//获取第i行
-                        string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
-                        for (int j = 0; j <= row.LastCellNum; j++)
+                        string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";                       
+                        for (int j = 0; j <= 6; j++)
                         {
                             if (sheet.GetRow(i).GetCell(j) != null)
                             {
@@ -491,26 +492,33 @@ namespace DataManage
                         }
                         sql = sql.Substring(0, sql.Length - 2);
                         sql = sql + ");";
-                        MessageBox.Show(sql);
+                        
                         using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                         {
                             command.ExecuteNonQuery();
                         }
-                        MessageBox.Show("插入成功");
-                    }                   
+                        /*MessageBox.Show("插入成功");*/
+                    }
+                    MessageBox.Show("上传成功");
+
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("插入失败");
+                    MessageBox.Show("上传失败");
                     throw ex;
                 }
                 conn.Close();
+                
             }
+            ShowAllData();
         }
 
         private void BtnRefresh(object sender, RoutedEventArgs e)
         {
-            inputPhase.Text = "";
+            inputTemperature.Text = "";
+            inputPhase_ratio.Text = "";
+            inputDiff_plane.Items.Clear();
+            inputPhase.SelectedIndex = 0;
             ShowAllData();
 
         }
@@ -682,12 +690,45 @@ namespace DataManage
         }
 
         private void inputPhase_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {                       
-            List<String> phases = selectDiff_planeALL(inputPhase.SelectedValue.ToString());
+        {
+            
             inputDiff_plane.Items.Clear();
+            List<String> phases = selectDiff_planeALL(inputPhase.SelectedValue.ToString());
             foreach (String phase in phases)
             {
                 inputDiff_plane.Items.Add(phase);
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void UploadFile(object sender, RoutedEventArgs e)
+        {
+            Upload.IsEnabled = false;
+            
+            /*ImportXls("C:\\Users\\艺涛\\Desktop\\数据库表格(1).xlsx");*/
+            Microsoft.Win32.OpenFileDialog fileDialog1 = new Microsoft.Win32.OpenFileDialog();
+            fileDialog1.InitialDirectory = "c:\\";//初始目录
+            fileDialog1.Filter = "Execl files (*.xlsx)|*.xlsx";//文件的类型
+            fileDialog1.FilterIndex = 1;
+            fileDialog1.RestoreDirectory = true;
+            Upload.IsEnabled = false;
+            if (fileDialog1.ShowDialog() == true)
+            {
+
+                FilePath.Text = fileDialog1.FileName;
+                string str1 = fileDialog1.FileName;
+                /*MessageBox.Show(str1);*/
+                MessageBox.Show("正在上传中");
+                ImportXls(str1);
+                Upload.IsEnabled = true;
+            }
+            else
+            {
+                FilePath.Text = "";
             }
         }
     }
