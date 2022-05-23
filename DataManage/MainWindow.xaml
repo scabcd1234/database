@@ -98,11 +98,12 @@
                             <!--操作栏-->
                             <Grid Grid.Row="1" Grid.Column="1">
                                 <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
-                                    <TextBox Width="300" Name="FilePath" Margin="190,0,0,0" Style="{StaticResource inputBox}"></TextBox>
+                                    <TextBox Width="300" Name="FilePath" Margin="110,0,0,0" Style="{StaticResource inputBox}"></TextBox>
                                     <Button Content="上传文件" Name="Upload" MinWidth="100" Margin="20,0,0,0" Click="UploadFile" Style="{StaticResource textButton}"/>
                                     <Button Content="增加" MinWidth="60" Margin="20,0,0,0" Click="BtnAdd"  Style="{StaticResource textButton}" />
                                     <Button Content="删除" MinWidth="60" Margin="20,0,20,0" Click="BtnDelete" Style="{StaticResource textButton}" />
-                                    <Button Content="修改" MinWidth="60" Margin="0,0,0,0" Click="BtnUpdate"  Style="{StaticResource textButton}" />
+                                    <Button Content="修改" MinWidth="60" Margin="0,0,20,0" Click="BtnUpdate"  Style="{StaticResource textButton}" />
+                                    <Button Content="导出" MinWidth="60" Margin="0,0,0,0" Click="BtnExport"  Style="{StaticResource textButton}" />
                                 </StackPanel>
                             </Grid>
 

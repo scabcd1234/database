@@ -22,9 +22,11 @@ namespace DataManage
     public partial class AddData : Window
     {     
 
-        public AddData()
+        public AddData(List<String> phases)
         {
             InitializeComponent();
+            SetPhase(phases);
+
         }
         public static string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
 
@@ -33,17 +35,13 @@ namespace DataManage
         public delegate void TransfDelegate(String sql);
 
         public event TransfDelegate TransfEvent;
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            
-            List<String> phases = selectPhaseALL();
-            inputPhase.Items.Add("");
+
+        private void SetPhase(List<String> phases)
+        {            
             foreach (String phase in phases)
             {
                 inputPhase.Items.Add(phase);
             }
-            inputPhase.SelectedIndex = 0;
-
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {                     
@@ -55,40 +53,9 @@ namespace DataManage
             this.Close();
         }
 
-        // 搜索所有的相字段
-        private List<String> selectPhaseALL()
-        {
+        
 
-            string sql = "select phase from data group by phase ";
-            List<String> strs = new List<string>();
-            using (SQLiteConnection conn = new SQLiteConnection(connStr))
-            {
-                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
-                {
-                    try
-                    {
-                        conn.Open();
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                strs.Add(reader["phase"].ToString());
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("查询失败123", "");
-                        throw new Exception("查询数据失败：" + ex.Message);
-                    }
-                    conn.Close();
-                    return strs;
-                }
-            }
-        }
-
-
-
-
+        
+        
     }
 }
