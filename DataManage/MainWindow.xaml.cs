@@ -224,7 +224,7 @@ namespace DataManage
         {
             string sql = "SELECT * FROM data where 1 = 1";
             
-            if (inputPhase.SelectedValue!=null)
+            if (inputPhase.SelectedValue.ToString()!="")
             {
                 sql = sql + " and phase='"+ inputPhase.SelectedValue.ToString()+"'";
             }
@@ -298,6 +298,7 @@ namespace DataManage
         // 删除数据
         private void BtnDelete(object sender, RoutedEventArgs e)
         {
+            bool flag = false;
             string sql = "delete from data where 1 = 2";
             for (int i = 0; i < dg1.Items.Count; i++)
             {
@@ -308,29 +309,37 @@ namespace DataManage
                 CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
                 if (cb.IsChecked == true)
                 {
-                    sql = sql + " or data.Id =" + cb.Tag;                  
+                    sql = sql + " or data.Id =" + cb.Tag;
+                    flag = true;
                 }         
             }
-            
-            object lockThis = new object();
-            
-            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+
+            if (flag)
             {
-                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
                 {
-                    try
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                     {
-                         conn.Open();
-                         command.ExecuteNonQuery();
-                         MessageBox.Show("删除成功", "");
+                        try
+                        {
+                            conn.Open();
+                            command.ExecuteNonQuery();
+                            MessageBox.Show("删除成功", "");
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("删除数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
                     }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("删除数据：" + "失败：" + ex.Message);
-                    }
-                    conn.Close();
                 }
-            }            
+            }
+            else
+            {
+                MessageBox.Show("请选择需要操作的数据", "提示信息");
+            }
+            
+                        
             ShowAllData();            
         }
         
@@ -597,6 +606,7 @@ namespace DataManage
                     updateData.TransfEvent += Update_TransfEvent;
                     updateData.ShowDialog();
                     flag= true;
+                    return;
                 }
             }
             if (flag)
@@ -651,26 +661,28 @@ namespace DataManage
                 {
                     try
                     {
-                        conn.Open();                       
-                        SQLiteDataReader reader = command.ExecuteReader();
-                        if (reader.Read())
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
                         {
-                            casedata.Id = Convert.ToInt32(reader["id"]);
-                            casedata.Phase = reader["phase"].ToString();
-                            casedata.Phase_ratio = (int)reader["phase_ratio"];
-                            casedata.Temperature = (int)reader["temperature"];
-                            casedata.Diff_plane = reader["diff_plane"].ToString();
-                            casedata.Ehkl = (int)reader["ehkl"];
-                            casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
-                            if (reader["distance"].ToString() == "")
+                            if (reader.Read())
                             {
-                                casedata.Distance = 0.00;
+                                casedata.Id = Convert.ToInt32(reader["id"]);
+                                casedata.Phase = reader["phase"].ToString();
+                                casedata.Phase_ratio = (int)reader["phase_ratio"];
+                                casedata.Temperature = (int)reader["temperature"];
+                                casedata.Diff_plane = reader["diff_plane"].ToString();
+                                casedata.Ehkl = (int)reader["ehkl"];
+                                casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
+                                if (reader["distance"].ToString() == "")
+                                {
+                                    casedata.Distance = 0.00;
+                                }
+                                else
+                                {
+                                    casedata.Distance = Convert.ToDouble(reader["distance"]);
+                                }
                             }
-                            else
-                            {
-                                casedata.Distance = Convert.ToDouble(reader["distance"]);
-                            }
-                        }
+                        }                            
                     }
                     catch (Exception ex)
                     {
@@ -763,11 +775,6 @@ namespace DataManage
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void UploadFile(object sender, RoutedEventArgs e)
         {
             Upload.IsEnabled = false;
@@ -800,7 +807,11 @@ namespace DataManage
         private void BtnExport(object sender, RoutedEventArgs e)
         {
             List<caseData> list = new List<caseData>();
-            bool flag=false;
+            bool flag=false;           
+            Microsoft.Win32.SaveFileDialog fileDialog1 = new Microsoft.Win32.SaveFileDialog();
+            fileDialog1.InitialDirectory = "c:\\";//初始目录
+            fileDialog1.Filter = "Execl files (*.xlsx)|*.xlsx";//文件的类型
+            fileDialog1.FilterIndex = 1;
             for (int i = 0; i < dg1.Items.Count; i++)
             {
                 //获取行
@@ -818,7 +829,15 @@ namespace DataManage
             }
             if (flag)
             {
-                exportXls(list, "E:\\c#study\\tt.xlsx");
+                if (fileDialog1.ShowDialog() == true)
+                {
+                    String filename = fileDialog1.FileName;
+                    exportXls(list, filename);
+                }
+                else
+                {
+
+                }              
             }
             else
             {
