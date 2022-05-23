@@ -17,6 +17,8 @@ using System.Data;
 using System.Data.Odbc;
 using System.Data.SqlClient;
 using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.IO;
 /*using System.Windows.Forms;*/
 
 namespace DataManage
@@ -288,9 +290,10 @@ namespace DataManage
          // 增加数据
          private void BtnAdd(object sender, RoutedEventArgs e)
         {
-             AddData adddata = new AddData();
-             adddata.TransfEvent += Add_TransfEvent;
-             adddata.ShowDialog();
+            List<String> phases = selectPhaseALL();
+            AddData adddata = new AddData(phases);
+            adddata.TransfEvent += Add_TransfEvent;
+            adddata.ShowDialog();
          }
 
         // 删除数据
@@ -510,7 +513,51 @@ namespace DataManage
                 conn.Close();
                 
             }
+            workbook.Close();
             ShowAllData();
+        }
+
+        //导出excel文件
+        public void exportXls(List<caseData> list,string filePath)
+        {
+            IWorkbook workbook = new XSSFWorkbook();
+            ISheet sheet = workbook.CreateSheet("sheet1");
+            FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
+            try
+            {
+                //写入excel文件         
+                IRow row = (IRow)sheet.CreateRow(0);//获取第一行                        
+                row.CreateCell(0).SetCellValue("相");
+                row.CreateCell(1).SetCellValue("相比例（%）");
+                row.CreateCell(2).SetCellValue("温度（℃）");
+                row.CreateCell(3).SetCellValue("衍射面");
+                row.CreateCell(4).SetCellValue("衍射弹性常数Ehkl（GPa）");
+                row.CreateCell(5).SetCellValue("衍射弹性常数Vhkl");
+                row.CreateCell(6).SetCellValue("晶面间距d");
+
+                int i = 1;
+                foreach (caseData casedata in list)
+                {
+                    row = (IRow)sheet.CreateRow(i);//获取第i行
+                    row.CreateCell(0).SetCellValue(casedata.Phase);
+                    row.CreateCell(1).SetCellValue(casedata.Phase_ratio);
+                    row.CreateCell(2).SetCellValue(casedata.Temperature);
+                    row.CreateCell(3).SetCellValue(casedata.Diff_plane);
+                    row.CreateCell(4).SetCellValue(casedata.Ehkl);
+                    row.CreateCell(5).SetCellValue(casedata.Vhkl);
+                    row.CreateCell(6).SetCellValue(casedata.Distance);
+                    i++;
+                }
+                //导出excel               
+                workbook.Write(fs);
+            }
+            catch
+            {
+                MessageBox.Show("导出失败");
+            }
+            MessageBox.Show("导出成功");
+            workbook.Close();
+            fs.Close();
         }
 
         private void BtnRefresh(object sender, RoutedEventArgs e)
@@ -520,7 +567,6 @@ namespace DataManage
             inputDiff_plane.Items.Clear();
             inputPhase.SelectedIndex = 0;
             ShowAllData();
-
         }
 
         // 修改
@@ -535,9 +581,10 @@ namespace DataManage
                 CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
                 if (cb.IsChecked == true)
                 {
-                    int updateId = Convert.ToInt32(cb.Tag);                    
+                    int updateId = Convert.ToInt32(cb.Tag);
+                    List<String> phases = selectPhaseALL();
                     caseData caseData = selectDataById(updateId);
-                    UpdateData updateData = new UpdateData(caseData);
+                    UpdateData updateData = new UpdateData(caseData,phases);
                     updateData.TransfEvent += Update_TransfEvent;
                     updateData.ShowDialog();
                     return ;
@@ -730,6 +777,36 @@ namespace DataManage
             {
                 FilePath.Text = "";
             }
+        }
+
+        private void BtnExport(object sender, RoutedEventArgs e)
+        {
+            List<caseData> list = new List<caseData>();
+            bool flag=false;
+            for (int i = 0; i < dg1.Items.Count; i++)
+            {
+                //获取行
+                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
+
+                //获取该行的某列
+                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+                if (cb.IsChecked == true)
+                {                    
+                    int Id = Convert.ToInt32(cb.Tag);                    
+                    caseData casedata = selectDataById(Id);
+                    list.Add(casedata);
+                    flag = true;
+                }
+            }
+            if (flag)
+            {
+                exportXls(list, "E:\\c#study\\tt.xlsx");
+            }
+            else
+            {
+                MessageBox.Show("请选择需要操作的数据","提示信息");
+            }
+            
         }
     }
 }

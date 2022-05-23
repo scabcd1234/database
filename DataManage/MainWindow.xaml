@@ -86,7 +86,8 @@
                                     <Button Content="上传文件" Name="Upload" MinWidth="100" Margin="20,0,0,0" Click="UploadFile" Style="{StaticResource textButton}"/>
                                     <Button Content="增加" MinWidth="60" Margin="20,0,0,0" Click="BtnAdd"  Style="{StaticResource textButton}" />
                                     <Button Content="删除" MinWidth="60" Margin="20,0,20,0" Click="BtnDelete" Style="{StaticResource textButton}" />
-                                    <Button Content="修改" MinWidth="60" Margin="0,0,0,0" Click="BtnUpdate"  Style="{StaticResource textButton}" />
+                                    <Button Content="修改" MinWidth="60" Margin="0,0,20,0" Click="BtnUpdate"  Style="{StaticResource textButton}" />
+                                    <Button Content="导出" MinWidth="60" Margin="0,0,0,0" Click="BtnExport"  Style="{StaticResource textButton}" />
                                 </StackPanel>
                             </Grid>
 

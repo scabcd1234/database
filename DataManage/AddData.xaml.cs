@@ -22,14 +22,23 @@ namespace DataManage
     public partial class AddData : Window
     {     
 
-        public AddData()
+        public AddData(List<String> phases)
         {
             InitializeComponent();
+            SetPhase(phases);
+
         }
         public delegate void TransfDelegate(String sql);
 
         public event TransfDelegate TransfEvent;
 
+        private void SetPhase(List<String> phases)
+        {            
+            foreach (String phase in phases)
+            {
+                Phase.Items.Add(phase);
+            }
+        }
         private void Button_Click(object sender, RoutedEventArgs e)
         {                     
             string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"

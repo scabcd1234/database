@@ -21,17 +21,27 @@ namespace DataManage
     {
 
         private static int id;
-        public UpdateData(caseData caseData)
+        public UpdateData(caseData caseData, List<String> phases)
         {
             InitializeComponent();
-            show(caseData);
+            SetPhase(phases);
+            show(caseData);            
         }
-        
+
+        private void SetPhase(List<String> phases)
+        {
+            foreach (String phase in phases)
+            {
+                Phase.Items.Add(phase);
+            }
+        }
+
         public void show(caseData caseData)
 
         {
             id = caseData.Id;
-            Phase.Text = caseData.Phase;
+            Phase.SelectedValue= caseData.Phase;
+             
             Phase_ratio.Text = caseData.Phase_ratio.ToString();
             Temperature.Text = caseData.Temperature.ToString();
             Diff_plane.Text = caseData.Diff_plane;

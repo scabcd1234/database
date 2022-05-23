@@ -46,7 +46,7 @@
 
                     </Grid.Resources>
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="相:" Margin="-20,5,0,0" VerticalAlignment="Top"/>
-                    <TextBox Grid.Row="0" Name="Phase" Margin="211,5,0,0" />
+                    <ComboBox Grid.Row="0" Grid.Column="1" Name="Phase" Margin="211,5,139,0" />
 
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="相比例（%）:" Margin="-20,5,0,0"/>
                     <TextBox Grid.Row="1" Grid.Column="1"   Name="Phase_ratio" />
