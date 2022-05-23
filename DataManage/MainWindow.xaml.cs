@@ -467,64 +467,73 @@ namespace DataManage
         }
 
         // 向数据库中插入excel文件
-        public void ImportXls(string filePath)
-        {           
-            IWorkbook workbook = WorkbookFactory.Create(filePath);
-            ISheet sheet = workbook.GetSheetAt(0);//获取第一个工作簿            
-            
-            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+        public int ImportXls(string filePath)
+        {
+            try
             {
-                try
+                IWorkbook workbook = WorkbookFactory.Create(filePath);
+                ISheet sheet = workbook.GetSheetAt(0);//获取第一个工作簿
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
                 {
-                    conn.Open();
-                    //开始导入数据库
-                    for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
+                    try
                     {
-                        IRow row = (IRow)sheet.GetRow(i);//获取第i行
-                        string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";                       
-                        for (int j = 0; j <= 6; j++)
+                        conn.Open();
+                        //开始导入数据库
+                        for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
                         {
-                            if (sheet.GetRow(i).GetCell(j) != null)
+                            IRow row = (IRow)sheet.GetRow(i);//获取第i行
+                            string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
+                            for (int j = 0; j <= 6; j++)
                             {
-                                sql = sql + sheet.GetRow(i).GetCell(j).ToString() + "','";
+                                if (sheet.GetRow(i).GetCell(j) != null)
+                                {
+                                    sql = sql + sheet.GetRow(i).GetCell(j).ToString() + "','";
+                                }
+                                else
+                                {
+                                    sql = sql + "" + "','";
+                                }
                             }
-                            else
+                            sql = sql.Substring(0, sql.Length - 2);
+                            sql = sql + ");";
+
+                            using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                             {
-                                sql = sql + ""+ "','";
-                            }                           
+                                command.ExecuteNonQuery();
+                            }
+                            /*MessageBox.Show("插入成功");*/
                         }
-                        sql = sql.Substring(0, sql.Length - 2);
-                        sql = sql + ");";
-                        
-                        using (SQLiteCommand command = new SQLiteCommand(sql, conn))
-                        {
-                            command.ExecuteNonQuery();
-                        }
-                        /*MessageBox.Show("插入成功");*/
+                        MessageBox.Show("上传成功");
+
                     }
-                    MessageBox.Show("上传成功");
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("上传失败");
+                        throw ex;
+                    }
+                    conn.Close();
 
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("上传失败");
-                    throw ex;
-                }
-                conn.Close();
-                
+                workbook.Close();
             }
-            workbook.Close();
+            catch (IOException)
+            {
+                MessageBox.Show("请先该关闭文件！","错误提示");
+                return -1;
+            }                                 
             ShowAllData();
+            return 0;
         }
 
         //导出excel文件
         public void exportXls(List<caseData> list,string filePath)
         {
-            IWorkbook workbook = new XSSFWorkbook();
-            ISheet sheet = workbook.CreateSheet("sheet1");
-            FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
             try
             {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("sheet1");
+                FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
+                
                 //写入excel文件         
                 IRow row = (IRow)sheet.CreateRow(0);//获取第一行                        
                 row.CreateCell(0).SetCellValue("相");
@@ -549,15 +558,15 @@ namespace DataManage
                     i++;
                 }
                 //导出excel               
-                workbook.Write(fs);
+                workbook.Write(fs);                                
+                workbook.Close();
+                fs.Close();
+                MessageBox.Show("导出成功");
             }
-            catch
+            catch (IOException)
             {
-                MessageBox.Show("导出失败");
+                MessageBox.Show("请先该关闭文件！", "错误提示");                
             }
-            MessageBox.Show("导出成功");
-            workbook.Close();
-            fs.Close();
         }
 
         private void BtnRefresh(object sender, RoutedEventArgs e)
@@ -572,6 +581,7 @@ namespace DataManage
         // 修改
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
+            bool flag = false;
             for (int i = 0; i < dg1.Items.Count; i++)
             {
                 //获取行
@@ -587,10 +597,17 @@ namespace DataManage
                     UpdateData updateData = new UpdateData(caseData,phases);
                     updateData.TransfEvent += Update_TransfEvent;
                     updateData.ShowDialog();
-                    return ;
+                    flag= true;
                 }
             }
-             
+            if (flag)
+            {
+
+            }
+            else
+            {
+                MessageBox.Show("请选择需要操作的数据", "提示信息");
+            }
 
         }
 
@@ -769,8 +786,10 @@ namespace DataManage
                 FilePath.Text = fileDialog1.FileName;
                 string str1 = fileDialog1.FileName;
                 /*MessageBox.Show(str1);*/
-                MessageBox.Show("正在上传中");
-                ImportXls(str1);
+                if (ImportXls(str1) != -1)
+                {
+                    MessageBox.Show("正在上传中");
+                }                
                 Upload.IsEnabled = true;
             }
             else
