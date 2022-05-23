@@ -28,6 +28,10 @@ namespace DataManage
             SetPhase(phases);
 
         }
+        public static string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
+
+        public static string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;Version=3;";
+
         public delegate void TransfDelegate(String sql);
 
         public event TransfDelegate TransfEvent;
@@ -36,13 +40,13 @@ namespace DataManage
         {            
             foreach (String phase in phases)
             {
-                Phase.Items.Add(phase);
+                inputPhase.Items.Add(phase);
             }
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {                     
             string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
-                    + Phase.Text.Trim() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + Diff_plane.Text.Trim() + "','"
+                    + inputPhase.SelectedValue.ToString() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + Diff_plane.Text.Trim() + "','"
                     + Ehkl.Text.Trim() + "','" + Vhkl.Text.Trim() + "','" + Distance.Text.Trim() + "');";
             //MessageBox.Show(sql);
             TransfEvent(sql);//触发事件

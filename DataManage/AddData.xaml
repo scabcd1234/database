@@ -5,48 +5,68 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DataManage"
         mc:Ignorable="d"
-        Title="增加数据" WindowStartupLocation="CenterScreen"  Width="1000" Height="900">
+        Title="增加数据" WindowStartupLocation="CenterScreen" Width="720" Height="390" >
     <Grid>
         <Viewbox Stretch="Fill">
             <Grid >
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="500"/>
+                    <ColumnDefinition Width="350"/>
                 </Grid.ColumnDefinitions>
-                <!--
-                <DataGrid Name="Form" Grid.Row="0" Grid.Column="1">
-                    <Label Content="Label" HorizontalAlignment="Left" Margin="118,56,0,0" VerticalAlignment="Top"/>
-                </DataGrid>
-                -->
+                
                 <Grid.Resources>
                     <Style TargetType="TextBlock">
                         <Setter Property="VerticalAlignment" Value="Center"/>
                         <Setter Property="HorizontalAlignment" Value="Left"/>
                         <Setter Property="Foreground" Value="Black"/>
-                        <Setter Property="Width" Value="200"/>
+                        <Setter Property="Width" Value="180"/>
                         <Setter Property="Block.TextAlignment" Value="Right"/>
                         <Setter Property="TextWrapping" Value="Wrap"/>
-                        <Setter Property="Margin" Value="0,5,10,0"/>
+                        <Setter Property="FontSize" Value="10"/>
+                        <Setter Property="Padding" Value="0,0,0,0"/>
+                        <Setter Property="Height" Value="15"/>
 
                     </Style>
                     <Style TargetType="TextBox">
                         <Setter Property="HorizontalAlignment" Value="Left"/>
-                        <Setter Property="Width" Value="150"/>
-                        <Setter Property="Margin" Value="211,5,0,0"/>
+                        <Setter Property="Width" Value="70"/>
+                        <Setter Property="Margin" Value="170,5,0,0"/>
+                        <Setter Property="FontSize" Value="7"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+
+                    
+                    <Style TargetType="Button">
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                        <Setter Property="Margin" Value="160,5,0,5"/>
+                        <Setter Property="FontSize" Value="7"/>
+                        <Setter Property="Width" Value="50"/>
+                        <Setter Property="Height" Value="20"/>
+                    </Style>
+                    <XmlDataProvider x:Key="AllItem" />
+                                                          
+                    <!--下拉框(ComboBox)样式设定-->
+                    <Style x:Key="selectComboBox" TargetType="{x:Type ComboBox}">
+                        <Setter Property="BorderThickness" Value="0.5"/>
+                        <Setter Property="FontSize" Value="7"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Height" Value="15"/>
+                        <Setter Property="Margin" Value="60,5,0,0"/>
                     </Style>
 
                 </Grid.Resources>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="相:" Margin="-20,5,0,0" VerticalAlignment="Top"/>
-                <ComboBox Grid.Row="0"  Grid.Column="1" Name="Phase" Margin="211,5,139,0" />
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="相 :" Margin="-20,5,0,0" VerticalAlignment="Top"/>
+                <ComboBox Name="inputPhase" Width="70"  Style="{StaticResource selectComboBox}"></ComboBox>
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="相比例（%）:" Margin="-20,5,0,0"/>
                 <TextBox Grid.Row="1" Grid.Column="1"   Name="Phase_ratio" />
@@ -54,21 +74,20 @@
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="温度（℃）:" Margin="-20,5,0,0"/>
                 <TextBox Grid.Row="2" Grid.Column="1"   Name="Temperature" />
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="衍射面:" Margin="-20,5,0,0"/>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="衍射面 :" Margin="-20,5,0,0"/>
                 <TextBox Grid.Row="3" Grid.Column="1"   Name="Diff_plane" />
 
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="衍射弹性常数Ehkl（GPa）:" Margin="-20,5,0,0"/>
                 <TextBox Grid.Row="4" Grid.Column="1"   Name="Ehkl" />
 
-                <TextBlock Grid.Row="5" Grid.Column="0" Text="衍射弹性常数vhkl:" Margin="-20,5,0,0"/>
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="衍射弹性常数vhkl :" Margin="-20,5,0,0"/>
                 <TextBox Grid.Row="5"  Grid.Column="1" Name="Vhkl"  />
 
-                <TextBlock Grid.Row="6" Grid.Column="0" Text="晶面间距d:" Margin="-20,5,0,0"/>
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="晶面间距d :" Margin="-20,5,0,0"/>
                 <TextBox Grid.Row="6" Grid.Column="1"   Name="Distance" />
 
-                <Button Content="增加" Name="add"  Grid.Row="7" VerticalAlignment="Center" 
-                        HorizontalAlignment="Left" Width="100" Height="30" 
-                         Click="Button_Click" Margin="211,5,0,5"  HorizontalContentAlignment="Center" />
+                <Button Content="增加" Name="add"  Grid.Row="7" 
+                        HorizontalAlignment="Left"  Click="Button_Click"   HorizontalContentAlignment="Center" />
 
 
 
