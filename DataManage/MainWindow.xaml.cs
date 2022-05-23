@@ -49,8 +49,7 @@ namespace DataManage
             inputPhase.Items.Add("");
             foreach (String phase in phases){              
                 inputPhase.Items.Add(phase);
-            }
-            
+            } 
             inputPhase.SelectedIndex = 0;
 
         }

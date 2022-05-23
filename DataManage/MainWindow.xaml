@@ -13,29 +13,45 @@
         <XmlDataProvider x:Key="AllItem" />
         <!--TextBlock样式设定-->
         <Style x:Key="dgCell" TargetType="{x:Type TextBlock}">
+        <Setter Property="Height" Value="20"/>
         </Style>
         
         <!--输入框(TextBox)样式设定-->
         <Style x:Key="inputBox" TargetType="{x:Type TextBox}">
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="Height" Value="20"/>
         </Style>
 
         <!--输入框(Label)样式设定-->
-        <Style x:Key="Label" TargetType="{x:Type TextBox}">
-            <Setter Property="FontSize" Value="14"/>
+        <Style x:Key="showLabel" TargetType="{x:Type Label}">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Padding" Value="2"/>
+        </Style>
+
+        <!--下拉框(ComboBox)样式设定-->
+        <Style x:Key="selectComboBox" TargetType="{x:Type ComboBox}">
+            <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="20"/>
         </Style>
 
         <!--Button样式设定-->
         <Style x:Key="textButton" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="Transparent"></Setter>
             <Setter Property="BorderThickness" Value="0.5"></Setter>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="10"/>
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Background" Value="White"/>
-            <Setter Property="FontWeight" Value="Heavy"/>
-            <Setter Property="FontFamily" Value="Arial,SimSun"/>
+            <!-- <Setter Property="FontFamily" Value="Arial,SimSun"/>-->
+            
+            <Setter Property="Height" Value="20"/>
         </Style>
         <!---->
     </Window.Resources>
@@ -63,17 +79,17 @@
                             <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top">
                                 
                                 <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
-                                    <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="70,0,0,0"></Label>
-                                    <ComboBox Name="inputPhase" Width="50" SelectionChanged="inputPhase_SelectionChanged" Margin="0,0,10,0" ></ComboBox>
+                                    <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="190,0,0,0" Style="{StaticResource showLabel}"></Label>
+                                    <ComboBox Name="inputPhase" Width="50" SelectionChanged="inputPhase_SelectionChanged" Margin="0,0,10,0" Style="{StaticResource selectComboBox}"></ComboBox>
 
-                                    <Label Content="请输入相比例:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" ></Label>
+                                    <Label Content="请输入相比例:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0"  Style="{StaticResource showLabel}"></Label>
                                     <TextBox Text="" Name="inputPhase_ratio" MinWidth="50" Margin="0,0,10,0" Style="{StaticResource inputBox}" ></TextBox>
-                                    
-                                    <Label Content="请输入温度:"  Panel.ZIndex="-10"></Label>
+
+                                    <Label Content="请输入温度:"  Panel.ZIndex="-10" Style="{StaticResource showLabel}"></Label>
                                     <TextBox Text="" Name="inputTemperature" MinWidth="50" Margin="0,0,10,0" Style="{StaticResource inputBox}"></TextBox>
-                                   
-                                    <Label Content="请选择衍射面:" ></Label>
-                                    <ComboBox Name="inputDiff_plane" Width="80" Margin="0,0,10,0"></ComboBox>
+
+                                    <Label Content="请选择衍射面:" Style="{StaticResource showLabel}"></Label>
+                                    <ComboBox Name="inputDiff_plane" Width="70" Margin="0,0,10,0" Style="{StaticResource selectComboBox}"></ComboBox>
                                     <Button Content="查询" MinWidth="60" Margin="10,0,10,0"  Click="BtnSelect" Style="{StaticResource textButton}"/>
                                     <Button Content="刷新" MinWidth="60" Margin="10,0,20,0" Click="BtnRefresh" Style="{StaticResource textButton}"/>
                                 </StackPanel>
@@ -181,13 +197,13 @@
                                 <StackPanel Orientation="Horizontal"  Margin="20,10,20,10">
                                     <Button Content="上一页"  Click="BtnUp_Click" IsEnabled="False" Name="BtnUp" HorizontalAlignment="Left" Margin="125,2,0,2" Style="{StaticResource textButton}"></Button>
                                     <Button Content="下一页" Click="BtnNext_Click" Name="BtnNext" HorizontalAlignment="Left" Margin="10,2,0,2" Style="{StaticResource textButton}"></Button>
-                                    <Label Content="第" HorizontalAlignment="Left" Margin="10,2,0,2"></Label>
-                                    <Label Name="CurrentPage" Content="" HorizontalAlignment="Left" Margin="0,2,0,2"></Label>
-                                    <Label Content="页" HorizontalAlignment="Left" Margin="0,2,2,2"></Label>
+                                    <Label Content="第" HorizontalAlignment="Left" Margin="10,2,0,2" Style="{StaticResource showLabel}"></Label>
+                                    <Label Name="CurrentPage" Content="" HorizontalAlignment="Left" Margin="0,2,0,2" Style="{StaticResource showLabel}"></Label>
+                                    <Label Content="页" HorizontalAlignment="Left" Margin="0,2,2,2" Style="{StaticResource showLabel}"></Label>
 
-                                    <Label Content="共" HorizontalAlignment="Left" Margin="2,2,0,2"></Label>
-                                    <Label Name="AllPage" Content="" HorizontalAlignment="Left" Margin="0,0,0,2"></Label>
-                                    <Label Content="页" HorizontalAlignment="Left" Margin="0,2,2,2"></Label>
+                                    <Label Content="共" HorizontalAlignment="Left" Margin="2,2,0,2" Style="{StaticResource showLabel}"></Label>
+                                    <Label Name="AllPage" Content="" HorizontalAlignment="Left" Margin="0,2,0,2" Style="{StaticResource showLabel}"></Label>
+                                    <Label Content="页" HorizontalAlignment="Left" Margin="0,2,2,2" Style="{StaticResource showLabel}"></Label>
 
                                     <TextBox Text="" Name="InputNumber" Width="380" Margin="10,2,10,2"  Style="{StaticResource inputBox}" ></TextBox>
                                     <Button Content="跳转" MinWidth="60" VerticalContentAlignment="Center" Click="Skip"  Margin="10,2,0,2" Style="{StaticResource textButton}"/>
