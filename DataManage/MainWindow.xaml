@@ -109,8 +109,9 @@
 
                             <!--显示栏-->
                             <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
-                              Margin="20,10,20,10" HorizontalAlignment="Center"
-                              Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow">
+                              Margin="20,10,20,10" HorizontalAlignment="Center" Height="300"
+                              Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow"
+                                      EnableRowVirtualization="False">
 
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">

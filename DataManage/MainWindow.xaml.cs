@@ -83,7 +83,7 @@ namespace DataManage
             {
                 sql2 += " and phase like '" + inputPhase.Text.Trim() + "%' ";
             }*/
-            string sql = sql1 + sql2 + sql3;
+            string sql = sql1 + sql2 ;
 
             /*MessageBox.Show(sql);*/
             using(SQLiteConnection conn = new SQLiteConnection(connStr))
@@ -347,16 +347,18 @@ namespace DataManage
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             CheckBox headercb = (CheckBox)sender;
-
             for (int i = 0; i < dg1.Items.Count; i++)
             {
                 //获取行
                 DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
 
-                //获取该行的某列
-                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+                if (neddrow != null)
+                {
+                    //获取该行的某列
+                    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
 
-                cb.IsChecked = headercb.IsChecked;
+                    cb.IsChecked = headercb.IsChecked;
+                }                               
             }
         }
               
@@ -582,8 +584,15 @@ namespace DataManage
             inputTemperature.Text = "";
             inputPhase_ratio.Text = "";
             inputDiff_plane.Items.Clear();
-            inputPhase.SelectedIndex = 0;
             ShowAllData();
+            List<String> phases = selectPhaseALL();
+            inputPhase.Items.Clear();
+            inputPhase.Items.Add("");
+            foreach (String phase in phases)
+            {
+                inputPhase.Items.Add(phase);
+            }
+            inputPhase.SelectedIndex = 0;
         }
 
         // 修改
@@ -594,7 +603,7 @@ namespace DataManage
             {
                 //获取行
                 DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
-
+                
                 //获取该行的某列
                 CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
                 if (cb.IsChecked == true)
@@ -765,14 +774,17 @@ namespace DataManage
         }
 
         private void inputPhase_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
+        {         
             inputDiff_plane.Items.Clear();
-            List<String> phases = selectDiff_planeALL(inputPhase.SelectedValue.ToString());
-            foreach (String phase in phases)
+            if (inputPhase.SelectedValue != null)
             {
-                inputDiff_plane.Items.Add(phase);
+                List<String> phases = selectDiff_planeALL(inputPhase.SelectedValue.ToString());
+                foreach (String phase in phases)
+                {
+                    inputDiff_plane.Items.Add(phase);
+                }
             }
+            
         }
 
         private void UploadFile(object sender, RoutedEventArgs e)
@@ -792,10 +804,8 @@ namespace DataManage
                 FilePath.Text = fileDialog1.FileName;
                 string str1 = fileDialog1.FileName;
                 /*MessageBox.Show(str1);*/
-                if (ImportXls(str1) != -1)
-                {
-                    MessageBox.Show("正在上传中");
-                }                
+                MessageBox.Show("正在上传中");
+                ImportXls(str1);                              
                 Upload.IsEnabled = true;
             }
             else
