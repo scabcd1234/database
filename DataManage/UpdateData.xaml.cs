@@ -30,10 +30,12 @@ namespace DataManage
 
         private void SetPhase(List<String> phases)
         {
-            foreach (String phase in phases)
-            {
-                Phase.Items.Add(phase);
-            }
+            //foreach (String phase in phases)
+            //{
+            //    Phase.Items.Add(phase);
+            //}
+            Phase.Items.Add("α");
+            Phase.Items.Add("β");
         }
 
         public void show(caseData caseData)

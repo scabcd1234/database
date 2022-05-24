@@ -246,11 +246,38 @@ namespace DataManage
             {
                 if (MessageBox.Show("未找到查询数据，是否自动生成数据？", "提示信息", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    double Ehkl = computeEhkl(inputPhase.SelectedValue.ToString(), Convert.ToDouble(inputPhase_ratio.Text),
-                    Convert.ToDouble(inputTemperature.Text), inputDiff_plane.SelectedValue.ToString());
+                    String phase = inputPhase.SelectedValue.ToString();
+                    double before_phase_ratio = Convert.ToDouble(inputPhase_ratio.Text); // 近似前相位比
+                    double after_phase_ratio= before_phase_ratio; // 近似后相位比
+                    if (phase == "α")
+                    {          
+                        double[] ratio_list = { 62, 55.5, 70, 80 };
+                        //选择最接近的相位比
+                        after_phase_ratio = ratio_list[0];
+                        foreach(double tmp in ratio_list)
+                        {
+                            if(Math.Abs(before_phase_ratio - tmp)<=Math.Abs(before_phase_ratio - after_phase_ratio))
+                            {
+                                after_phase_ratio = tmp;
+                            }
+                        }                        
+                    }else if (phase == "β")
+                    {
+                        double[] ratio_list = { 38, 44.5, 30, 20 };
+                        //选择最接近的相位比
+                        after_phase_ratio = ratio_list[0];
+                        foreach (double tmp in ratio_list)
+                        {
+                            if (Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio))
+                            {
+                                after_phase_ratio = tmp;
+                            }
+                        }
+                    }
+                    double Ehkl = computeEhkl(phase, after_phase_ratio, Convert.ToDouble(inputTemperature.Text), inputDiff_plane.SelectedValue.ToString());
                     caseData casedata = new caseData();
-                    casedata.Phase = inputPhase.SelectedValue.ToString();
-                    casedata.Phase_ratio = Convert.ToDouble(inputPhase_ratio.Text);
+                    casedata.Phase = phase;
+                    casedata.Phase_ratio = before_phase_ratio;
                     casedata.Temperature = Convert.ToDouble(inputTemperature.Text);
                     casedata.Diff_plane = inputDiff_plane.SelectedValue.ToString();
                     casedata.Ehkl = Ehkl;
@@ -897,6 +924,99 @@ namespace DataManage
                 
             }else if(phase == "β")
             {
+                switch (phase_ratio)
+                {
+                    case 38:
+                        switch (diff_plane)
+                        {
+                            case "100":
+                                Ehkl = 88.22357 - 0.03345 * temperature;
+                                break;
+                            case "101":
+                                Ehkl = 105.89515 - 0.04458 * temperature;
+                                break;
+                            case "102":
+                                Ehkl = 98.448877 - 0.03847 * temperature;
+                                break;
+                            case "211":
+                                Ehkl = 105.89515 - 0.04458 * temperature;
+                                break;
+                            case "110":
+                                Ehkl = 105.89515 - 0.04458 * temperature;
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case 44.5:
+                        switch (diff_plane)
+                        {
+                            case "100":
+                                Ehkl = 86.75737 - 0.0292 * temperature;
+                                break;
+                            case "101":
+                                Ehkl = 103.75737 - 0.0292 * temperature;
+                                break;
+                            case "102":
+                                Ehkl = 96.75737 - 0.0292 * temperature;
+                                break;
+                            case "211":
+                                Ehkl = 103.75737 - 0.0292 * temperature;
+                                break;
+                            case "110":
+                                Ehkl = 103.75737 - 0.0292 * temperature;
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case 30:
+                        switch (diff_plane)
+                        {
+                            case "100":
+                                Ehkl = 88.37608 - 0.03324 * temperature;
+                                break;
+                            case "101":
+                                Ehkl = 106.92374 - 0.05061 * temperature;
+                                break;
+                            case "102":
+                                Ehkl = 100.54593 - 0.04679 * temperature;
+                                break;
+                            case "211":
+                                Ehkl = 106.92374 - 0.05061 * temperature;
+                                break;
+                            case "110":
+                                Ehkl = 106.92374 - 0.05061 * temperature;
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case 20:
+                        switch (diff_plane)
+                        {
+                            case "100":
+                                Ehkl = 90.44887 - 0.03847 * temperature;
+                                break;
+                            case "101":
+                                Ehkl = 109.00087 - 0.06079 * temperature;
+                                break;
+                            case "102":
+                                Ehkl = 101.15251 - 0.04879 * temperature;
+                                break;
+                            case "211":
+                                Ehkl = 109.00087 - 0.06079 * temperature;
+                                break;
+                            case "110":
+                                Ehkl = 109.00087 - 0.06079 * temperature;
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
 
             }
             return Ehkl;
