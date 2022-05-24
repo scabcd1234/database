@@ -59,10 +59,10 @@ namespace DataManage
             caseData caseData = new caseData();
             caseData.Id = id;
             caseData.Phase = Phase.SelectedValue.ToString();
-            caseData.Phase_ratio = Convert.ToInt32(Phase_ratio.Text.Trim());
-            caseData.Temperature = Convert.ToInt32(Temperature.Text.Trim());
+            caseData.Phase_ratio = Convert.ToDouble(Phase_ratio.Text.Trim());
+            caseData.Temperature = Convert.ToDouble(Temperature.Text.Trim());
             caseData.Diff_plane = Diff_plane.Text.Trim();
-            caseData.Ehkl = Convert.ToInt32(Ehkl.Text.Trim());
+            caseData.Ehkl = Convert.ToDouble(Ehkl.Text.Trim());
             caseData.Vhkl = Convert.ToDouble(Vhkl.Text.Trim());
             caseData.Distance = Convert.ToDouble(Distance.Text.Trim());
             TransfEvent(caseData);//触发事件
