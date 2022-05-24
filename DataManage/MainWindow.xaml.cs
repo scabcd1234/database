@@ -271,8 +271,8 @@ namespace DataManage
          // 增加数据
          private void BtnAdd(object sender, RoutedEventArgs e)
         {
-            List<String> phases = selectPhaseALL();
-            AddData adddata = new AddData(phases);
+           
+            AddData adddata = new AddData();
             adddata.TransfEvent += Add_TransfEvent;
             adddata.ShowDialog();
          }
@@ -549,9 +549,9 @@ namespace DataManage
                 {
                     //MessageBox.Show(i.ToString());
                     int updateId = Convert.ToInt32(cb.Tag);
-                    List<String> phases = selectPhaseALL();
+                    
                     caseData caseData = selectDataById(updateId);
-                    UpdateData updateData = new UpdateData(caseData,phases);
+                    UpdateData updateData = new UpdateData(caseData);
                     updateData.TransfEvent += Update_TransfEvent;
                     updateData.ShowDialog();
                     flag= true;

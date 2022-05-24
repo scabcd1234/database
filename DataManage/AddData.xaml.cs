@@ -22,10 +22,10 @@ namespace DataManage
     public partial class AddData : Window
     {     
 
-        public AddData(List<String> phases)
+        public AddData()
         {
             InitializeComponent();
-            SetPhase(phases);
+            SetPhaseAndDiffPlane();
 
         }
         public static string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
@@ -36,21 +36,42 @@ namespace DataManage
 
         public event TransfDelegate TransfEvent;
 
-        private void SetPhase(List<String> phases)
+        private void SetPhaseAndDiffPlane()
         {            
-            foreach (String phase in phases)
-            {
-                inputPhase.Items.Add(phase);
-            }
+            inputPhase.Items.Add("α");
+            inputPhase.Items.Add("β");
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {                     
             string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
-                    + inputPhase.SelectedValue.ToString() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + Diff_plane.Text.Trim() + "','"
+                    + inputPhase.SelectedValue.ToString() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + inputDiff_plane.SelectedValue.ToString() + "','"
                     + Ehkl.Text.Trim() + "','" + Vhkl.Text.Trim() + "','" + Distance.Text.Trim() + "');";
             //MessageBox.Show(sql);
             TransfEvent(sql);//触发事件
             this.Close();
+        }
+
+        //相的点击事件
+        private void inputPhase_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            inputDiff_plane.Items.Clear();
+            if (inputPhase.SelectedValue.ToString() == "α")
+            {
+                inputDiff_plane.Items.Add("101");
+                inputDiff_plane.Items.Add("100");
+                inputDiff_plane.Items.Add("103");
+                inputDiff_plane.Items.Add("002");
+                inputDiff_plane.Items.Add("011");
+            }
+            if (inputPhase.SelectedValue.ToString() == "β")
+            {
+                inputDiff_plane.Items.Add("100");
+                inputDiff_plane.Items.Add("101");
+                inputDiff_plane.Items.Add("102");
+                inputDiff_plane.Items.Add("211");
+                inputDiff_plane.Items.Add("110");
+            }
+
         }
 
     }
