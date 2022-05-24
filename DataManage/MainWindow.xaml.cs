@@ -47,6 +47,7 @@ namespace DataManage
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {            
             ShowAllData();
+            SetNumber();
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Add("");
             foreach (String phase in phases){              
@@ -152,6 +153,40 @@ namespace DataManage
             
             AllPage.Content = totalPage.ToString();
             CurrentPage.Content = pageIndex.ToString();      
+        }
+
+        // 设置条数
+        private void SetNumber()
+        {
+            string sql = "select count(*) from data where 1 = 1";
+            string sql1 = sql+" and phase='α'";
+            string sql2 = sql + " and phase='β'";
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {               
+                    try
+                    {
+                        conn.Open();
+                        using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                        {
+                            ALLNumber.Content = Convert.ToInt32(command.ExecuteScalar());                            
+                        }
+                        using (SQLiteCommand command = new SQLiteCommand(sql1, conn))
+                        {
+                            FirstNumber.Content = Convert.ToInt32(command.ExecuteScalar());                            
+                        }
+                        using (SQLiteCommand command = new SQLiteCommand(sql2, conn))
+                        {
+                            SecondNumber.Content= Convert.ToInt32(command.ExecuteScalar());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("查询失败", "");
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                
+            }
         }
 
         // 查询所有数据条数
@@ -581,6 +616,7 @@ namespace DataManage
 
         private void BtnRefresh(object sender, RoutedEventArgs e)
         {
+            SetNumber();
             inputTemperature.Text = "";
             inputPhase_ratio.Text = "";
             inputDiff_plane.Items.Clear();
@@ -822,6 +858,7 @@ namespace DataManage
             fileDialog1.InitialDirectory = "c:\\";//初始目录
             fileDialog1.Filter = "Execl files (*.xlsx)|*.xlsx";//文件的类型
             fileDialog1.FilterIndex = 1;
+            fileDialog1.FileName = "导出数据";
             for (int i = 0; i < dg1.Items.Count; i++)
             {
                 //获取行
