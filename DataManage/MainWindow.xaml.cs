@@ -39,8 +39,7 @@ namespace DataManage
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {            
-            ShowAllData();
-            SetNumber();
+            ShowAllData();            
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Add("");
             foreach (String phase in phases){              
@@ -115,8 +114,9 @@ namespace DataManage
             
             dg1.ItemsSource = null;
             dg1.ItemsSource = list;
-            
-                
+
+            // 显示记录条数
+            SetNumber();
         }
 
         // 设置条数
@@ -536,7 +536,6 @@ namespace DataManage
 
         private void BtnRefresh(object sender, RoutedEventArgs e)
         {
-            SetNumber();
             inputTemperature.Text = "";
             inputPhase_ratio.Text = "";
             inputDiff_plane.Items.Clear();
