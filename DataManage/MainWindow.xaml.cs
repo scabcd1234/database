@@ -55,7 +55,7 @@ namespace DataManage
         {
             List<caseData> list = new List<caseData>();
         
-            int Count = selectData();
+            // int Count = selectData();
             
             
             /*string sql = "SELECT * FROM casedata " + "limit " + index + "," + pageSize;*/
@@ -87,10 +87,10 @@ namespace DataManage
                                 casedata.Id = Convert.ToInt32(reader["id"]);
                                 casedata.FlaseId = i;
                                 casedata.Phase = reader["phase"].ToString();
-                                casedata.Phase_ratio = (int)reader["phase_ratio"];
-                                casedata.Temperature = (int)reader["temperature"];
+                                casedata.Phase_ratio = Convert.ToDouble(reader["phase_ratio"]);
+                                casedata.Temperature = Convert.ToDouble(reader["temperature"]);
                                 casedata.Diff_plane = reader["diff_plane"].ToString();
-                                casedata.Ehkl = (int)reader["ehkl"];
+                                casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
                                 casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
                                 if (reader["distance"].ToString() == "")
                                 {
@@ -156,46 +156,6 @@ namespace DataManage
             }
         }
 
-        // 查询所有数据条数
-        private int selectData()
-        {
-            List<caseData> listAll = new List<caseData>();
-            string sql1 = "select count(*) from data ";
-            string sql2 = "where 1 = 1 ";
-            
-            //if(inputPhase.Text.Trim() != "")
-            //{
-            //    sql2 += " and phase like '" + inputPhase.Text.Trim() + "%'";
-            //}
-            
-            string sqlAll = sql1 + sql2;
-            int count = 0;
-            using (SQLiteConnection conn = new SQLiteConnection(connStr))
-            {
-                using (SQLiteCommand command = new SQLiteCommand(sqlAll, conn))
-                {
-                    try
-                    {
-                        conn.Open();
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                count = Convert.ToInt32(reader[0].ToString());
-                            }
-                        }
-                            
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("查询失败", "");
-                        throw new Exception("查询数据失败：" + ex.Message);
-                    }
-                    conn.Close();
-                }
-            }
-            return count;
-        }
         
         // 增加数据
         void Add_TransfEvent(String sql)
@@ -224,6 +184,7 @@ namespace DataManage
         // 多个搜索字段查询
         private void BtnSelect(object sender, RoutedEventArgs e)
         {
+            bool HasData=false;
             string sql = "SELECT * FROM data where 1 = 1";
             
             if (inputPhase.SelectedValue.ToString()!="")
@@ -257,14 +218,15 @@ namespace DataManage
                             int i = 1;
                             while (reader.Read())
                             {
+                                HasData = true;
                                 caseData casedata = new caseData();
                                 casedata.Id = Convert.ToInt32(reader["id"]);
                                 casedata.FlaseId = i;
                                 casedata.Phase = reader["phase"].ToString();
-                                casedata.Phase_ratio = (int)reader["phase_ratio"];
-                                casedata.Temperature = (int)reader["temperature"];
+                                casedata.Phase_ratio = Convert.ToDouble(reader["phase_ratio"]);
+                                casedata.Temperature = Convert.ToDouble(reader["temperature"]);
                                 casedata.Diff_plane = reader["diff_plane"].ToString();
-                                casedata.Ehkl = (int)reader["ehkl"];
+                                casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
                                 casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
                                 if (reader["distance"].ToString() == "")
                                 {
@@ -285,6 +247,21 @@ namespace DataManage
                     }
                     conn.Close();
                 }
+            }
+            if (!HasData) // 未找到数据
+            {
+                if (MessageBox.Show("未找到查询数据，是否自动生成数据？", "提示信息", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    double Ehkl = computeEhkl(inputPhase.SelectedValue.ToString(), Convert.ToDouble(inputPhase_ratio.Text),
+                    Convert.ToDouble(inputTemperature.Text), inputDiff_plane.SelectedValue.ToString());
+                    caseData casedata = new caseData();
+                    casedata.Phase = inputPhase.SelectedValue.ToString();
+                    casedata.Phase_ratio = Convert.ToDouble(inputPhase_ratio.Text);
+                    casedata.Temperature = Convert.ToDouble(inputTemperature.Text);
+                    casedata.Diff_plane = inputDiff_plane.SelectedValue.ToString();
+                    casedata.Ehkl = Ehkl;
+                    list.Add(casedata);
+                }                            
             }
             dg1.ItemsSource = null;
             dg1.ItemsSource = list;
@@ -560,7 +537,8 @@ namespace DataManage
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
             bool flag = false;
-            for (int i = 0; i < dg1.Items.Count; i++)
+            int i = 0;
+            for (i = 0; i < dg1.Items.Count; i++)
             {
                 //获取行
                 DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
@@ -569,6 +547,7 @@ namespace DataManage
                 CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
                 if (cb.IsChecked == true)
                 {
+                    //MessageBox.Show(i.ToString());
                     int updateId = Convert.ToInt32(cb.Tag);
                     List<String> phases = selectPhaseALL();
                     caseData caseData = selectDataById(updateId);
@@ -576,12 +555,18 @@ namespace DataManage
                     updateData.TransfEvent += Update_TransfEvent;
                     updateData.ShowDialog();
                     flag= true;
-                    return;
+                    break;
                 }
             }
             if (flag)
             {
+                MessageBox.Show("修改成功");
+                //获取行
+                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
 
+                //获取该行的某列
+                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+                cb.IsChecked = true;
             }
             else
             {
@@ -606,7 +591,7 @@ namespace DataManage
                     using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                     {
                         command.ExecuteNonQuery();
-                        MessageBox.Show("修改成功");
+                        // MessageBox.Show("修改成功");
                     }
                 }
                 catch (Exception ex)
@@ -638,10 +623,10 @@ namespace DataManage
                             {
                                 casedata.Id = Convert.ToInt32(reader["id"]);
                                 casedata.Phase = reader["phase"].ToString();
-                                casedata.Phase_ratio = (int)reader["phase_ratio"];
-                                casedata.Temperature = (int)reader["temperature"];
+                                casedata.Phase_ratio = Convert.ToDouble(reader["phase_ratio"]);
+                                casedata.Temperature = Convert.ToDouble(reader["temperature"]);
                                 casedata.Diff_plane = reader["diff_plane"].ToString();
-                                casedata.Ehkl = (int)reader["ehkl"];
+                                casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
                                 casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
                                 if (reader["distance"].ToString() == "")
                                 {
@@ -814,6 +799,113 @@ namespace DataManage
                 MessageBox.Show("请选择需要操作的数据","提示信息");
             }
             
+        }
+
+        // 计算弹性常数
+        private double computeEhkl(String phase,double phase_ratio,double temperature,string diff_plane)
+        {
+            double Ehkl = 0;
+            if (phase == "α")
+            {
+                switch (phase_ratio)
+                {
+                    case 55.5:
+                        switch (diff_plane)
+                        {
+                            case "101":
+                                Ehkl = 112.84229 - 0.03658 * temperature;
+                                break;
+                            case "100":
+                                Ehkl = 119.20884 - 0.05004 * temperature;
+                                break;
+                            case "103":
+                                Ehkl = 110.87868 - 0.0396 * temperature;
+                                break;
+                            case "002":
+                                Ehkl = 115.84749 - 0.05121 * temperature;
+                                break;
+                            case "011":
+                                Ehkl = 112.84229 - 0.03658 * temperature;
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case 62:
+                        switch (diff_plane)
+                        {
+                            case "101":
+                                Ehkl = 113.87868 - 0.0396 * temperature;
+                                break;
+                            case "100":
+                                Ehkl = 120.44194 - 0.05217 * temperature;
+                                break;
+                            case "103":
+                                Ehkl = 111.5052 - 0.03973 * temperature;
+                                break;
+                            case "002":
+                                Ehkl = 117.10485 - 0.05542 * temperature;
+                                break;
+                            case "011":
+                                Ehkl = 113.87868 - 0.0396 * temperature;
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case 70:
+                        switch (diff_plane)
+                        {
+                            case "101":
+                                Ehkl = 114.87868 - 0.0396 * temperature;
+                                break;
+                            case "100":
+                                Ehkl = 121.44194 - 0.05217 * temperature;
+                                break;
+                            case "103":
+                                Ehkl = 112.5052 - 0.03973 * temperature;
+                                break;
+                            case "002":
+                                Ehkl = 118.12912 - 0.0575 * temperature;
+                                break;
+                            case "011":
+                                Ehkl = 114.87868 - 0.0396 * temperature;
+                                break;
+                            default:
+                                break;
+                        }
+                        break ;
+                    case 80:
+                        switch (diff_plane)
+                        {
+                            case "101":
+                                Ehkl = 115.87868 - 0.0396 * temperature;
+                                break;
+                            case "100":
+                                Ehkl = 122.44194 - 0.05217 * temperature;
+                                break;
+                            case "103":
+                                Ehkl = 113.93501 - 0.04086 * temperature;
+                                break;
+                            case "002":
+                                Ehkl = 119.11698 - 0.05646 * temperature;
+                                break;
+                            case "011":
+                                Ehkl = 115.87868 - 0.0396 * temperature;
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                
+            }else if(phase == "β")
+            {
+
+            }
+            return Ehkl;
         }
     }
 }
