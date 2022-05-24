@@ -21,19 +21,15 @@ namespace DataManage
     {
 
         private static int id;
-        public UpdateData(caseData caseData, List<String> phases)
+        public UpdateData(caseData caseData)
         {
             InitializeComponent();
-            SetPhase(phases);
+            SetPhase();
             show(caseData);            
         }
 
-        private void SetPhase(List<String> phases)
+        private void SetPhase()
         {
-            //foreach (String phase in phases)
-            //{
-            //    Phase.Items.Add(phase);
-            //}
             Phase.Items.Add("α");
             Phase.Items.Add("β");
         }
@@ -41,15 +37,15 @@ namespace DataManage
         public void show(caseData caseData)
 
         {
+            
             id = caseData.Id;
-            Phase.SelectedValue= caseData.Phase;
-             
+            Phase.SelectedValue = caseData.Phase;
             Phase_ratio.Text = caseData.Phase_ratio.ToString();
             Temperature.Text = caseData.Temperature.ToString();
-            Diff_plane.Text = caseData.Diff_plane;
+            Diff_plane.SelectedValue = caseData.Diff_plane;
             Ehkl.Text = caseData.Ehkl.ToString();
             Vhkl.Text = caseData.Vhkl.ToString();
-            Distance.Text = caseData.Distance.ToString();
+            Distance.Text = caseData.Distance.ToString();           
         }
 
         public delegate void TransfDelegate(caseData caseData);
@@ -63,12 +59,35 @@ namespace DataManage
             caseData.Phase = Phase.SelectedValue.ToString();
             caseData.Phase_ratio = Convert.ToDouble(Phase_ratio.Text.Trim());
             caseData.Temperature = Convert.ToDouble(Temperature.Text.Trim());
-            caseData.Diff_plane = Diff_plane.Text.Trim();
+            caseData.Diff_plane = Diff_plane.SelectedValue.ToString();
             caseData.Ehkl = Convert.ToDouble(Ehkl.Text.Trim());
             caseData.Vhkl = Convert.ToDouble(Vhkl.Text.Trim());
             caseData.Distance = Convert.ToDouble(Distance.Text.Trim());
             TransfEvent(caseData);//触发事件
             this.Close();
+        }
+
+        //相的点击事件
+        private void inputPhase_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Diff_plane.Items.Clear();
+            if (Phase.SelectedValue.ToString() == "α")
+            {
+                Diff_plane.Items.Add("101");
+                Diff_plane.Items.Add("100");
+                Diff_plane.Items.Add("103");
+                Diff_plane.Items.Add("002");
+                Diff_plane.Items.Add("011");
+            }
+            if (Phase.SelectedValue.ToString() == "β")
+            {
+                Diff_plane.Items.Add("100");
+                Diff_plane.Items.Add("101");
+                Diff_plane.Items.Add("102");
+                Diff_plane.Items.Add("211");
+                Diff_plane.Items.Add("110");
+            }
+
         }
     }
 }

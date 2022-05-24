@@ -32,6 +32,7 @@ namespace DataManage
         public static string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
 
         public static string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;Version=3;";
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -79,10 +80,12 @@ namespace DataManage
                         conn.Open();
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
+                            int i = 1;
                             while (reader.Read())
                             {
                                 caseData casedata = new caseData();
                                 casedata.Id = Convert.ToInt32(reader["id"]);
+                                casedata.FlaseId = i;
                                 casedata.Phase = reader["phase"].ToString();
                                 casedata.Phase_ratio = Convert.ToDouble(reader["phase_ratio"]);
                                 casedata.Temperature = Convert.ToDouble(reader["temperature"]);
@@ -98,7 +101,7 @@ namespace DataManage
                                     casedata.Distance = Convert.ToDouble(reader["distance"]);
                                 }
                                 list.Add(casedata);
-                               
+                                i++;
                             }
                             /*MessageBox.Show("进来了");*/
                         }
@@ -212,11 +215,13 @@ namespace DataManage
                         conn.Open();
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
+                            int i = 1;
                             while (reader.Read())
                             {
                                 HasData = true;
                                 caseData casedata = new caseData();
                                 casedata.Id = Convert.ToInt32(reader["id"]);
+                                casedata.FlaseId = i;
                                 casedata.Phase = reader["phase"].ToString();
                                 casedata.Phase_ratio = Convert.ToDouble(reader["phase_ratio"]);
                                 casedata.Temperature = Convert.ToDouble(reader["temperature"]);
@@ -232,6 +237,7 @@ namespace DataManage
                                     casedata.Distance = Convert.ToDouble(reader["distance"]);
                                 }
                                 list.Add(casedata);
+                                i++;
                             }                           
                         }
                     }
@@ -292,8 +298,8 @@ namespace DataManage
          // 增加数据
          private void BtnAdd(object sender, RoutedEventArgs e)
         {
-            List<String> phases = selectPhaseALL();
-            AddData adddata = new AddData(phases);
+           
+            AddData adddata = new AddData();
             adddata.TransfEvent += Add_TransfEvent;
             adddata.ShowDialog();
          }
@@ -570,9 +576,9 @@ namespace DataManage
                 {
                     //MessageBox.Show(i.ToString());
                     int updateId = Convert.ToInt32(cb.Tag);
-                    List<String> phases = selectPhaseALL();
+                    
                     caseData caseData = selectDataById(updateId);
-                    UpdateData updateData = new UpdateData(caseData,phases);
+                    UpdateData updateData = new UpdateData(caseData);
                     updateData.TransfEvent += Update_TransfEvent;
                     updateData.ShowDialog();
                     flag= true;
