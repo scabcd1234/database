@@ -8,6 +8,7 @@ namespace DataManage
 {
     public class caseData
     {
+        public int FlaseId { get; set; }
         public int Id { get; set; }
         public string Phase { get; set; }
         public int Phase_ratio { get; set; }
