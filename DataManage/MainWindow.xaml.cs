@@ -83,7 +83,7 @@ namespace DataManage
             {
                 sql2 += " and phase like '" + inputPhase.Text.Trim() + "%' ";
             }*/
-            string sql = sql1 + sql2 + sql3;
+            string sql = sql1 + sql2 ;
 
             /*MessageBox.Show(sql);*/
             using(SQLiteConnection conn = new SQLiteConnection(connStr))
@@ -224,7 +224,7 @@ namespace DataManage
         {
             string sql = "SELECT * FROM data where 1 = 1";
             
-            if (inputPhase.SelectedValue!=null)
+            if (inputPhase.SelectedValue.ToString()!="")
             {
                 sql = sql + " and phase='"+ inputPhase.SelectedValue.ToString()+"'";
             }
@@ -298,6 +298,7 @@ namespace DataManage
         // 删除数据
         private void BtnDelete(object sender, RoutedEventArgs e)
         {
+            bool flag = false;
             string sql = "delete from data where 1 = 2";
             for (int i = 0; i < dg1.Items.Count; i++)
             {
@@ -308,29 +309,37 @@ namespace DataManage
                 CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
                 if (cb.IsChecked == true)
                 {
-                    sql = sql + " or data.Id =" + cb.Tag;                  
+                    sql = sql + " or data.Id =" + cb.Tag;
+                    flag = true;
                 }         
             }
-            
-            object lockThis = new object();
-            
-            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+
+            if (flag)
             {
-                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
                 {
-                    try
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                     {
-                         conn.Open();
-                         command.ExecuteNonQuery();
-                         MessageBox.Show("删除成功", "");
+                        try
+                        {
+                            conn.Open();
+                            command.ExecuteNonQuery();
+                            MessageBox.Show("删除成功", "");
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("删除数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
                     }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("删除数据：" + "失败：" + ex.Message);
-                    }
-                    conn.Close();
                 }
-            }            
+            }
+            else
+            {
+                MessageBox.Show("请选择需要操作的数据", "提示信息");
+            }
+            
+                        
             ShowAllData();            
         }
         
@@ -338,16 +347,18 @@ namespace DataManage
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             CheckBox headercb = (CheckBox)sender;
-
             for (int i = 0; i < dg1.Items.Count; i++)
             {
                 //获取行
                 DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
 
-                //获取该行的某列
-                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+                if (neddrow != null)
+                {
+                    //获取该行的某列
+                    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
 
-                cb.IsChecked = headercb.IsChecked;
+                    cb.IsChecked = headercb.IsChecked;
+                }                               
             }
         }
               
@@ -466,64 +477,73 @@ namespace DataManage
         }
 
         // 向数据库中插入excel文件
-        public void ImportXls(string filePath)
-        {           
-            IWorkbook workbook = WorkbookFactory.Create(filePath);
-            ISheet sheet = workbook.GetSheetAt(0);//获取第一个工作簿            
-            
-            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+        public int ImportXls(string filePath)
+        {
+            try
             {
-                try
+                IWorkbook workbook = WorkbookFactory.Create(filePath);
+                ISheet sheet = workbook.GetSheetAt(0);//获取第一个工作簿
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
                 {
-                    conn.Open();
-                    //开始导入数据库
-                    for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
+                    try
                     {
-                        IRow row = (IRow)sheet.GetRow(i);//获取第i行
-                        string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";                       
-                        for (int j = 0; j <= 6; j++)
+                        conn.Open();
+                        //开始导入数据库
+                        for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
                         {
-                            if (sheet.GetRow(i).GetCell(j) != null)
+                            IRow row = (IRow)sheet.GetRow(i);//获取第i行
+                            string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
+                            for (int j = 0; j <= 6; j++)
                             {
-                                sql = sql + sheet.GetRow(i).GetCell(j).ToString() + "','";
+                                if (sheet.GetRow(i).GetCell(j) != null)
+                                {
+                                    sql = sql + sheet.GetRow(i).GetCell(j).ToString() + "','";
+                                }
+                                else
+                                {
+                                    sql = sql + "" + "','";
+                                }
                             }
-                            else
+                            sql = sql.Substring(0, sql.Length - 2);
+                            sql = sql + ");";
+
+                            using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                             {
-                                sql = sql + ""+ "','";
-                            }                           
+                                command.ExecuteNonQuery();
+                            }
+                            /*MessageBox.Show("插入成功");*/
                         }
-                        sql = sql.Substring(0, sql.Length - 2);
-                        sql = sql + ");";
-                        
-                        using (SQLiteCommand command = new SQLiteCommand(sql, conn))
-                        {
-                            command.ExecuteNonQuery();
-                        }
-                        /*MessageBox.Show("插入成功");*/
+                        MessageBox.Show("上传成功");
+
                     }
-                    MessageBox.Show("上传成功");
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("上传失败");
+                        throw ex;
+                    }
+                    conn.Close();
 
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("上传失败");
-                    throw ex;
-                }
-                conn.Close();
-                
+                workbook.Close();
             }
-            workbook.Close();
+            catch (IOException)
+            {
+                MessageBox.Show("请先该关闭文件！","错误提示");
+                return -1;
+            }                                 
             ShowAllData();
+            return 0;
         }
 
         //导出excel文件
         public void exportXls(List<caseData> list,string filePath)
         {
-            IWorkbook workbook = new XSSFWorkbook();
-            ISheet sheet = workbook.CreateSheet("sheet1");
-            FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
             try
             {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("sheet1");
+                FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
+                
                 //写入excel文件         
                 IRow row = (IRow)sheet.CreateRow(0);//获取第一行                        
                 row.CreateCell(0).SetCellValue("相");
@@ -548,15 +568,15 @@ namespace DataManage
                     i++;
                 }
                 //导出excel               
-                workbook.Write(fs);
+                workbook.Write(fs);                                
+                workbook.Close();
+                fs.Close();
+                MessageBox.Show("导出成功");
             }
-            catch
+            catch (IOException)
             {
-                MessageBox.Show("导出失败");
+                MessageBox.Show("请先该关闭文件！", "错误提示");                
             }
-            MessageBox.Show("导出成功");
-            workbook.Close();
-            fs.Close();
         }
 
         private void BtnRefresh(object sender, RoutedEventArgs e)
@@ -564,18 +584,26 @@ namespace DataManage
             inputTemperature.Text = "";
             inputPhase_ratio.Text = "";
             inputDiff_plane.Items.Clear();
-            inputPhase.SelectedIndex = 0;
             ShowAllData();
+            List<String> phases = selectPhaseALL();
+            inputPhase.Items.Clear();
+            inputPhase.Items.Add("");
+            foreach (String phase in phases)
+            {
+                inputPhase.Items.Add(phase);
+            }
+            inputPhase.SelectedIndex = 0;
         }
 
         // 修改
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
+            bool flag = false;
             for (int i = 0; i < dg1.Items.Count; i++)
             {
                 //获取行
                 DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
-
+                
                 //获取该行的某列
                 CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
                 if (cb.IsChecked == true)
@@ -586,37 +614,45 @@ namespace DataManage
                     UpdateData updateData = new UpdateData(caseData,phases);
                     updateData.TransfEvent += Update_TransfEvent;
                     updateData.ShowDialog();
-                    return ;
+                    flag= true;
+                    return;
                 }
             }
-             
+            if (flag)
+            {
+
+            }
+            else
+            {
+                MessageBox.Show("请选择需要操作的数据", "提示信息");
+            }
 
         }
 
         // 修改数据事件
         void Update_TransfEvent(caseData caseData)
         {
-            string sql = "update data  set phase = '" + caseData.Phase + "' , phase_ratio = " + caseData.Phase_ratio + ", temperature = " +
-                        caseData.Temperature + ", diff_plane = '" + caseData.Diff_plane + "', ehkl = '" + caseData.Ehkl + "', vhkl = " +
-                        caseData.Vhkl + ", distance = " + caseData.Distance + " where 1 = 1 and id = " + caseData.Id;
+
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
-                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                try
                 {
-                    try{
-                        conn.Open();
-                        
+                    conn.Open();
+                    string sql = "update data  set phase = '" + caseData.Phase + "' , phase_ratio = " + caseData.Phase_ratio + ", temperature = " +
+                    caseData.Temperature + ", diff_plane = '" + caseData.Diff_plane + "', ehkl = '" + caseData.Ehkl + "', vhkl = " +
+                    caseData.Vhkl + ", distance = " + caseData.Distance + " where 1 = 1 and id = " + caseData.Id;
+
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
                         command.ExecuteNonQuery();
                         MessageBox.Show("修改成功");
-                       
                     }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("修改数据失败：" + ex.Message);
-                    }
-                    conn.Close(); 
-                }    
-                             
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("修改数据失败：" + ex.Message);
+                }
+                conn.Close();               
             }
             ShowAllData();
 
@@ -655,9 +691,7 @@ namespace DataManage
                                     casedata.Distance = Convert.ToDouble(reader["distance"]);
                                 }
                             }
-                        }
-                            
-                        
+                        }                            
                     }
                     catch (Exception ex)
                     {
@@ -740,19 +774,17 @@ namespace DataManage
         }
 
         private void inputPhase_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
+        {         
             inputDiff_plane.Items.Clear();
-            List<String> phases = selectDiff_planeALL(inputPhase.SelectedValue.ToString());
-            foreach (String phase in phases)
+            if (inputPhase.SelectedValue != null)
             {
-                inputDiff_plane.Items.Add(phase);
+                List<String> phases = selectDiff_planeALL(inputPhase.SelectedValue.ToString());
+                foreach (String phase in phases)
+                {
+                    inputDiff_plane.Items.Add(phase);
+                }
             }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
+            
         }
 
         private void UploadFile(object sender, RoutedEventArgs e)
@@ -773,7 +805,7 @@ namespace DataManage
                 string str1 = fileDialog1.FileName;
                 /*MessageBox.Show(str1);*/
                 MessageBox.Show("正在上传中");
-                ImportXls(str1);
+                ImportXls(str1);                              
                 Upload.IsEnabled = true;
             }
             else
@@ -785,7 +817,11 @@ namespace DataManage
         private void BtnExport(object sender, RoutedEventArgs e)
         {
             List<caseData> list = new List<caseData>();
-            bool flag=false;
+            bool flag=false;           
+            Microsoft.Win32.SaveFileDialog fileDialog1 = new Microsoft.Win32.SaveFileDialog();
+            fileDialog1.InitialDirectory = "c:\\";//初始目录
+            fileDialog1.Filter = "Execl files (*.xlsx)|*.xlsx";//文件的类型
+            fileDialog1.FilterIndex = 1;
             for (int i = 0; i < dg1.Items.Count; i++)
             {
                 //获取行
@@ -803,7 +839,15 @@ namespace DataManage
             }
             if (flag)
             {
-                exportXls(list, "E:\\c#study\\tt.xlsx");
+                if (fileDialog1.ShowDialog() == true)
+                {
+                    String filename = fileDialog1.FileName;
+                    exportXls(list, filename);
+                }
+                else
+                {
+
+                }              
             }
             else
             {

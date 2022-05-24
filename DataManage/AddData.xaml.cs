@@ -53,9 +53,5 @@ namespace DataManage
             this.Close();
         }
 
-        
-
-        
-        
     }
 }
