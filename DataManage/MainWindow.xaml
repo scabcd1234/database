@@ -70,7 +70,7 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
+                                
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
@@ -149,7 +149,7 @@
                                         <Setter Property="BorderBrush" Value="Gray" />
                                     </Style>
                                 </DataGrid.ColumnHeaderStyle>
-                                
+
                                 <DataGrid.Columns>
                                     <DataGridCheckBoxColumn>
                                         <DataGridCheckBoxColumn.HeaderTemplate >
@@ -170,7 +170,7 @@
                                             <Style>
                                                 <Setter Property="CheckBox.VerticalAlignment"  Value="Center"></Setter>
                                                 <Setter Property="CheckBox.HorizontalAlignment"  Value="Center"></Setter>
-                                                
+
                                             </Style>
                                         </DataGridCheckBoxColumn.CellStyle>
 
@@ -194,38 +194,18 @@
                                     <DataGridTextColumn Binding="{Binding Vhkl}" Header="衍射弹性常数vhkl"  Width="160"/>
                                     <DataGridTextColumn Binding="{Binding Distance}" Header="晶面间距d"  Width="100">
                                         <DataGridTextColumn.ElementStyle>
-                                                <Style TargetType="TextBlock">
+                                            <Style TargetType="TextBlock">
                                                 <Setter Property="TextWrapping" Value="Wrap"/>
                                                 <Setter Property="HorizontalAlignment" Value="Center"/>
                                                 <Setter Property="Height" Value="auto"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    
+
                                 </DataGrid.Columns>
 
                             </DataGrid>
-                            
-                            <!--分页-->
-                            
-                            <Grid Grid.Row="3" Grid.Column="1" VerticalAlignment="Bottom">
-                                <StackPanel Orientation="Horizontal"  Margin="20,10,20,10">
-                                    <Button Content="上一页"  Click="BtnUp_Click" IsEnabled="False" Name="BtnUp" HorizontalAlignment="Left" Margin="125,2,0,2" Style="{StaticResource textButton}"></Button>
-                                    <Button Content="下一页" Click="BtnNext_Click" Name="BtnNext" HorizontalAlignment="Left" Margin="10,2,0,2" Style="{StaticResource textButton}"></Button>
-                                    <Label Content="第" HorizontalAlignment="Left" Margin="10,2,0,2" Style="{StaticResource showLabel}"></Label>
-                                    <Label Name="CurrentPage" Content="" HorizontalAlignment="Left" Margin="0,2,0,2" Style="{StaticResource showLabel}"></Label>
-                                    <Label Content="页" HorizontalAlignment="Left" Margin="0,2,2,2" Style="{StaticResource showLabel}"></Label>
 
-                                    <Label Content="共" HorizontalAlignment="Left" Margin="2,2,0,2" Style="{StaticResource showLabel}"></Label>
-                                    <Label Name="AllPage" Content="" HorizontalAlignment="Left" Margin="0,2,0,2" Style="{StaticResource showLabel}"></Label>
-                                    <Label Content="页" HorizontalAlignment="Left" Margin="0,2,2,2" Style="{StaticResource showLabel}"></Label>
-
-                                    <TextBox Text="" Name="InputNumber" Width="380" Margin="10,2,10,2"  Style="{StaticResource inputBox}" ></TextBox>
-                                    <Button Content="跳转" MinWidth="60" VerticalContentAlignment="Center" Click="Skip"  Margin="10,2,0,2" Style="{StaticResource textButton}"/>
-                                </StackPanel>
-                            </Grid>
-                            
-                            
                         </Grid>
                     </TabItem>
 

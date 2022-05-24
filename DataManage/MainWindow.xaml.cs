@@ -29,13 +29,6 @@ namespace DataManage
     public partial class MainWindow : Window
     {
 
-        //当前页
-        public static int pageIndex = 1;
-        //总页数
-        public static int totalPage = 0;
-        //页大小
-        public static int pageSize = 10;
-
         public static string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
 
         public static string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;Version=3;";
@@ -63,21 +56,12 @@ namespace DataManage
         
             int Count = selectData();
             
-            totalPage = Count % pageSize == 0 ? Count / pageSize : Count / pageSize + 1;
-            if (pageIndex > totalPage)
-            {
-                pageIndex = totalPage;
-            }
-            if (pageIndex == 0 && totalPage != 0)
-            {
-                pageIndex = 1;
-            }
-            int index = (pageIndex - 1) * pageSize;
+            
             /*string sql = "SELECT * FROM casedata " + "limit " + index + "," + pageSize;*/
             
             string sql1 = "SELECT * FROM data " ;
             string sql2 = "where 1 = 1 ";
-            string sql3 = "limit " + index + "," + pageSize;
+            
             
             /*if (inputPhase.Text.Trim() != "")
             {
@@ -131,27 +115,7 @@ namespace DataManage
             dg1.ItemsSource = null;
             dg1.ItemsSource = list;
             
-            if (totalPage <= 1)
-            {
-                BtnNext.IsEnabled = false;
-                BtnUp.IsEnabled = false;
-            }else if(pageIndex < totalPage && pageIndex >1)
-            {
-                BtnNext.IsEnabled = true;
-                BtnUp.IsEnabled = true;
-            }else if (pageIndex < totalPage && pageIndex == 1)
-            {
-                BtnUp.IsEnabled = false;
-                BtnNext.IsEnabled = true;
-            }else if (pageIndex == totalPage && pageIndex >1)
-            {
-                BtnNext.IsEnabled = false;
-                BtnUp.IsEnabled = true;
-            }
-
-            
-            AllPage.Content = totalPage.ToString();
-            CurrentPage.Content = pageIndex.ToString();      
+                
         }
 
         // 查询所有数据条数
@@ -378,53 +342,9 @@ namespace DataManage
                 }                                 
         }
 
-        // 上一页
-        private void BtnUp_Click(object sender, RoutedEventArgs e)
-        {
-            
-            if(pageIndex > 1 )
-            {
-                pageIndex -= 1;                          
-            }               
-            ShowAllData();
-        }
+        
 
-        // 下一页
-        private void BtnNext_Click(object sender, RoutedEventArgs e)
-        {
-            
-            if (pageIndex < totalPage)
-            {              
-                pageIndex += 1;                               
-            }
-            ShowAllData();
-        }
-
-        // 跳转
-        private void Skip(object sender, RoutedEventArgs e)
-        {
-            if(InputNumber.Text != "")
-            {
-                int inputNumber = Convert.ToInt32(InputNumber.Text);
-            
-                if(inputNumber > totalPage)
-                {
-                    pageIndex = totalPage;
-                
-                }else if (inputNumber < 1)
-                {
-                    pageIndex = 1;
-                
-                }
-                else
-                {
-                    pageIndex = inputNumber;               
-                }
-            
-                ShowAllData();
-            }
-            
-        }
+        
 
         // 向数据库中插入csv文件
         public void ImportCsv(string filePath, string fileName)
@@ -789,7 +709,7 @@ namespace DataManage
 
         private void UploadFile(object sender, RoutedEventArgs e)
         {
-            Upload.IsEnabled = false;
+            
             
             /*ImportXls("C:\\Users\\艺涛\\Desktop\\数据库表格(1).xlsx");*/
             Microsoft.Win32.OpenFileDialog fileDialog1 = new Microsoft.Win32.OpenFileDialog();
@@ -797,16 +717,14 @@ namespace DataManage
             fileDialog1.Filter = "Execl files (*.xlsx)|*.xlsx";//文件的类型
             fileDialog1.FilterIndex = 1;
             fileDialog1.RestoreDirectory = true;
-            Upload.IsEnabled = false;
+            
             if (fileDialog1.ShowDialog() == true)
             {
-
                 FilePath.Text = fileDialog1.FileName;
                 string str1 = fileDialog1.FileName;
                 /*MessageBox.Show(str1);*/
                 MessageBox.Show("正在上传中");
-                ImportXls(str1);                              
-                Upload.IsEnabled = true;
+                ImportXls(str1);                                     
             }
             else
             {
