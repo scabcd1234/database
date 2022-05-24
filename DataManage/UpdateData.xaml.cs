@@ -58,7 +58,7 @@ namespace DataManage
 
             caseData caseData = new caseData();
             caseData.Id = id;
-            caseData.Phase = Phase.Text.Trim();
+            caseData.Phase = Phase.SelectedValue.ToString();
             caseData.Phase_ratio = Convert.ToInt32(Phase_ratio.Text.Trim());
             caseData.Temperature = Convert.ToInt32(Temperature.Text.Trim());
             caseData.Diff_plane = Diff_plane.Text.Trim();

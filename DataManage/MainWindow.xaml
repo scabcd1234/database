@@ -13,45 +13,47 @@
         <XmlDataProvider x:Key="AllItem" />
         <!--TextBlock样式设定-->
         <Style x:Key="dgCell" TargetType="{x:Type TextBlock}">
-        <Setter Property="Height" Value="20"/>
+        <Setter Property="Height" Value="15"/>
         </Style>
         
         <!--输入框(TextBox)样式设定-->
         <Style x:Key="inputBox" TargetType="{x:Type TextBox}">
-            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontSize" Value="8"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="BorderThickness" Value="0.5"/>
-            <Setter Property="Height" Value="20"/>
+            <Setter Property="Height" Value="15"/>
         </Style>
 
         <!--输入框(Label)样式设定-->
         <Style x:Key="showLabel" TargetType="{x:Type Label}">
-            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontSize" Value="8"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="BorderThickness" Value="0.5"/>
-            <Setter Property="Height" Value="20"/>
+            <Setter Property="Height" Value="15"/>
             <Setter Property="Padding" Value="2"/>
         </Style>
 
         <!--下拉框(ComboBox)样式设定-->
         <Style x:Key="selectComboBox" TargetType="{x:Type ComboBox}">
             <Setter Property="BorderThickness" Value="0.5"/>
-            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontSize" Value="8"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Height" Value="20"/>
+            <Setter Property="Height" Value="15"/>
         </Style>
 
         <!--Button样式设定-->
         <Style x:Key="textButton" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="Transparent"></Setter>
             <Setter Property="BorderThickness" Value="0.5"></Setter>
-            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontSize" Value="8"/>
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="1"/>
             <!-- <Setter Property="FontFamily" Value="Arial,SimSun"/>-->
             
-            <Setter Property="Height" Value="20"/>
+            <Setter Property="Height" Value="15"/>
         </Style>
         <!---->
     </Window.Resources>
@@ -61,7 +63,7 @@
         <Viewbox Stretch="Fill" >
             <Grid>
                 <TabControl TabStripPlacement="Left">
-                    <TabItem Header="数据展示" FontSize="14" Height="40">
+                    <TabItem Header="数据展示" FontSize="15" Height="40">
                         <Grid Background="#FFE5E5E5">
                             <!--三行一列-->
                             <Grid.RowDefinitions>
@@ -79,10 +81,10 @@
                             <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top">
                                 
                                 <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
-                                    <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="190,0,0,0" Style="{StaticResource showLabel}"></Label>
+                                    <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="0,0,0,0" Style="{StaticResource showLabel}"></Label>
                                     <ComboBox Name="inputPhase" Width="50" SelectionChanged="inputPhase_SelectionChanged" Margin="0,0,10,0" Style="{StaticResource selectComboBox}"></ComboBox>
 
-                                    <Label Content="请输入相比例:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0"  Style="{StaticResource showLabel}"></Label>
+                                    <Label Content="请输入相比例:"  HorizontalAlignment="Left"  Margin="10,0,0,0"  Style="{StaticResource showLabel}"></Label>
                                     <TextBox Text="" Name="inputPhase_ratio" MinWidth="50" Margin="0,0,10,0" Style="{StaticResource inputBox}" ></TextBox>
 
                                     <Label Content="请输入温度:"  Panel.ZIndex="-10" Style="{StaticResource showLabel}"></Label>
@@ -90,20 +92,30 @@
 
                                     <Label Content="请选择衍射面:" Style="{StaticResource showLabel}"></Label>
                                     <ComboBox Name="inputDiff_plane" Width="70" Margin="0,0,10,0" Style="{StaticResource selectComboBox}"></ComboBox>
-                                    <Button Content="查询" MinWidth="60" Margin="10,0,10,0"  Click="BtnSelect" Style="{StaticResource textButton}"/>
-                                    <Button Content="刷新" MinWidth="60" Margin="10,0,20,0" Click="BtnRefresh" Style="{StaticResource textButton}"/>
+                                    <Button Content="查询" MinWidth="60" Margin="0,0,10,0"  Click="BtnSelect" Style="{StaticResource textButton}"/>
+                                    <Button Content="刷新" MinWidth="60" Margin="0,0,10,0" Click="BtnRefresh" Style="{StaticResource textButton}"/>
+                                    <Label Content="总条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
+                                    <Label Name="ALLNumber" Content="13000" Margin="0,0,10,0" Style="{StaticResource showLabel}"/>
+
+                                    <Label Content="α条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
+                                    <Label Name="FirstNumber" Content="6500" Margin="0,0,10,0" Style="{StaticResource showLabel}"/>
+
+                                    <Label Content="β条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
+                                    <Label Name="SecondNumber" Content="6500" Margin="0,0,10,0" Style="{StaticResource showLabel}"/>
+                                   
+
                                 </StackPanel>
                             </Grid>
                             
                             <!--操作栏-->
                             <Grid Grid.Row="1" Grid.Column="1">
                                 <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
-                                    <TextBox Width="300" Name="FilePath" Margin="110,0,0,0" Style="{StaticResource inputBox}"></TextBox>
-                                    <Button Content="上传文件" Name="Upload" MinWidth="100" Margin="20,0,0,0" Click="UploadFile" Style="{StaticResource textButton}"/>
-                                    <Button Content="增加" MinWidth="60" Margin="20,0,0,0" Click="BtnAdd"  Style="{StaticResource textButton}" />
-                                    <Button Content="删除" MinWidth="60" Margin="20,0,20,0" Click="BtnDelete" Style="{StaticResource textButton}" />
                                     <Button Content="修改" MinWidth="60" Margin="0,0,20,0" Click="BtnUpdate"  Style="{StaticResource textButton}" />
-                                    <Button Content="导出" MinWidth="60" Margin="0,0,0,0" Click="BtnExport"  Style="{StaticResource textButton}" />
+                                    <Button Content="删除" MinWidth="60" Margin="0,0,20,0" Click="BtnDelete" Style="{StaticResource textButton}" />
+                                    <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="BtnAdd"  Style="{StaticResource textButton}" />
+                                    <Button Content="导出" MinWidth="60" Margin="0,0,20,0" Click="BtnExport"  Style="{StaticResource textButton}" />
+                                    <Button Content="上传文件" Name="Upload" MinWidth="100" Margin="0,0,20,0" Click="UploadFile" Style="{StaticResource textButton}"/>
+                                    <TextBox Width="300" Name="FilePath" Margin="0,0,0,0" Style="{StaticResource inputBox}"></TextBox>
                                 </StackPanel>
                             </Grid>
 
@@ -154,9 +166,10 @@
 
                                         <!--设置一点样式-->
                                         <DataGridCheckBoxColumn.CellStyle >
-                                            <Style  >
+                                            <Style>
                                                 <Setter Property="CheckBox.VerticalAlignment"  Value="Center"></Setter>
                                                 <Setter Property="CheckBox.HorizontalAlignment"  Value="Center"></Setter>
+                                                
                                             </Style>
                                         </DataGridCheckBoxColumn.CellStyle>
 

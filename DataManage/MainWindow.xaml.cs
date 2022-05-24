@@ -596,27 +596,27 @@ namespace DataManage
         // 修改数据事件
         void Update_TransfEvent(caseData caseData)
         {
-
+            string sql = "update data  set phase = '" + caseData.Phase + "' , phase_ratio = " + caseData.Phase_ratio + ", temperature = " +
+                        caseData.Temperature + ", diff_plane = '" + caseData.Diff_plane + "', ehkl = '" + caseData.Ehkl + "', vhkl = " +
+                        caseData.Vhkl + ", distance = " + caseData.Distance + " where 1 = 1 and id = " + caseData.Id;
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
-                try
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                 {
-                    conn.Open();
-                    string sql = "update data  set phase = '" + caseData.Phase + "' , phase_ratio = " + caseData.Phase_ratio + ", temperature = " +
-                    caseData.Temperature + ", diff_plane = '" + caseData.Diff_plane + "', ehkl = '" + caseData.Ehkl + "', vhkl = " +
-                    caseData.Vhkl + ", distance = " + caseData.Distance + " where 1 = 1 and id = " + caseData.Id;
-
-                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
-                    {
+                    try{
+                        conn.Open();
+                        
                         command.ExecuteNonQuery();
                         MessageBox.Show("修改成功");
+                       
                     }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("修改数据失败：" + ex.Message);
-                }
-                conn.Close();               
+                    catch (Exception ex)
+                    {
+                        throw new Exception("修改数据失败：" + ex.Message);
+                    }
+                    conn.Close(); 
+                }    
+                             
             }
             ShowAllData();
 
@@ -634,26 +634,30 @@ namespace DataManage
                 {
                     try
                     {
-                        conn.Open();                       
-                        SQLiteDataReader reader = command.ExecuteReader();
-                        if (reader.Read())
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
                         {
-                            casedata.Id = Convert.ToInt32(reader["id"]);
-                            casedata.Phase = reader["phase"].ToString();
-                            casedata.Phase_ratio = (int)reader["phase_ratio"];
-                            casedata.Temperature = (int)reader["temperature"];
-                            casedata.Diff_plane = reader["diff_plane"].ToString();
-                            casedata.Ehkl = (int)reader["ehkl"];
-                            casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
-                            if (reader["distance"].ToString() == "")
+                            if (reader.Read())
                             {
-                                casedata.Distance = 0.00;
-                            }
-                            else
-                            {
-                                casedata.Distance = Convert.ToDouble(reader["distance"]);
+                                casedata.Id = Convert.ToInt32(reader["id"]);
+                                casedata.Phase = reader["phase"].ToString();
+                                casedata.Phase_ratio = (int)reader["phase_ratio"];
+                                casedata.Temperature = (int)reader["temperature"];
+                                casedata.Diff_plane = reader["diff_plane"].ToString();
+                                casedata.Ehkl = (int)reader["ehkl"];
+                                casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
+                                if (reader["distance"].ToString() == "")
+                                {
+                                    casedata.Distance = 0.00;
+                                }
+                                else
+                                {
+                                    casedata.Distance = Convert.ToDouble(reader["distance"]);
+                                }
                             }
                         }
+                            
+                        
                     }
                     catch (Exception ex)
                     {
