@@ -289,6 +289,10 @@ namespace DataManage
                     casedata.Ehkl = Ehkl;
                     List<double> test = selectPhase_ratio(phase, inputDiff_plane.SelectedValue.ToString());
                     List<double> temperature_list = selectTemperature(phase, inputDiff_plane.SelectedValue.ToString(), after_phase_ratio);
+                    caseData selectData = new caseData();
+                    selectData = selectVhklAndDistance(phase, inputDiff_plane.SelectedValue.ToString(), after_phase_ratio, 20);
+                    casedata.Vhkl = selectData.Vhkl;
+                    casedata.Distance = selectData.Distance;
                     list.Add(casedata);
                 }                            
             }
@@ -388,10 +392,7 @@ namespace DataManage
                     cb.IsChecked = !cb.IsChecked;
                 }                                 
         }
-
-        
-
-        
+ 
 
         // 向数据库中插入csv文件
         public void ImportCsv(string filePath, string fileName)
@@ -1102,14 +1103,15 @@ namespace DataManage
         }
 
         // 根据相、衍射面、相比例和温度查找确定的衍射弹性常数vhkl、晶面间距d
-        private selectVhklAndDistance(String phase, string diff_plane, double phase_ratio,double temperature)
+        private caseData selectVhklAndDistance(String phase, string diff_plane, double phase_ratio,double temperature)
         {
-            MessageBox.Show("进来了");
-            string sql = "select  from data where phase = '" + phase + "' and diff_plane = '" + diff_plane + "' and phase_ratio = '" + 
+            caseData casedata = new caseData();
+            
+            string sql = "select * from data where phase = '" + phase + "' and diff_plane = '" + diff_plane + "' and phase_ratio = '" + 
                 phase_ratio + "' and temperature = '" + temperature + "'";
             /*select phase_ratio from data where phase = 'α' and diff_plane = '100' group by phase_ratio*/
-            MessageBox.Show(sql);
-            List<double> strs = new List<double>();
+            
+            
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 using (SQLiteCommand command = new SQLiteCommand(sql, conn))
@@ -1121,7 +1123,15 @@ namespace DataManage
                         {
                             while (reader.Read())
                             {
-                                strs.Add(Convert.ToDouble(reader["temperature"]));
+                                casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
+                                if (reader["distance"].ToString() == "")
+                                {
+                                    casedata.Distance = 0.00;
+                                }
+                                else
+                                {
+                                    casedata.Distance = Convert.ToDouble(reader["distance"]);
+                                }
                             }
                         }
                     }
@@ -1131,8 +1141,7 @@ namespace DataManage
                         throw new Exception("查询数据失败：" + ex.Message);
                     }
                     conn.Close();
-                    MessageBox.Show(strs[0].ToString());
-                    return strs;
+                    return casedata;
 
                 }
             }
