@@ -184,7 +184,7 @@ namespace DataManage
         // 多个搜索字段查询
         private void BtnSelect(object sender, RoutedEventArgs e)
         {
-            bool HasData=false;
+            bool HasData = false;
             string sql = "SELECT * FROM data where 1 = 1";
             
             if (inputPhase.SelectedValue.ToString()!="")
@@ -193,7 +193,7 @@ namespace DataManage
             }
             if (inputTemperature.Text.ToString() != "")
             {
-                sql=sql+" and temperature='" + inputTemperature.Text.ToString()+ "'";
+                sql = sql+" and temperature='" + inputTemperature.Text.ToString()+ "'";
             }
             if (inputPhase_ratio.Text.ToString() != "")
             {
@@ -254,7 +254,7 @@ namespace DataManage
                 {
                     String phase = inputPhase.SelectedValue.ToString();
                     double before_phase_ratio = Convert.ToDouble(inputPhase_ratio.Text); // 近似前相位比
-                    double after_phase_ratio= before_phase_ratio; // 近似后相位比
+                    double after_phase_ratio = before_phase_ratio; // 近似后相位比
                     if (phase == "α")
                     {          
                         double[] ratio_list = { 62, 55.5, 70, 80 };
@@ -262,7 +262,7 @@ namespace DataManage
                         after_phase_ratio = ratio_list[0];
                         foreach(double tmp in ratio_list)
                         {
-                            if(Math.Abs(before_phase_ratio - tmp)<=Math.Abs(before_phase_ratio - after_phase_ratio))
+                            if(Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio))
                             {
                                 after_phase_ratio = tmp;
                             }
@@ -287,6 +287,8 @@ namespace DataManage
                     casedata.Temperature = Convert.ToDouble(inputTemperature.Text);
                     casedata.Diff_plane = inputDiff_plane.SelectedValue.ToString();
                     casedata.Ehkl = Ehkl;
+                    List<double> test = selectPhase_ratio(phase, inputDiff_plane.SelectedValue.ToString());
+                    List<double> temperature_list = selectTemperature(phase, inputDiff_plane.SelectedValue.ToString(), after_phase_ratio);
                     list.Add(casedata);
                 }                            
             }
@@ -840,7 +842,7 @@ namespace DataManage
                         switch (diff_plane)
                         {
                             case "101":
-                                Ehkl = 112.84229 - 0.03658 * temperature;
+                                Ehkl = 112.84229 - 0.03648 * temperature;
                                 break;
                             case "100":
                                 Ehkl = 119.20884 - 0.05004 * temperature;
@@ -852,7 +854,7 @@ namespace DataManage
                                 Ehkl = 115.84749 - 0.05121 * temperature;
                                 break;
                             case "011":
-                                Ehkl = 112.84229 - 0.03658 * temperature;
+                                Ehkl = 112.84229 - 0.03648 * temperature;
                                 break;
                             default:
                                 break;
@@ -1026,6 +1028,114 @@ namespace DataManage
 
             }
             return Ehkl;
+        }
+
+        // 根据相和衍射面查找所有的相比例
+        private List<double> selectPhase_ratio(String phase,string diff_plane)
+        { 
+            string sql = "select phase_ratio from data where phase = '" + phase + "' and diff_plane = '" + diff_plane + "' group by phase_ratio";
+            /*select phase_ratio from data where phase = 'α' and diff_plane = '100' group by phase_ratio*/
+            
+            List<double> strs = new List<double>();
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                strs.Add(Convert.ToDouble(reader["phase_ratio"]));
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("查询失败123", "");
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                    
+                    return strs;
+
+                }
+            }
+        }
+
+        // 根据相、衍射面和相比例查找所有的温度
+        private List<double> selectTemperature(String phase,string diff_plane,double phase_ratio)
+        {
+            
+            string sql = "select temperature from data where phase = '" + phase + "' and diff_plane = '" + diff_plane + "' and phase_ratio = '" + phase_ratio + "' group by temperature" ;
+            /*select phase_ratio from data where phase = 'α' and diff_plane = '100' group by phase_ratio*/
+           
+            List<double> strs = new List<double>();
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                strs.Add(Convert.ToDouble(reader["temperature"]));
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("查询失败123", "");
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                    
+                    return strs;
+
+                }
+            }
+        }
+
+        // 根据相、衍射面、相比例和温度查找确定的衍射弹性常数vhkl、晶面间距d
+        private selectVhklAndDistance(String phase, string diff_plane, double phase_ratio,double temperature)
+        {
+            MessageBox.Show("进来了");
+            string sql = "select  from data where phase = '" + phase + "' and diff_plane = '" + diff_plane + "' and phase_ratio = '" + 
+                phase_ratio + "' and temperature = '" + temperature + "'";
+            /*select phase_ratio from data where phase = 'α' and diff_plane = '100' group by phase_ratio*/
+            MessageBox.Show(sql);
+            List<double> strs = new List<double>();
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                strs.Add(Convert.ToDouble(reader["temperature"]));
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("查询失败123", "");
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                    MessageBox.Show(strs[0].ToString());
+                    return strs;
+
+                }
+            }
         }
     }
 }
