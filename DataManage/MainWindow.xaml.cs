@@ -393,10 +393,7 @@ namespace DataManage
                     cb.IsChecked = !cb.IsChecked;
                 }                                 
         }
-
-        
-
-        
+ 
 
         // 向数据库中插入csv文件
         public void ImportCsv(string filePath, string fileName)
