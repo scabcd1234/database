@@ -287,12 +287,14 @@ namespace DataManage
                     casedata.Temperature = Convert.ToDouble(inputTemperature.Text);
                     casedata.Diff_plane = inputDiff_plane.SelectedValue.ToString();
                     casedata.Ehkl = Ehkl;
+
                     List<double> test = selectPhase_ratio(phase, inputDiff_plane.SelectedValue.ToString());
                     List<double> temperature_list = selectTemperature(phase, inputDiff_plane.SelectedValue.ToString(), after_phase_ratio);
                     caseData selectData = new caseData();
                     selectData = selectVhklAndDistance(phase, inputDiff_plane.SelectedValue.ToString(), after_phase_ratio, 20);
                     casedata.Vhkl = selectData.Vhkl;
                     casedata.Distance = selectData.Distance;
+
                     list.Add(casedata);
                 }                            
             }
@@ -584,7 +586,7 @@ namespace DataManage
                     UpdateData updateData = new UpdateData(caseData);
                     updateData.TransfEvent += Update_TransfEvent;
                     updateData.ShowDialog();
-                    flag= true;
+                    flag = true;
                     break;
                 }
             }
