@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:local="clr-namespace:DataManage"
         mc:Ignorable="d"
         Title="提示" WindowStartupLocation="CenterScreen" Height="200" Width="300">
@@ -20,10 +21,11 @@
             
         </Style>
     </Window.Resources>
-    
-    <Grid>
 
-        <Label Name="messageShow" Style="{StaticResource showLabel}"></Label>
+    <Grid>
         
+        <Image gif:ImageBehavior.AnimatedSource="loading.gif" Width="28" Height="28" Margin="42,79,230,78" />
+        <Label Name="messageShow" Style="{StaticResource showLabel}"/>
+
     </Grid>
 </Window>

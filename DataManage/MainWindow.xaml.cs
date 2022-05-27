@@ -437,7 +437,7 @@ namespace DataManage
                     //开始导入数据库
                     foreach (DataRow row in ds.Tables[0].Rows)
                     {
-                        string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
+                        string sql = "replace into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
                         foreach (DataColumn column in ds.Tables[0].Columns)
                         {
                              sql = sql + row[column].ToString() + "','";
@@ -462,7 +462,7 @@ namespace DataManage
 
         // 向数据库中插入excel文件
         public int ImportXls(string filePath)
-        {
+        {          
             try
             {
                 IWorkbook workbook = WorkbookFactory.Create(filePath);
@@ -473,13 +473,13 @@ namespace DataManage
                     {
                         NotificationWindow data = new NotificationWindow("正在上传中!");
                         data.Show();
-
+                        
                         conn.Open();
                         //开始导入数据库
                         for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
                         {
                             IRow row = (IRow)sheet.GetRow(i);//获取第i行
-                            string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
+                            string sql = "replace into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
                             for (int j = 0; j <= 6; j++)
                             {
                                 if (sheet.GetRow(i).GetCell(j) != null)
