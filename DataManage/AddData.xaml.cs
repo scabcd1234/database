@@ -42,13 +42,83 @@ namespace DataManage
             inputPhase.Items.Add("β");
         }
         private void Button_Click(object sender, RoutedEventArgs e)
-        {                     
-            string sql = "replace into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
+        {
+            if (string.IsNullOrEmpty(inputPhase.Text.Trim()))
+            {
+                phaseLabel.Visibility = Visibility.Visible;
+                phaseLabel.Content = "相不能为空！";
+            }else if (string.IsNullOrEmpty(Phase_ratio.Text.ToString()))
+            {
+                phaseLabel.Visibility = Visibility.Hidden;
+                Phase_ratioLabel.Visibility = Visibility.Visible;
+                Phase_ratioLabel.Content = "相比例不能为空！";
+            }
+            else if (isNotDouble(Phase_ratio.Text.ToString()))
+            {
+                Phase_ratioLabel.Visibility = Visibility.Visible;
+                Phase_ratioLabel.Content = "请输入double类型！";
+            }
+            else if (string.IsNullOrEmpty(Temperature.Text.ToString()))
+            {
+                Phase_ratioLabel.Visibility = Visibility.Hidden;
+                TemperatureLabel.Visibility = Visibility.Visible;
+                TemperatureLabel.Content = "温度不能为空！";
+            }
+            else if (isNotDouble(Temperature.Text.ToString()))
+            {
+                TemperatureLabel.Visibility = Visibility.Visible;
+                TemperatureLabel.Content = "请输入double类型！";
+            }
+            else if (string.IsNullOrEmpty(inputDiff_plane.Text.Trim()))
+            {
+                TemperatureLabel.Visibility = Visibility.Hidden;
+                Diff_planeLabel.Visibility = Visibility.Visible;
+                Diff_planeLabel.Content = "衍射面不能为空！";
+            }
+            else if (string.IsNullOrEmpty(Ehkl.Text.ToString()))
+            {
+                Diff_planeLabel.Visibility = Visibility.Hidden;
+                EhklLabel.Visibility = Visibility.Visible;
+                EhklLabel.Content = "Ehkl不能为空！";
+            }
+            else if (isNotDouble(Ehkl.Text.ToString()))
+            {
+                EhklLabel.Visibility = Visibility.Visible;
+                EhklLabel.Content = "请输入double类型！";
+            }
+            else if (string.IsNullOrEmpty(Vhkl.Text.ToString()))
+            {
+                EhklLabel.Visibility = Visibility.Hidden;
+                VhklLabel.Visibility = Visibility.Visible;
+                VhklLabel.Content = "vhkl不能为空！";
+            }
+            else if (isNotDouble(Vhkl.Text.ToString()))
+            {
+                VhklLabel.Visibility = Visibility.Visible;
+                VhklLabel.Content = "请输入double类型！";
+            }
+            else if (string.IsNullOrEmpty(Distance.Text.ToString()))
+            {
+                VhklLabel.Visibility = Visibility.Hidden;
+                DistanceLabel.Visibility = Visibility.Visible;
+                DistanceLabel.Content = "晶面间距d不能为空！";
+            }
+            else if (isNotDouble(Distance.Text.ToString()))
+            {
+                DistanceLabel.Visibility = Visibility.Visible;
+                DistanceLabel.Content = "请输入double类型！";
+            }
+            else
+            {
+                DistanceLabel.Visibility = Visibility.Hidden;
+                string sql = "replace into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
                     + inputPhase.SelectedValue.ToString() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + inputDiff_plane.Text.Trim() + "','"
                     + Ehkl.Text.Trim() + "','" + Vhkl.Text.Trim() + "','" + Distance.Text.Trim() + "');";
-            //MessageBox.Show(sql);
-            TransfEvent(sql);//触发事件
-            this.Close();
+                //MessageBox.Show(sql);
+                TransfEvent(sql);//触发事件
+                this.Close();
+            }
+                
         }
 
         //相的点击事件
