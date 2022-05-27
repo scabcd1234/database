@@ -26,7 +26,7 @@ namespace DataManage
         {
             InitializeComponent();
             SetPhaseAndDiffPlane();
-
+            
         }
         public static string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
 
@@ -42,7 +42,8 @@ namespace DataManage
             inputPhase.Items.Add("β");
         }
         private void Button_Click(object sender, RoutedEventArgs e)
-        {                     
+        {          
+            
             string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
                     + inputPhase.SelectedValue.ToString() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + inputDiff_plane.Text.Trim() + "','"
                     + Ehkl.Text.Trim() + "','" + Vhkl.Text.Trim() + "','" + Distance.Text.Trim() + "');";
@@ -54,6 +55,7 @@ namespace DataManage
         //相的点击事件
         private void inputPhase_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+           
             inputDiff_plane.Items.Clear();
             if (inputPhase.SelectedValue.ToString() == "α")
             {
@@ -74,5 +76,165 @@ namespace DataManage
 
         }
 
+
+        // 相失去焦点 LostFocus="inputPhase_LostFocus"
+        private void inputPhase_LostFocus(object sender, RoutedEventArgs e)
+        {
+
+            string temp = inputPhase.Text.Trim();
+            if (string.IsNullOrEmpty(temp))
+            {
+                phaseLabel.Visibility = Visibility.Visible;
+                phaseLabel.Content = "相不能为空！";
+            }
+            else
+            {
+                phaseLabel.Visibility = Visibility.Hidden;
+            }
+        }
+
+        // 相比例失去焦点
+        private void Phase_ratio_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string temp = Phase_ratio.Text.ToString();
+            if (string.IsNullOrEmpty(temp))
+            {
+                Phase_ratioLabel.Visibility = Visibility.Visible;
+                Phase_ratioLabel.Content = "相比例不能为空！";
+            }
+            else if(isNotDouble(temp))
+            {
+                Phase_ratioLabel.Visibility = Visibility.Visible;
+                Phase_ratioLabel.Content = "请输入double类型！";
+
+            }
+            else
+            {
+                Phase_ratioLabel.Visibility = Visibility.Hidden;
+            }
+            
+        }
+
+        // 温度失去焦点
+        private void Temperature_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string temp = Temperature.Text.ToString();
+            if (string.IsNullOrEmpty(temp))
+            {
+                TemperatureLabel.Visibility = Visibility.Visible;
+                TemperatureLabel.Content = "温度不能为空！";
+            }
+            else if (isNotDouble(temp))
+            {
+                TemperatureLabel.Visibility = Visibility.Visible;
+                TemperatureLabel.Content = "请输入double类型！";
+
+            }
+            else
+            {
+                TemperatureLabel.Visibility = Visibility.Hidden;
+            }
+        }
+
+        // 衍射面失去焦点 LostFocus="inputDiff_plane_LostFocus"
+        private void inputDiff_plane_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string temp = inputDiff_plane.Text.Trim();
+            if (string.IsNullOrEmpty(temp))
+            {
+                Diff_planeLabel.Visibility = Visibility.Visible;
+                Diff_planeLabel.Content = "衍射面不能为空！";
+            }
+            else
+            {
+                Diff_planeLabel.Visibility = Visibility.Hidden;
+            }
+        }
+
+        //判断输入是否为double,不是则返回true
+        public static bool isNotDouble(string str)
+        {
+            bool flag = false;
+            if (str.StartsWith(".") || str.EndsWith("."))
+            {
+                flag = true;
+            }
+            else
+            {
+                for (int i = 0; i < str.Length; i++)
+                {
+                    if (!(char.IsDigit(str, i) || str[i].Equals('.')))
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+
+            }
+            return flag;
+        }
+
+        // 衍射弹性常数Ehkl（GPa）失去焦点
+        private void Ehkl_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string temp = Ehkl.Text.ToString();
+            if (string.IsNullOrEmpty(temp))
+            {
+                EhklLabel.Visibility = Visibility.Visible;
+                EhklLabel.Content = "Ehkl不能为空！";
+            }
+            else if (isNotDouble(temp))
+            {
+                EhklLabel.Visibility = Visibility.Visible;
+                EhklLabel.Content = "请输入double类型！";
+
+            }
+            else
+            {
+                EhklLabel.Visibility = Visibility.Hidden;
+            }
+        }
+
+        // 衍射弹性常数vhkl失去焦点
+        private void Vhkl_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string temp = Vhkl.Text.ToString();
+            if (string.IsNullOrEmpty(temp))
+            {
+                VhklLabel.Visibility = Visibility.Visible;
+                VhklLabel.Content = "vhkl不能为空！";
+            }
+            else if (isNotDouble(temp))
+            {
+                VhklLabel.Visibility = Visibility.Visible;
+                VhklLabel.Content = "请输入double类型！";
+
+            }
+            else
+            {
+                VhklLabel.Visibility = Visibility.Hidden;
+            }
+        }
+        
+        // 晶面间距d失去焦点
+        private void Distance_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string temp = Distance.Text.ToString();
+            if (string.IsNullOrEmpty(temp))
+            {
+                DistanceLabel.Visibility = Visibility.Visible;
+                DistanceLabel.Content = "晶面间距d不能为空！";
+            }
+            else if (isNotDouble(temp))
+            {
+                DistanceLabel.Visibility = Visibility.Visible;
+                DistanceLabel.Content = "请输入double类型！";
+
+            }
+            else
+            {
+                DistanceLabel.Visibility = Visibility.Hidden;
+            }
+        }
     }
 }

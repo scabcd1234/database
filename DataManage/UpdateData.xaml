@@ -67,30 +67,47 @@
                         <Setter Property="Margin" Value="60,5,0,0"/>
                     </Style>
 
+                    <!--label样式设定-->
+                    <Style TargetType="Label">
+                        <Setter Property="VerticalAlignment" Value="Bottom"/>
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="Width" Value="180"/>
+                        <Setter Property="FontSize" Value="10"/>
+                        <Setter Property="Padding" Value="0,0,0,0"/>
+                        <Setter Property="Height" Value="15"/>
+                        <Setter Property="Visibility" Value="Visible"/>
+                    </Style>
+                        
                 </Grid.Resources>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="相:" Margin="-20,5,0,0" VerticalAlignment="Top"/>
-                    <ComboBox Name="Phase" Width="70" SelectionChanged="inputPhase_SelectionChanged" Style="{StaticResource selectComboBox}"></ComboBox>
+                <ComboBox Name="Phase" Width="70" SelectionChanged="inputPhase_SelectionChanged" Style="{StaticResource selectComboBox}"></ComboBox>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="相比例（%）:" Margin="-20,5,0,0"/>
-                    <TextBox Grid.Row="1" Grid.Column="1"   Name="Phase_ratio" />
-
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="温度（℃）:" Margin="-20,5,0,0"/>
-                    <TextBox Grid.Row="2" Grid.Column="1"   Name="Temperature" />
-
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="衍射面:" Margin="-20,5,0,0"/>
-                    <ComboBox Name="Diff_plane" Width="70" Grid.Row="3" Grid.Column="1"  Style="{StaticResource selectComboBox}"></ComboBox>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="相比例（%）:" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="1" Grid.Column="1"   Name="Phase_ratio" LostFocus="Phase_ratio_LostFocus" />
+                <Label Name="Phase_ratioLabel"  Grid.Column="2" Grid.Row="1" Margin="245,0,0,0" />
                     
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="温度（℃）:" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="2" Grid.Column="1"   Name="Temperature" LostFocus="Temperature_LostFocus" />
+                <Label Name="TemperatureLabel"  Grid.Column="2" Grid.Row="2" Margin="245,0,0,0" />
+                    
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="衍射面:" Margin="-20,5,0,0"/>
+                <ComboBox Name="Diff_plane" Width="70" Grid.Row="3" Grid.Column="1"  Style="{StaticResource selectComboBox}" LostFocus="Diff_plane_LostFocus"></ComboBox>
+                <Label Name="Diff_planeLabel"  Grid.Column="2" Grid.Row="3" Margin="245,0,0,0" />
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="衍射弹性常数Ehkl（GPa）:" Margin="-20,5,0,0"/>
-                    <TextBox Grid.Row="4" Grid.Column="1"   Name="Ehkl" />
-
-                    <TextBlock Grid.Row="5" Grid.Column="0" Text="衍射弹性常数vhkl:" Margin="-20,5,0,0"/>
-                    <TextBox Grid.Row="5"  Grid.Column="1" Name="Vhkl"  />
-
-                    <TextBlock Grid.Row="6" Grid.Column="0" Text="晶面间距d:" Margin="-20,5,0,0"/>
-                    <TextBox Grid.Row="6" Grid.Column="1"   Name="Distance" />
-
-                    <Button Content="确认修改" Name="add"  Grid.Row="7"  HorizontalAlignment="Left" 
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="衍射弹性常数Ehkl（GPa）:" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="4" Grid.Column="1"   Name="Ehkl" LostFocus="Ehkl_LostFocus" />
+                <Label Name="EhklLabel"  Grid.Column="2" Grid.Row="4" Margin="245,0,0,0" />
+                    
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="衍射弹性常数vhkl:" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="5"  Grid.Column="1" Name="Vhkl" LostFocus="Vhkl_LostFocus"  />
+                <Label Name="VhklLabel"  Grid.Column="2" Grid.Row="5" Margin="245,0,0,0" />
+                    
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="晶面间距d:" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="6" Grid.Column="1"   Name="Distance" LostFocus="Distance_LostFocus" />
+                <Label Name="DistanceLabel"  Grid.Column="2" Grid.Row="6" Margin="245,0,0,0" />
+                    
+                <Button Content="确认修改" Name="add"  Grid.Row="7"  HorizontalAlignment="Left" 
                              Click="Button_Click"   HorizontalContentAlignment="Center" />
 
 
