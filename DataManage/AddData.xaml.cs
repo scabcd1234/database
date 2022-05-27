@@ -42,9 +42,8 @@ namespace DataManage
             inputPhase.Items.Add("β");
         }
         private void Button_Click(object sender, RoutedEventArgs e)
-        {          
-            
-            string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
+        {                     
+            string sql = "replace into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
                     + inputPhase.SelectedValue.ToString() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + inputDiff_plane.Text.Trim() + "','"
                     + Ehkl.Text.Trim() + "','" + Vhkl.Text.Trim() + "','" + Distance.Text.Trim() + "');";
             //MessageBox.Show(sql);
