@@ -21,25 +21,16 @@ namespace DataManage
     /// </summary>
     public partial class NotificationWindow : Window
     {
-        private Timer timer = new Timer(6000000);
-
+        
         public NotificationWindow(string message)
         {
             InitializeComponent();
             
             messageShow.Content = message;
-            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
-            timer.Start();
+            //timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+            //timer.Start();
         }
-        void timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            timer.Stop();
-            Dispatcher.Invoke(DispatcherPriority.Normal, (Action)delegate ()
-            {
-                /*this.Hide();*/
-                this.Hide();
-            });
-        }
+       
         
     }
 }

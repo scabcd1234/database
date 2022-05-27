@@ -48,7 +48,7 @@ namespace DataManage
             Distance.Text = caseData.Distance.ToString();           
         }
 
-        public delegate void TransfDelegate(caseData caseData);
+        public delegate int TransfDelegate(caseData caseData);
 
         public event TransfDelegate TransfEvent;
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -116,8 +116,11 @@ namespace DataManage
                 caseData.Ehkl = Convert.ToDouble(Ehkl.Text.Trim());
                 caseData.Vhkl = Convert.ToDouble(Vhkl.Text.Trim());
                 caseData.Distance = Convert.ToDouble(Distance.Text.Trim());
-                TransfEvent(caseData);//触发事件
-                this.Close();
+                int result=TransfEvent(caseData);//触发事件
+                if (result != -1){
+                    this.Close();
+                }
+                
             }
             
         }

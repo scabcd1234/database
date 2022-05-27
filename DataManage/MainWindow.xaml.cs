@@ -628,9 +628,9 @@ namespace DataManage
         }
 
         // 修改数据事件
-        void Update_TransfEvent(caseData caseData)
+        int Update_TransfEvent(caseData caseData)
         {
-
+            int result = 0;
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 try
@@ -648,12 +648,14 @@ namespace DataManage
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("修改数据失败：" + ex.Message);
+                    MessageBox.Show("表中已存在该实验条件，请重新输入！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    result = -1;
+                    //throw new Exception("修改数据失败：" + ex.Message);
                 }
                 conn.Close();               
             }
             ShowAllData();
-
+            return result;
         }
 
         // 通过ID查询数据
