@@ -19,6 +19,8 @@ using System.Data.SqlClient;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.IO;
+using System.Threading;
+
 /*using System.Windows.Forms;*/
 
 namespace DataManage
@@ -32,7 +34,9 @@ namespace DataManage
         public static string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
 
         public static string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;Version=3;";
+
         
+
         public MainWindow()
         {
             InitializeComponent();
@@ -168,7 +172,8 @@ namespace DataManage
                     {
                         conn.Open();
                         command.ExecuteNonQuery();
-                        MessageBox.Show("插入成功");
+                        MessageBox.Show("插入成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
+
                     }
                     catch (Exception ex)
                     {
@@ -350,7 +355,7 @@ namespace DataManage
                         {
                             conn.Open();
                             command.ExecuteNonQuery();
-                            MessageBox.Show("删除成功", "");
+                            MessageBox.Show("删除成功", "提示信息", MessageBoxButton.OK,MessageBoxImage.Information);                            
                         }
                         catch (Exception ex)
                         {
@@ -442,13 +447,13 @@ namespace DataManage
                         using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                         {
                             command.ExecuteNonQuery();
-                        }
-                        MessageBox.Show("插入成功");
+                        }                       
+                        MessageBox.Show("插入成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show("插入失败");
+                {                    
+                    MessageBox.Show("插入失败", "提示信息", MessageBoxButton.OK, MessageBoxImage.Error);
                     throw ex;
                 }
                 conn.Close();
@@ -466,6 +471,9 @@ namespace DataManage
                 {
                     try
                     {
+                        NotificationWindow data = new NotificationWindow("正在上传中!");
+                        data.Show();
+
                         conn.Open();
                         //开始导入数据库
                         for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
@@ -491,13 +499,12 @@ namespace DataManage
                                 command.ExecuteNonQuery();
                             }
                             /*MessageBox.Show("插入成功");*/
-                        }
-                        MessageBox.Show("上传成功");
-
+                        }                        
+                        MessageBox.Show("上传成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("上传失败");
+                        MessageBox.Show("上传失败", "提示信息", MessageBoxButton.OK, MessageBoxImage.Error);
                         throw ex;
                     }
                     conn.Close();
@@ -507,7 +514,7 @@ namespace DataManage
             }
             catch (IOException)
             {
-                MessageBox.Show("请先该关闭文件！","错误提示");
+                MessageBox.Show("请先关闭该文件！","错误提示");
                 return -1;
             }                                 
             ShowAllData();
@@ -550,11 +557,11 @@ namespace DataManage
                 workbook.Write(fs);                                
                 workbook.Close();
                 fs.Close();
-                MessageBox.Show("导出成功");
+                MessageBox.Show("导出成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (IOException)
             {
-                MessageBox.Show("请先该关闭文件！", "错误提示");                
+                MessageBox.Show("请先该关闭文件！", "错误提示", MessageBoxButton.OK, MessageBoxImage.Warning);                
             }
         }
 
@@ -595,19 +602,22 @@ namespace DataManage
                     UpdateData updateData = new UpdateData(caseData);
                     updateData.TransfEvent += Update_TransfEvent;
                     updateData.ShowDialog();
-                    flag= true;
+                    flag = true;
                     break;
                 }
             }
             if (flag)
-            {
-                MessageBox.Show("修改成功");
+            {   
+                dg1.UpdateLayout();
                 //获取行
                 DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
-
-                //获取该行的某列
-                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
-                cb.IsChecked = true;
+                if (neddrow != null)
+                {
+                    //获取该行的某列
+                    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+                    cb.IsChecked = true;
+                }
+               
             }
             else
             {
@@ -632,7 +642,7 @@ namespace DataManage
                     using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                     {
                         command.ExecuteNonQuery();
-                        // MessageBox.Show("修改成功");
+                        MessageBox.Show("修改成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);                        
                     }
                 }
                 catch (Exception ex)
@@ -789,9 +799,9 @@ namespace DataManage
             {
                 FilePath.Text = fileDialog1.FileName;
                 string str1 = fileDialog1.FileName;
-                /*MessageBox.Show(str1);*/
-                MessageBox.Show("正在上传中");
-                ImportXls(str1);                                     
+                
+                ImportXls(str1);    
+                                                 
             }
             else
             {

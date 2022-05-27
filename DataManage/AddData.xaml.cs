@@ -44,7 +44,7 @@ namespace DataManage
         private void Button_Click(object sender, RoutedEventArgs e)
         {                     
             string sql = "insert into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
-                    + inputPhase.SelectedValue.ToString() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + inputDiff_plane.SelectedValue.ToString() + "','"
+                    + inputPhase.SelectedValue.ToString() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + inputDiff_plane.Text.Trim() + "','"
                     + Ehkl.Text.Trim() + "','" + Vhkl.Text.Trim() + "','" + Distance.Text.Trim() + "');";
             //MessageBox.Show(sql);
             TransfEvent(sql);//触发事件
