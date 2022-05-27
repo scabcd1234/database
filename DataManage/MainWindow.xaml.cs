@@ -489,8 +489,8 @@ namespace DataManage
                             }
                             /*MessageBox.Show("插入成功");*/
                         }
+                        data.Close();
                         MessageBox.Show("上传成功");
-
                     }
                     catch (Exception ex)
                     {

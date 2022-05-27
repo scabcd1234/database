@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DataManage"
         mc:Ignorable="d"
-        Title="增加数据" WindowStartupLocation="CenterScreen" Width="720" Height="390" >
+        Title="增加数据" WindowStartupLocation="CenterScreen" Width="600" Height="390" >
     <Grid>
         <Viewbox Stretch="Fill">
             <Grid >
@@ -47,7 +47,7 @@
                     
                     <Style TargetType="Button">
                         <Setter Property="HorizontalAlignment" Value="Left"/>
-                        <Setter Property="Margin" Value="160,5,0,5"/>
+                        <Setter Property="Margin" Value="160,10,0,5"/>
                         <Setter Property="FontSize" Value="7"/>
                         <Setter Property="Width" Value="50"/>
                         <Setter Property="Height" Value="20"/>

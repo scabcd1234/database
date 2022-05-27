@@ -21,7 +21,7 @@ namespace DataManage
     /// </summary>
     public partial class NotificationWindow : Window
     {
-        private Timer timer = new Timer(1000);
+        private Timer timer = new Timer(6000000);
 
         public NotificationWindow(string message)
         {
