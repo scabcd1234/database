@@ -10,6 +10,12 @@
     <!--WindowState="Maximized" -->
 
     <Window.Resources>
+        <!--<ControlTemplate TargetType="{x:Type TextBox}" x:Key="SearchTextBoxTemplate">
+            <Border x:Name="border" BorderThickness="0" 
+                        Background="Gray" SnapsToDevicePixels="True"
+                        CornerRadius="50">
+            </Border>
+        </ControlTemplate>-->
         <XmlDataProvider x:Key="AllItem" />
         <!--TextBlock样式设定-->
         <Style x:Key="dgCell" TargetType="{x:Type TextBlock}">
@@ -41,6 +47,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Height" Value="15"/>
+            <Setter Property="Cursor" Value="Hand"/>
         </Style>
 
         <!--Button样式设定-->
@@ -51,7 +58,14 @@
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Background" Value="White"/>
             <Setter Property="Padding" Value="1"/>
-            <!-- <Setter Property="FontFamily" Value="Arial,SimSun"/>-->
+            <Setter Property="Cursor" Value="Hand"/>
+            <!--<Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Name="Border" CornerRadius="10"></Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>-->
             
             <Setter Property="Height" Value="15"/>
         </Style>
@@ -64,7 +78,7 @@
             <Grid>
                 <TabControl TabStripPlacement="Left">
                     <TabItem Header="数据展示" FontSize="15" Height="40">
-                        <Grid Background="#FFE5E5E5">
+                        <Grid Background="#22000000">
                             <!--三行一列-->
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
@@ -108,14 +122,14 @@
                             </Grid>
                             
                             <!--操作栏-->
-                            <Grid Grid.Row="1" Grid.Column="1">
+                            <Grid Grid.Row="1" Grid.Column="1" >
                                 <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
                                     <Button Content="修改" MinWidth="60" Margin="0,0,20,0" Click="BtnUpdate"  Style="{StaticResource textButton}" />
                                     <Button Content="删除" MinWidth="60" Margin="0,0,20,0" Click="BtnDelete" Style="{StaticResource textButton}" />
                                     <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="BtnAdd"  Style="{StaticResource textButton}" />
                                     <Button Content="导出" MinWidth="60" Margin="0,0,20,0" Click="BtnExport"  Style="{StaticResource textButton}" />
                                     <Button Content="上传文件" Name="Upload" MinWidth="100" Margin="0,0,20,0" Click="UploadFile" Style="{StaticResource textButton}"/>
-                                    <TextBox Width="300" Name="FilePath" Margin="0,0,0,0" Style="{StaticResource inputBox}"></TextBox>
+                                    <TextBox Width="300" Name="FilePath" Margin="0,0,0,0"  Style="{StaticResource inputBox}"></TextBox>
                                 </StackPanel>
                             </Grid>
 
@@ -123,7 +137,7 @@
                             <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
                               Margin="20,10,20,10" HorizontalAlignment="Center" Height="300"
                               Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow"
-                                      EnableRowVirtualization="False">
+                                      EnableRowVirtualization="False" Cursor="Hand">
 
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">

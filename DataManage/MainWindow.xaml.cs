@@ -19,6 +19,7 @@ using System.Data.SqlClient;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.IO;
+
 /*using System.Windows.Forms;*/
 
 namespace DataManage
@@ -32,7 +33,9 @@ namespace DataManage
         public static string dbpath = AppDomain.CurrentDomain.BaseDirectory + @"mydb.db";
 
         public static string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;Version=3;";
+
         
+
         public MainWindow()
         {
             InitializeComponent();
@@ -253,48 +256,48 @@ namespace DataManage
                 if (MessageBox.Show("未找到查询数据，是否自动生成数据？", "提示信息", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     String phase = inputPhase.SelectedValue.ToString();
+                    String diff_plane = inputDiff_plane.SelectedValue.ToString();            
                     double before_phase_ratio = Convert.ToDouble(inputPhase_ratio.Text); // 近似前相位比
-                    double after_phase_ratio = before_phase_ratio; // 近似后相位比
+                    double after_phase_ratio1 = before_phase_ratio; // 近似后计算用相位比
+                    double after_phase_ratio2 = Find_PhaseRatio(phase, diff_plane,before_phase_ratio); // 近似后查找用相位比
+                    double before_temperature = Convert.ToDouble(inputTemperature.Text); //近似前温度
+                    double after_temperature = Find_Temperature(phase, diff_plane, after_phase_ratio2, before_temperature); // 近似后查找用温度
                     if (phase == "α")
                     {          
                         double[] ratio_list = { 62, 55.5, 70, 80 };
                         //选择最接近的相位比
-                        after_phase_ratio = ratio_list[0];
+                        after_phase_ratio1 = ratio_list[0];
                         foreach(double tmp in ratio_list)
                         {
-                            if(Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio))
+                            if(Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio1))
                             {
-                                after_phase_ratio = tmp;
+                                after_phase_ratio1 = tmp;
                             }
                         }                        
                     }else if (phase == "β")
                     {
                         double[] ratio_list = { 38, 44.5, 30, 20 };
                         //选择最接近的相位比
-                        after_phase_ratio = ratio_list[0];
+                        after_phase_ratio1 = ratio_list[0];
                         foreach (double tmp in ratio_list)
                         {
-                            if (Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio))
+                            if (Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio1))
                             {
-                                after_phase_ratio = tmp;
+                                after_phase_ratio1 = tmp;
                             }
                         }
                     }
-                    double Ehkl = computeEhkl(phase, after_phase_ratio, Convert.ToDouble(inputTemperature.Text), inputDiff_plane.SelectedValue.ToString());
+                    double Ehkl = computeEhkl(phase, after_phase_ratio1,before_temperature,diff_plane );                   
+                    caseData tmp_data = selectVhklAndDistance(phase, diff_plane, after_phase_ratio2, after_temperature);
                     caseData casedata = new caseData();
+                    casedata.FlaseId = 1;
                     casedata.Phase = phase;
                     casedata.Phase_ratio = before_phase_ratio;
-                    casedata.Temperature = Convert.ToDouble(inputTemperature.Text);
-                    casedata.Diff_plane = inputDiff_plane.SelectedValue.ToString();
+                    casedata.Temperature = before_temperature;
+                    casedata.Diff_plane = diff_plane;
                     casedata.Ehkl = Ehkl;
-
-                    List<double> test = selectPhase_ratio(phase, inputDiff_plane.SelectedValue.ToString());
-                    List<double> temperature_list = selectTemperature(phase, inputDiff_plane.SelectedValue.ToString(), after_phase_ratio);
-                    caseData selectData = new caseData();
-                    selectData = selectVhklAndDistance(phase, inputDiff_plane.SelectedValue.ToString(), after_phase_ratio, 20);
-                    casedata.Vhkl = selectData.Vhkl;
-                    casedata.Distance = selectData.Distance;
-
+                    casedata.Vhkl = tmp_data.Vhkl;
+                    casedata.Distance = tmp_data.Distance;
                     list.Add(casedata);
                 }                            
             }
@@ -457,6 +460,9 @@ namespace DataManage
                 {
                     try
                     {
+                        NotificationWindow data = new NotificationWindow("正在上传中!");
+                        data.Show();
+
                         conn.Open();
                         //开始导入数据库
                         for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
@@ -780,9 +786,9 @@ namespace DataManage
             {
                 FilePath.Text = fileDialog1.FileName;
                 string str1 = fileDialog1.FileName;
-                /*MessageBox.Show(str1);*/
-                MessageBox.Show("正在上传中");
-                ImportXls(str1);                                     
+                
+                ImportXls(str1);    
+                                                 
             }
             else
             {
@@ -1068,6 +1074,22 @@ namespace DataManage
             }
         }
 
+        //寻找最近似的相位比
+        private double Find_PhaseRatio(string phase, string diff_plane,double before_phase_ratio)
+        {            
+            List<double> ratio_list = selectPhase_ratio(phase, diff_plane);
+            //选择最接近的相位比
+            double after_phase_ratio = ratio_list[0];
+            foreach (double tmp in ratio_list)
+            {
+                if (Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio))
+                {
+                    after_phase_ratio = tmp;
+                }
+            }
+            return after_phase_ratio;
+        }
+
         // 根据相、衍射面和相比例查找所有的温度
         private List<double> selectTemperature(String phase,string diff_plane,double phase_ratio)
         {
@@ -1104,16 +1126,32 @@ namespace DataManage
             }
         }
 
+        //寻找最近似的温度
+        private double Find_Temperature(string phase,string diff_plane,double after_phase_ratio,double before_temperature)
+        {
+            List<double> temperature_list = selectTemperature(phase, diff_plane, after_phase_ratio);
+            //选择最接近的温度
+            double after_temperature = temperature_list[0];
+            foreach (double tmp in temperature_list)
+            {
+                if (Math.Abs(before_temperature - tmp) <= Math.Abs(before_temperature - after_temperature))
+                {
+                    after_temperature = tmp;
+                }
+            }
+            return after_temperature;
+        }
+
         // 根据相、衍射面、相比例和温度查找确定的衍射弹性常数vhkl、晶面间距d
-        private caseData selectVhklAndDistance(String phase, string diff_plane, double phase_ratio,double temperature)
+        private caseData selectVhklAndDistance(String phase, string diff_plane, double phase_ratio, double temperature)
         {
             caseData casedata = new caseData();
-            
-            string sql = "select * from data where phase = '" + phase + "' and diff_plane = '" + diff_plane + "' and phase_ratio = '" + 
+
+            string sql = "select * from data where phase = '" + phase + "' and diff_plane = '" + diff_plane + "' and phase_ratio = '" +
                 phase_ratio + "' and temperature = '" + temperature + "'";
             /*select phase_ratio from data where phase = 'α' and diff_plane = '100' group by phase_ratio*/
-            
-            
+
+
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 using (SQLiteCommand command = new SQLiteCommand(sql, conn))
