@@ -367,7 +367,7 @@ namespace DataManage
             }
             else
             {
-                MessageBox.Show("请选择需要操作的数据", "提示信息");
+                MessageBox.Show("请选择需要操作的数据", "提示信息",MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             
                         
@@ -475,11 +475,13 @@ namespace DataManage
                         data.Show();
                         
                         conn.Open();
+                        SQLiteTransaction tx = conn.BeginTransaction();
                         //开始导入数据库
                         for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
                         {
                             IRow row = (IRow)sheet.GetRow(i);//获取第i行
-                            string sql = "replace into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";
+                            string sql = "replace into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('";                            
+
                             for (int j = 0; j <= 6; j++)
                             {
                                 if (sheet.GetRow(i).GetCell(j) != null)
@@ -495,11 +497,14 @@ namespace DataManage
                             sql = sql + ");";
 
                             using (SQLiteCommand command = new SQLiteCommand(sql, conn))
-                            {
+                            {                               
+                                command.Transaction = tx;
+                                command.CommandText=sql;
                                 command.ExecuteNonQuery();
                             }
                             /*MessageBox.Show("插入成功");*/
                         }
+                        tx.Commit();
                         data.Close();
                         MessageBox.Show("上传成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
@@ -562,7 +567,7 @@ namespace DataManage
             }
             catch (IOException)
             {
-                MessageBox.Show("请先该关闭文件！", "错误提示", MessageBoxButton.OK, MessageBoxImage.Warning);                
+                MessageBox.Show("请先关闭该文件！", "错误提示", MessageBoxButton.OK, MessageBoxImage.Warning);                
             }
         }
 
@@ -622,7 +627,7 @@ namespace DataManage
             }
             else
             {
-                MessageBox.Show("请选择需要操作的数据", "提示信息");
+                MessageBox.Show("请选择需要操作的数据", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
         }
@@ -850,7 +855,7 @@ namespace DataManage
             }
             else
             {
-                MessageBox.Show("请选择需要操作的数据","提示信息");
+                MessageBox.Show("请选择需要操作的数据", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             
         }
