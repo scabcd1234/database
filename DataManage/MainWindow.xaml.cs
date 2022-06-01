@@ -35,7 +35,9 @@ namespace DataManage
 
         public static string connStr = @"Data Source=" + dbpath + @";Initial Catalog=sqlite;Version=3;";
 
-        
+        public static int index = 0;
+
+        public static int pageSzie = 20;
 
         public MainWindow()
         {
@@ -50,16 +52,31 @@ namespace DataManage
                 inputPhase.Items.Add(phase);
             } 
             inputPhase.SelectedIndex = 0;
-                       
-            var Loads = this.Dispatcher.BeginInvoke(new Action(() =>
+
+            ShowAllData();
+
+            /*var Loads = this.Dispatcher.BeginInvoke(new Action(() =>
             {
                 ShowAllData(); 
             }));
-            Loads.Completed += new EventHandler(Loads_Completed);
+            Loads.Completed += new EventHandler(Loads_Completed);*/
         }
         void Loads_Completed(object sender, EventArgs e)
         {            
             loading_text.Visibility = Visibility.Hidden;
+        }
+
+        // 实现滚动监听
+        private void DataGrid_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            var scrollViewer = e.OriginalSource as ScrollViewer;
+            if (e.VerticalOffset != 0 && e.VerticalOffset == scrollViewer.ScrollableHeight)
+            {
+                index += pageSzie;
+                ShowAllData();
+                /*MessageBox.Show(index.ToString());
+                MessageBox.Show(pageSzie.ToString());*/
+            }
         }
         // 显示所有数据
         private void ShowAllData()
@@ -73,16 +90,16 @@ namespace DataManage
             
             string sql1 = "SELECT * FROM data " ;
             string sql2 = "where 1 = 1 ";
-            
+            string sql3 = " limit " + index + "," + (index + pageSzie);
             
             /*if (inputPhase.Text.Trim() != "")
             {
                 sql2 += " and phase like '" + inputPhase.Text.Trim() + "%' ";
             }*/
-            string sql = sql1 + sql2 ;
+            string sql = sql1 + sql2 + sql3;
 
-            /*MessageBox.Show(sql);*/
-            using(SQLiteConnection conn = new SQLiteConnection(connStr))
+            MessageBox.Show(sql);
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {                    
                 using(SQLiteCommand command = new SQLiteCommand(sql, conn))
                 {
@@ -126,7 +143,7 @@ namespace DataManage
                 }                                                                            
             }
             
-            dg1.ItemsSource = null;
+            /*dg1.ItemsSource = null;*/
             dg1.ItemsSource = list;
 
             // 显示记录条数
@@ -189,6 +206,7 @@ namespace DataManage
                     conn.Close();
                 }
             }
+            index = 0;
             ShowAllData();
             
         }
@@ -378,7 +396,7 @@ namespace DataManage
             }
             
                         
-            ShowAllData();            
+            //ShowAllData();            
         }
         
         // 全选数据
@@ -530,7 +548,7 @@ namespace DataManage
                 MessageBox.Show("请先关闭该文件！","错误提示");
                 return -1;
             }                                 
-            ShowAllData();
+            //ShowAllData();
             return 0;
         }
 
@@ -583,7 +601,7 @@ namespace DataManage
             inputTemperature.Text = "";
             inputPhase_ratio.Text = "";
             inputDiff_plane.Items.Clear();
-            ShowAllData();
+            //ShowAllData();
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Clear();
             inputPhase.Items.Add("");
@@ -666,7 +684,7 @@ namespace DataManage
                 }
                 conn.Close();               
             }
-            ShowAllData();
+            //ShowAllData();
             return result;
         }
 
