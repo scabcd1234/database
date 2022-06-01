@@ -45,7 +45,9 @@ namespace DataManage
         }
       
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {                       
+        {
+            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
+            sv1.ScrollChanged += DataGrid_ScrollChanged;
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Add("");
             foreach (String phase in phases){              
@@ -405,8 +407,16 @@ namespace DataManage
                     
                 }                            
             }
-            dg1.ItemsSource = null;
-            dg1.ItemsSource = list;
+            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
+            sv1.ScrollChanged -= DataGrid_ScrollChanged;
+            dg1.Items.Clear();
+            foreach (caseData item in list)
+            {
+                dg1.Items.Add(item);
+            }
+            //dg1.ItemsSource = null;
+            //dg1.ItemsSource = list;
+            
         }
 
        
@@ -668,8 +678,7 @@ namespace DataManage
         {
             inputTemperature.Text = "";
             inputPhase_ratio.Text = "";
-            inputDiff_plane.Items.Clear();
-            //ShowAllData();
+            inputDiff_plane.Items.Clear();           
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Clear();
             inputPhase.Items.Add("");
@@ -678,6 +687,10 @@ namespace DataManage
                 inputPhase.Items.Add(phase);
             }
             inputPhase.SelectedIndex = 0;
+
+            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
+            sv1.ScrollChanged += DataGrid_ScrollChanged;
+            ShowAllData();
         }
 
         // 修改
