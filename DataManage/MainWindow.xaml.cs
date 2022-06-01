@@ -73,10 +73,69 @@ namespace DataManage
             if (e.VerticalOffset != 0 && e.VerticalOffset == scrollViewer.ScrollableHeight)
             {
                 index += pageSize;
-                ShowAllData();                
+                GenerateData();                
             }
         }
-        // 显示所有数据
+
+        // 产生数据
+        private void GenerateData()
+        {
+            List<caseData> list = new List<caseData>();
+            
+            string sql = "SELECT * FROM data limit " + pageSize + " offset " + index;
+                       
+            //MessageBox.Show(sql);
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            int i = 1;
+                            while (reader.Read())
+                            {
+                                caseData casedata = new caseData();
+                                casedata.Id = Convert.ToInt32(reader["id"]);
+                                casedata.FlaseId = i;
+                                casedata.Phase = reader["phase"].ToString();
+                                casedata.Phase_ratio = Convert.ToDouble(reader["phase_ratio"]);
+                                casedata.Temperature = Convert.ToDouble(reader["temperature"]);
+                                casedata.Diff_plane = reader["diff_plane"].ToString();
+                                casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
+                                casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
+                                if (reader["distance"].ToString() == "")
+                                {
+                                    casedata.Distance = 0.00;
+                                }
+                                else
+                                {
+                                    casedata.Distance = Convert.ToDouble(reader["distance"]);
+                                }
+                                list.Add(casedata);
+                                i++;
+                            }                            
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                }
+            }
+
+            List<caseData> result = (List<caseData>)dg1.ItemsSource;
+            result.AddRange(list);           
+            dg1.ItemsSource = null;
+            dg1.ItemsSource = result;
+
+        }
+        
+        // 显示原始数据
         private void ShowAllData()
         {
             List<caseData> list = new List<caseData>();
@@ -88,7 +147,7 @@ namespace DataManage
             
             string sql1 = "SELECT * FROM data " ;
             string sql2 = "";
-            string sql3 = " limit " + pageSize + " offset " + index ;
+            string sql3 = " limit " + pageSize + " offset 0";
             
             /*if (inputPhase.Text.Trim() != "")
             {
@@ -96,7 +155,7 @@ namespace DataManage
             }*/
             string sql = sql1 + sql2 + sql3;
 
-            //MessageBox.Show(sql);
+            MessageBox.Show(sql);
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {                    
                 using(SQLiteCommand command = new SQLiteCommand(sql, conn))
@@ -141,12 +200,9 @@ namespace DataManage
                 }                                                                            
             }
             
-            /*dg1.ItemsSource = null;*/
-            //dg1.ItemsSource = list;
-            foreach(caseData item in list){
-                dg1.Items.Add(list);
-            }
-                
+            dg1.ItemsSource = null;
+            dg1.ItemsSource = list;
+
             // 显示记录条数
             SetNumber();
         }
@@ -206,8 +262,7 @@ namespace DataManage
                     }
                     conn.Close();
                 }
-            }
-            index = 0;
+            }            
             ShowAllData();
             
         }
