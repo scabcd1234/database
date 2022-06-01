@@ -84,6 +84,12 @@ namespace DataManage
         // 产生数据
         private void GenerateData() 
         {
+            int size = (int)ALLNumber.Content;
+            if (index > size)
+            {
+                return;
+            }
+
             List<caseData> list = new List<caseData>();
             
             string sql = "SELECT * FROM data limit " + pageSize + " offset " + index;
