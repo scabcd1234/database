@@ -75,8 +75,7 @@ namespace DataManage
             if (e.VerticalOffset != 0 && e.VerticalOffset == scrollViewer.ScrollableHeight)
             {
                 index += pageSize;
-                GenerateData();
-                MessageBox.Show("dd");
+                GenerateData();                
             }
         }
 
@@ -134,12 +133,15 @@ namespace DataManage
                 }
             }
 
-            List<caseData> result = (List<caseData>)dg1.ItemsSource;
-            result.AddRange(list);
-            
-            dg1.ItemsSource = null;
-            dg1.ItemsSource = result;
-           
+            foreach(caseData item in list)
+            {
+                dg1.Items.Add(item);
+            }
+
+            //List<caseData> result = (List<caseData>)dg1.ItemsSource;
+            //result.AddRange(list);           
+            //dg1.ItemsSource = null;
+            //dg1.ItemsSource = result;
 
         }
         
@@ -210,8 +212,13 @@ namespace DataManage
                 }                                                                            
             }
             
-            dg1.ItemsSource = null;            
-            dg1.ItemsSource = list;
+            dg1.Items.Clear();
+            foreach (caseData item in list)
+            {
+                dg1.Items.Add(item);
+            }
+            //dg1.ItemsSource = null;            
+            //dg1.ItemsSource = list;
             dg1.ScrollIntoView(dg1.Items[0]);
 
             // 显示记录条数
@@ -405,8 +412,14 @@ namespace DataManage
                     
                 }                            
             }
-            dg1.ItemsSource = null;
-            dg1.ItemsSource = list;
+            dg1.Items.Clear();
+            foreach (caseData item in list)
+            {
+                dg1.Items.Add(item);
+            }
+            /*dg1.ItemsSource = null;
+            dg1.ItemsSource = list;*/
+            
         }
 
        
