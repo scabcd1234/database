@@ -177,6 +177,7 @@
                                         <DataGridCheckBoxColumn.ElementStyle>
                                             <Style TargetType="CheckBox">
                                                 <Setter Property="Tag" Value="{Binding Id}"></Setter>
+                                                
                                             </Style>
                                         </DataGridCheckBoxColumn.ElementStyle>
 
@@ -190,7 +191,7 @@
                                         </DataGridCheckBoxColumn.CellStyle>
 
                                     </DataGridCheckBoxColumn>
-                                    <DataGridTextColumn  Header="编号" Binding="{Binding Id}" Width="50" >
+                                    <DataGridTextColumn  Header="编号" Binding="{Binding FlaseId}" Width="50" >
                                         <!-- ElementStyle="{StaticResource ResourceKey=dgCell}" 在每一个DataGridTextColumn后面加上这个，使得表格的每一行都居中-->
                                         <!-- 
                                         <DataGridTextColumn.HeaderTemplate>

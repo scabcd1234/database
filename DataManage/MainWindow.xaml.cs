@@ -39,6 +39,8 @@ namespace DataManage
 
         public static int pageSize = 20;
 
+        public static int flaseIdFlag = 1;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -73,12 +75,13 @@ namespace DataManage
             if (e.VerticalOffset != 0 && e.VerticalOffset == scrollViewer.ScrollableHeight)
             {
                 index += pageSize;
-                GenerateData();                
+                GenerateData();
+                MessageBox.Show("dd");
             }
         }
 
         // 产生数据
-        private void GenerateData()
+        private void GenerateData() 
         {
             List<caseData> list = new List<caseData>();
             
@@ -94,7 +97,8 @@ namespace DataManage
                         conn.Open();
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
-                            int i = 1;
+                            
+                            int i = 1 + flaseIdFlag * pageSize;
                             while (reader.Read())
                             {
                                 caseData casedata = new caseData();
@@ -116,7 +120,9 @@ namespace DataManage
                                 }
                                 list.Add(casedata);
                                 i++;
-                            }                            
+                                
+                            }
+                            flaseIdFlag++;                           
                         }
 
                     }
@@ -129,9 +135,11 @@ namespace DataManage
             }
 
             List<caseData> result = (List<caseData>)dg1.ItemsSource;
-            result.AddRange(list);           
+            result.AddRange(list);
+            
             dg1.ItemsSource = null;
             dg1.ItemsSource = result;
+           
 
         }
         
@@ -148,7 +156,7 @@ namespace DataManage
             
             string sql1 = "SELECT * FROM data " ;
             string sql2 = "";
-            string sql3 = " limit " + pageSize + " offset "+index;
+            string sql3 = " limit " + pageSize + " offset "+ index;
             
             /*if (inputPhase.Text.Trim() != "")
             {
@@ -188,6 +196,7 @@ namespace DataManage
                                 }
                                 list.Add(casedata);
                                 i++;
+
                             }
                             /*MessageBox.Show("进来了");*/
                         }
@@ -264,7 +273,8 @@ namespace DataManage
                     }
                     conn.Close();
                 }
-            }            
+            }
+            flaseIdFlag = 1;
             ShowAllData();
             
         }
@@ -453,8 +463,10 @@ namespace DataManage
                 MessageBox.Show("请选择需要操作的数据", "提示信息",MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             
-                        
-            ShowAllData();            
+            flaseIdFlag = 1;
+            ShowAllData();
+            
+            
         }
         
         // 全选数据
@@ -605,8 +617,10 @@ namespace DataManage
             {
                 MessageBox.Show("请先关闭该文件！","错误提示");
                 return -1;
-            }                                 
-            //ShowAllData();
+            }
+            flaseIdFlag = 1;
+            ShowAllData();
+            
             return 0;
         }
 
@@ -659,7 +673,10 @@ namespace DataManage
             inputTemperature.Text = "";
             inputPhase_ratio.Text = "";
             inputDiff_plane.Items.Clear();
-            //ShowAllData();
+
+            flaseIdFlag = 1;
+            ShowAllData();
+            
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Clear();
             inputPhase.Items.Add("");
@@ -742,7 +759,9 @@ namespace DataManage
                 }
                 conn.Close();               
             }
-            //ShowAllData();
+            flaseIdFlag = 1;
+            ShowAllData();
+            
             return result;
         }
 
