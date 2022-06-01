@@ -41,19 +41,26 @@ namespace DataManage
         {
             InitializeComponent();
         }
-
+      
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {            
-            ShowAllData();            
+        {                       
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Add("");
             foreach (String phase in phases){              
                 inputPhase.Items.Add(phase);
             } 
             inputPhase.SelectedIndex = 0;
-
+                       
+            var Loads = this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ShowAllData(); 
+            }));
+            Loads.Completed += new EventHandler(Loads_Completed);
         }
-
+        void Loads_Completed(object sender, EventArgs e)
+        {            
+            loading_text.Visibility = Visibility.Hidden;
+        }
         // 显示所有数据
         private void ShowAllData()
         {
