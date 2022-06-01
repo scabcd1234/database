@@ -138,6 +138,7 @@ namespace DataManage
         // 显示原始数据
         private void ShowAllData()
         {
+            index = 0;
             List<caseData> list = new List<caseData>();
         
             // int Count = selectData();
@@ -147,7 +148,7 @@ namespace DataManage
             
             string sql1 = "SELECT * FROM data " ;
             string sql2 = "";
-            string sql3 = " limit " + pageSize + " offset 0";
+            string sql3 = " limit " + pageSize + " offset "+index;
             
             /*if (inputPhase.Text.Trim() != "")
             {
@@ -155,7 +156,7 @@ namespace DataManage
             }*/
             string sql = sql1 + sql2 + sql3;
 
-            MessageBox.Show(sql);
+            //MessageBox.Show(sql);
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {                    
                 using(SQLiteCommand command = new SQLiteCommand(sql, conn))
@@ -200,8 +201,9 @@ namespace DataManage
                 }                                                                            
             }
             
-            dg1.ItemsSource = null;
+            dg1.ItemsSource = null;            
             dg1.ItemsSource = list;
+            dg1.ScrollIntoView(dg1.Items[0]);
 
             // 显示记录条数
             SetNumber();
@@ -452,7 +454,7 @@ namespace DataManage
             }
             
                         
-            //ShowAllData();            
+            ShowAllData();            
         }
         
         // 全选数据
