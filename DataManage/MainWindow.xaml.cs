@@ -293,134 +293,159 @@ namespace DataManage
         {
             bool HasData = false;
             string sql = "SELECT * FROM data where 1 = 1";
-            
-            if (inputPhase.SelectedValue.ToString()!="")
+            if (inputPhase.SelectedValue.ToString() != "" && inputDiff_plane.SelectedValue == null)
             {
-                sql = sql + " and phase='"+ inputPhase.SelectedValue.ToString()+"'";
+                MessageBox.Show("请选择衍射面！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            if (inputTemperature.Text.ToString() != "")
+            else if(inputPhase.SelectedValue.ToString() == "" && inputDiff_plane.SelectedValue != null)
             {
-                sql = sql+" and temperature='" + inputTemperature.Text.ToString()+ "'";
+                MessageBox.Show("请选择相！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }else if (inputPhase.SelectedValue.ToString() == "" && inputDiff_plane.SelectedValue == null)
+            {
+                MessageBox.Show("请选择相和衍射面！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            if (inputPhase_ratio.Text.ToString() != "")
+            else
             {
-                sql = sql + " and phase_ratio='" + inputPhase_ratio.Text.ToString() + "'";
-            }
-            if (inputDiff_plane.SelectedValue!= null)
-            {
-                sql = sql + " and diff_plane='" + inputDiff_plane.SelectedValue.ToString() + "'";
-            }
-            //MessageBox.Show(sql);
-
-            List<caseData> list = new List<caseData>();
-            using (SQLiteConnection conn = new SQLiteConnection(connStr))
-            {
-                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                if (isNotDouble(inputPhase_ratio.Text.ToString()) || isNotDouble(inputTemperature.Text.ToString()))
                 {
-                    try
-                    {
-                        conn.Open();
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            int i = 1;
-                            while (reader.Read())
-                            {
-                                HasData = true;
-                                caseData casedata = new caseData();
-                                casedata.Id = Convert.ToInt32(reader["id"]);
-                                casedata.FlaseId = i;
-                                casedata.Phase = reader["phase"].ToString();
-                                casedata.Phase_ratio = Convert.ToDouble(reader["phase_ratio"]);
-                                casedata.Temperature = Convert.ToDouble(reader["temperature"]);
-                                casedata.Diff_plane = reader["diff_plane"].ToString();
-                                casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
-                                casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
-                                if (reader["distance"].ToString() == "")
-                                {
-                                    casedata.Distance = 0.00;
-                                }
-                                else
-                                {
-                                    casedata.Distance = Convert.ToDouble(reader["distance"]);
-                                }
-                                list.Add(casedata);
-                                i++;
-                            }                           
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("查询数据失败：" + ex.Message);
-                    }
-                    conn.Close();
+                    MessageBox.Show("相比例或温度请输入double类型！！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
-            }
-            if (!HasData) // 未找到数据
-            {
-                if (MessageBox.Show("未找到查询数据，是否自动生成数据？", "提示信息", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                else
                 {
-                    String phase = inputPhase.SelectedValue.ToString();
-                    String diff_plane = inputDiff_plane.SelectedValue.ToString();
-                    if (phase != "" && diff_plane != "" && inputPhase_ratio.Text!="" && inputTemperature.Text !="")
+                    if (inputPhase.SelectedValue.ToString() != "")
                     {
-                        double before_phase_ratio = Convert.ToDouble(inputPhase_ratio.Text); // 近似前相位比
-                        double before_temperature = Convert.ToDouble(inputTemperature.Text); //近似前温度
+                        sql = sql + " and phase='" + inputPhase.SelectedValue.ToString() + "'";
+                    }
+                    if (inputTemperature.Text.ToString() != "")
+                    {
+                        sql = sql + " and temperature='" + inputTemperature.Text.ToString() + "'";
+                    }
+                    if (inputPhase_ratio.Text.ToString() != "")
+                    {
+                        sql = sql + " and phase_ratio='" + inputPhase_ratio.Text.ToString() + "'";
+                    }
+                    if (inputDiff_plane.SelectedValue != null)
+                    {
+                        sql = sql + " and diff_plane='" + inputDiff_plane.SelectedValue.ToString() + "'";
+                    }
+                    //MessageBox.Show(sql);
 
-                        double after_phase_ratio1 = before_phase_ratio; // 近似后计算用相位比
-                        double after_phase_ratio2 = Find_PhaseRatio(phase, diff_plane, before_phase_ratio); // 近似后查找用相位比                
-                        double after_temperature = Find_Temperature(phase, diff_plane, after_phase_ratio2, before_temperature); // 近似后查找用温度
-                        if (phase == "α")
-                        {
-                            double[] ratio_list = { 62, 55.5, 70, 80 };
-                            //选择最接近的相位比
-                            after_phase_ratio1 = ratio_list[0];
-                            foreach (double tmp in ratio_list)
-                            {
-                                if (Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio1))
-                                {
-                                    after_phase_ratio1 = tmp;
-                                }
-                            }
-                        }
-                        else if (phase == "β")
-                        {
-                            double[] ratio_list = { 38, 44.5, 30, 20 };
-                            //选择最接近的相位比
-                            after_phase_ratio1 = ratio_list[0];
-                            foreach (double tmp in ratio_list)
-                            {
-                                if (Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio1))
-                                {
-                                    after_phase_ratio1 = tmp;
-                                }
-                            }
-                        }
-                        double Ehkl = computeEhkl(phase, after_phase_ratio1, before_temperature, diff_plane);
-                        caseData tmp_data = selectVhklAndDistance(phase, diff_plane, after_phase_ratio2, after_temperature);
-                        caseData casedata = new caseData();
-                        casedata.Phase = phase;
-                        casedata.Phase_ratio = before_phase_ratio;
-                        casedata.Temperature = before_temperature;
-                        casedata.Diff_plane = diff_plane;
-                        casedata.Ehkl = Ehkl;
-                        casedata.Vhkl = tmp_data.Vhkl;
-                        casedata.Distance = tmp_data.Distance;
-                        list.Add(casedata);
-                    }
-                    else
+                    List<caseData> list = new List<caseData>();
+                    using (SQLiteConnection conn = new SQLiteConnection(connStr))
                     {
-                        MessageBox.Show("生成数据不能填入空值!请重新填写", "提示信息", MessageBoxButton.OK,MessageBoxImage.Warning);
+                        using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                        {
+                            try
+                            {
+                                conn.Open();
+                                using (SQLiteDataReader reader = command.ExecuteReader())
+                                {
+                                    int i = 1;
+                                    while (reader.Read())
+                                    {
+                                        HasData = true;
+                                        caseData casedata = new caseData();
+                                        casedata.Id = Convert.ToInt32(reader["id"]);
+                                        casedata.FlaseId = i;
+                                        casedata.Phase = reader["phase"].ToString();
+                                        casedata.Phase_ratio = Convert.ToDouble(reader["phase_ratio"]);
+                                        casedata.Temperature = Convert.ToDouble(reader["temperature"]);
+                                        casedata.Diff_plane = reader["diff_plane"].ToString();
+                                        casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
+                                        casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
+                                        if (reader["distance"].ToString() == "")
+                                        {
+                                            casedata.Distance = 0.00;
+                                        }
+                                        else
+                                        {
+                                            casedata.Distance = Convert.ToDouble(reader["distance"]);
+                                        }
+                                        list.Add(casedata);
+                                        i++;
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception("查询数据失败：" + ex.Message);
+                            }
+                            conn.Close();
+                        }
                     }
-                    
-                }                            
+                    if (!HasData) // 未找到数据
+                    {
+                        if (MessageBox.Show("未找到查询数据，是否自动生成数据？", "提示信息", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            String phase = inputPhase.SelectedValue.ToString();
+                            String diff_plane = inputDiff_plane.SelectedValue.ToString();
+                            if (phase != "" && diff_plane != "" && inputPhase_ratio.Text != "" && inputTemperature.Text != "")
+                            {
+                                double before_phase_ratio = Convert.ToDouble(inputPhase_ratio.Text); // 近似前相位比
+                                double before_temperature = Convert.ToDouble(inputTemperature.Text); //近似前温度
+
+                                double after_phase_ratio1 = before_phase_ratio; // 近似后计算用相位比
+                                double after_phase_ratio2 = Find_PhaseRatio(phase, diff_plane, before_phase_ratio); // 近似后查找用相位比                
+                                double after_temperature = Find_Temperature(phase, diff_plane, after_phase_ratio2, before_temperature); // 近似后查找用温度
+                                if (phase == "α")
+                                {
+                                    double[] ratio_list = { 62, 55.5, 70, 80 };
+                                    //选择最接近的相位比
+                                    after_phase_ratio1 = ratio_list[0];
+                                    foreach (double tmp in ratio_list)
+                                    {
+                                        if (Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio1))
+                                        {
+                                            after_phase_ratio1 = tmp;
+                                        }
+                                    }
+                                }
+                                else if (phase == "β")
+                                {
+                                    double[] ratio_list = { 38, 44.5, 30, 20 };
+                                    //选择最接近的相位比
+                                    after_phase_ratio1 = ratio_list[0];
+                                    foreach (double tmp in ratio_list)
+                                    {
+                                        if (Math.Abs(before_phase_ratio - tmp) <= Math.Abs(before_phase_ratio - after_phase_ratio1))
+                                        {
+                                            after_phase_ratio1 = tmp;
+                                        }
+                                    }
+                                }
+                                double Ehkl = computeEhkl(phase, after_phase_ratio1, before_temperature, diff_plane);
+                                caseData tmp_data = selectVhklAndDistance(phase, diff_plane, after_phase_ratio2, after_temperature);
+                                caseData casedata = new caseData();
+                                casedata.FlaseId = 1;
+                                casedata.Phase = phase;
+                                casedata.Phase_ratio = before_phase_ratio;
+                                casedata.Temperature = before_temperature;
+                                casedata.Diff_plane = diff_plane;
+                                casedata.Ehkl = Ehkl;
+                                casedata.Vhkl = tmp_data.Vhkl;
+                                casedata.Distance = tmp_data.Distance;
+                                list.Add(casedata);
+                                updateButton.IsEnabled = false;
+                                deleteButton.IsEnabled = false;
+                            }
+                            else
+                            {
+                                MessageBox.Show("生成数据不能填入空值!请重新填写", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
+
+                        }
+                    }
+                    ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
+                    sv1.ScrollChanged -= DataGrid_ScrollChanged;
+                    dg1.Items.Clear();
+                    foreach (caseData item in list)
+                    {
+                        dg1.Items.Add(item);
+                    }
+                }
+                
             }
-            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
-            sv1.ScrollChanged -= DataGrid_ScrollChanged;
-            dg1.Items.Clear();
-            foreach (caseData item in list)
-            {
-                dg1.Items.Add(item);
-            }
+            
             //dg1.ItemsSource = null;
             //dg1.ItemsSource = list;
             
@@ -583,8 +608,8 @@ namespace DataManage
                 {
                     try
                     {
-                        NotificationWindow data = new NotificationWindow("正在上传中!");
-                        data.Show();
+                        /*NotificationWindow data = new NotificationWindow("正在上传中!");
+                        data.Show();*/
                         
                         conn.Open();
                         SQLiteTransaction tx = conn.BeginTransaction();
@@ -685,15 +710,16 @@ namespace DataManage
             }
         }
 
+        // 刷新数据表
         private void BtnRefresh(object sender, RoutedEventArgs e)
         {
             inputTemperature.Text = "";
             inputPhase_ratio.Text = "";
             inputDiff_plane.Items.Clear();
 
-            flaseIdFlag = 1;
-            ShowAllData();
-            
+            updateButton.IsEnabled = true;
+            deleteButton.IsEnabled = true;
+
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Clear();
             inputPhase.Items.Add("");
@@ -705,6 +731,7 @@ namespace DataManage
 
             ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
             sv1.ScrollChanged += DataGrid_ScrollChanged;
+            flaseIdFlag = 1;
             ShowAllData();
         }
 
@@ -1329,6 +1356,29 @@ namespace DataManage
 
                 }
             }
+        }
+
+        //判断输入是否为double,不是则返回true
+        public static bool isNotDouble(string str)
+        {
+            bool flag = false;
+            if (str.StartsWith(".") || str.EndsWith("."))
+            {
+                flag = true;
+            }
+            else
+            {
+                for (int i = 0; i < str.Length; i++)
+                {
+                    if (!(char.IsDigit(str, i) || str[i].Equals('.')))
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+
+            }
+            return flag;
         }
     }
 }
