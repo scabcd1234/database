@@ -37,7 +37,7 @@ namespace DataManage
 
         public static int index = 0;
 
-        public static int pageSzie = 20;
+        public static int pageSize = 20;
 
         public MainWindow()
         {
@@ -61,10 +61,10 @@ namespace DataManage
             }));
             Loads.Completed += new EventHandler(Loads_Completed);*/
         }
-        void Loads_Completed(object sender, EventArgs e)
-        {            
-            loading_text.Visibility = Visibility.Hidden;
-        }
+        //void Loads_Completed(object sender, EventArgs e)
+        //{
+        //    loading_text.Visibility = Visibility.Hidden;
+        //}
 
         // 实现滚动监听
         private void DataGrid_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -72,10 +72,8 @@ namespace DataManage
             var scrollViewer = e.OriginalSource as ScrollViewer;
             if (e.VerticalOffset != 0 && e.VerticalOffset == scrollViewer.ScrollableHeight)
             {
-                index += pageSzie;
-                ShowAllData();
-                /*MessageBox.Show(index.ToString());
-                MessageBox.Show(pageSzie.ToString());*/
+                index += pageSize;
+                ShowAllData();                
             }
         }
         // 显示所有数据
@@ -89,8 +87,8 @@ namespace DataManage
             /*string sql = "SELECT * FROM casedata " + "limit " + index + "," + pageSize;*/
             
             string sql1 = "SELECT * FROM data " ;
-            string sql2 = "where 1 = 1 ";
-            string sql3 = " limit " + index + "," + (index + pageSzie);
+            string sql2 = "";
+            string sql3 = " limit " + pageSize + " offset " + index ;
             
             /*if (inputPhase.Text.Trim() != "")
             {
@@ -98,7 +96,7 @@ namespace DataManage
             }*/
             string sql = sql1 + sql2 + sql3;
 
-            MessageBox.Show(sql);
+            //MessageBox.Show(sql);
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {                    
                 using(SQLiteCommand command = new SQLiteCommand(sql, conn))
@@ -144,8 +142,11 @@ namespace DataManage
             }
             
             /*dg1.ItemsSource = null;*/
-            dg1.ItemsSource = list;
-
+            //dg1.ItemsSource = list;
+            foreach(caseData item in list){
+                dg1.Items.Add(list);
+            }
+                
             // 显示记录条数
             SetNumber();
         }

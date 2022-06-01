@@ -220,7 +220,7 @@
                                 </DataGrid.Columns>
 
                             </DataGrid>
-                            <Label Name="loading_text" Content="数据加载中..." FontSize="50" Margin="280,124,280,124" Grid.Row="2"/>
+                            
                         </Grid>
                     </TabItem>
 
