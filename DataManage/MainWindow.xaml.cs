@@ -520,6 +520,9 @@ namespace DataManage
         // 全选数据
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
+            //持续滑动
+            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
+            sv1.ScrollToVerticalOffset(sv1.ScrollableHeight);
             CheckBox headercb = (CheckBox)sender;
             for (int i = 0; i < dg1.Items.Count; i++)
             {
@@ -648,7 +651,7 @@ namespace DataManage
                             /*MessageBox.Show("插入成功");*/
                         }
                         tx.Commit();
-                        data.Close();
+                        //data.Close();
                         MessageBox.Show("上传成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
