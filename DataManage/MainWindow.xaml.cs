@@ -41,6 +41,7 @@ namespace DataManage
 
         public static int flaseIdFlag = 1;
 
+        public static bool selectedFlag = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -48,8 +49,7 @@ namespace DataManage
       
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
-            sv1.ScrollChanged += DataGrid_ScrollChanged;
+            
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Add("");
             foreach (String phase in phases){              
@@ -219,7 +219,10 @@ namespace DataManage
                     conn.Close();               
                 }                                                                            
             }
-            
+
+            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
+            sv1.ScrollChanged -= DataGrid_ScrollChanged;
+            sv1.ScrollChanged += DataGrid_ScrollChanged;
             dg1.Items.Clear();
             foreach (caseData item in list)
             {
@@ -314,7 +317,7 @@ namespace DataManage
             {
                 if (isNotDouble(inputPhase_ratio.Text.ToString()) || isNotDouble(inputTemperature.Text.ToString()))
                 {
-                    MessageBox.Show("相比例或温度请输入double类型！！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("相比例或温度请输入double类型！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else
                 {
@@ -433,6 +436,8 @@ namespace DataManage
                                 list.Add(casedata);
                                 updateButton.IsEnabled = false;
                                 deleteButton.IsEnabled = false;
+                                exportButton.IsEnabled = false;
+
                             }
                             else
                             {
@@ -448,6 +453,7 @@ namespace DataManage
                     {
                         dg1.Items.Add(item);
                     }
+                    selectedFlag = true;
                 }
                 
             }
@@ -470,6 +476,7 @@ namespace DataManage
         // 删除数据
         private void BtnDelete(object sender, RoutedEventArgs e)
         {
+            
             bool flag = false;
             string sql = "delete from data where 1 = 2";
             for (int i = 0; i < dg1.Items.Count; i++)
@@ -512,7 +519,16 @@ namespace DataManage
             }
             
             flaseIdFlag = 1;
-            ShowAllData();
+            if (selectedFlag == true)
+            {
+                BtnSelect(null, null);
+                
+            }
+            else
+            {
+                ShowAllData();
+            }
+            
             
             
         }
@@ -648,7 +664,7 @@ namespace DataManage
                             /*MessageBox.Show("插入成功");*/
                         }
                         tx.Commit();
-                        data.Close();
+                        /*data.Close();*/
                         MessageBox.Show("上传成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
@@ -725,6 +741,7 @@ namespace DataManage
 
             updateButton.IsEnabled = true;
             deleteButton.IsEnabled = true;
+            exportButton.IsEnabled = true;
 
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Clear();
@@ -735,15 +752,17 @@ namespace DataManage
             }
             inputPhase.SelectedIndex = 0;
 
-            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
-            sv1.ScrollChanged += DataGrid_ScrollChanged;
+           
             flaseIdFlag = 1;
+            selectedFlag = false;
             ShowAllData();
+
         }
 
         // 修改
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
+
             bool flag = false;
             int i = 0;
             for (i = 0; i < dg1.Items.Count; i++)
@@ -814,8 +833,15 @@ namespace DataManage
                 conn.Close();               
             }
             flaseIdFlag = 1;
-            ShowAllData();
-            
+            if(selectedFlag == true)
+            {
+                BtnSelect(null,null);
+            }
+            else
+            {
+                ShowAllData();
+            }
+
             return result;
         }
 
