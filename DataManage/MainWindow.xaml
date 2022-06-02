@@ -128,7 +128,7 @@
                                     <Button Content="修改" Name="updateButton" MinWidth="60" Margin="0,0,20,0" Click="BtnUpdate"  Style="{StaticResource textButton}" />
                                     <Button Content="删除" Name="deleteButton" MinWidth="60" Margin="0,0,20,0" Click="BtnDelete" Style="{StaticResource textButton}" />
                                     <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="BtnAdd"  Style="{StaticResource textButton}" />
-                                    <Button Content="导出" MinWidth="60" Margin="0,0,20,0" Click="BtnExport"  Style="{StaticResource textButton}" />
+                                    <Button Content="导出" Name="exportButton" MinWidth="60" Margin="0,0,20,0" Click="BtnExport"  Style="{StaticResource textButton}" />
                                     <Button Content="上传文件" Name="Upload" MinWidth="100" Margin="0,0,20,0" Click="UploadFile" Style="{StaticResource textButton}"/>
                                     <TextBox Width="300" Name="FilePath" Margin="0,0,0,0"  Style="{StaticResource inputBox}"></TextBox>
                                 </StackPanel>
@@ -191,7 +191,7 @@
                                         </DataGridCheckBoxColumn.CellStyle>
 
                                     </DataGridCheckBoxColumn>
-                                    <DataGridTextColumn  Header="编号" Binding="{Binding FlaseId}" Width="50" >
+                                    <DataGridTextColumn  Header="编号" Binding="{Binding Id}" Width="50" >
                                         <!-- ElementStyle="{StaticResource ResourceKey=dgCell}" 在每一个DataGridTextColumn后面加上这个，使得表格的每一行都居中-->
                                         <!-- 
                                         <DataGridTextColumn.HeaderTemplate>

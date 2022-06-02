@@ -20,6 +20,8 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.IO;
 using System.Threading;
+using System.Net.Sockets;
+using System.Windows.Threading;
 
 /*using System.Windows.Forms;*/
 
@@ -41,6 +43,9 @@ namespace DataManage
 
         public static int flaseIdFlag = 1;
 
+        public static bool selectedFlag = false;
+
+        public static bool scrollerFlag = false; //是否还能滑动
         public MainWindow()
         {
             InitializeComponent();
@@ -48,8 +53,7 @@ namespace DataManage
       
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
-            sv1.ScrollChanged += DataGrid_ScrollChanged;
+            
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Add("");
             foreach (String phase in phases){              
@@ -73,12 +77,18 @@ namespace DataManage
         // 实现滚动监听
         private void DataGrid_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
+            
             var scrollViewer = e.OriginalSource as ScrollViewer;
             if (e.VerticalOffset != 0 && e.VerticalOffset == scrollViewer.ScrollableHeight)
             {
                 index += pageSize;
-                GenerateData();                
-            }
+                GenerateData();
+                dg1.UpdateLayout();
+                if (scrollerFlag)
+                {
+                    ScrollToEnd(scrollViewer);
+                }
+            }          
         }
 
         // 产生数据
@@ -87,6 +97,7 @@ namespace DataManage
             int size = (int)ALLNumber.Content;
             if (index > size)
             {
+                scrollerFlag = false;
                 return;
             }
 
@@ -156,7 +167,7 @@ namespace DataManage
         // 显示原始数据
         private void ShowAllData()
         {
-            index = 0;
+            index = 0;            
             List<caseData> list = new List<caseData>();
         
             // int Count = selectData();
@@ -219,7 +230,10 @@ namespace DataManage
                     conn.Close();               
                 }                                                                            
             }
-            
+
+            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
+            sv1.ScrollChanged -= DataGrid_ScrollChanged;
+            sv1.ScrollChanged += DataGrid_ScrollChanged;
             dg1.Items.Clear();
             foreach (caseData item in list)
             {
@@ -227,8 +241,11 @@ namespace DataManage
             }
             //dg1.ItemsSource = null;            
             //dg1.ItemsSource = list;
-            dg1.ScrollIntoView(dg1.Items[0]);
-
+            if(dg1.Items.Count > 0)
+            {
+                dg1.ScrollIntoView(dg1.Items[0]);
+            }
+            
             // 显示记录条数
             SetNumber();
         }
@@ -314,7 +331,7 @@ namespace DataManage
             {
                 if (isNotDouble(inputPhase_ratio.Text.ToString()) || isNotDouble(inputTemperature.Text.ToString()))
                 {
-                    MessageBox.Show("相比例或温度请输入double类型！！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("相比例或温度请输入double类型！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else
                 {
@@ -433,6 +450,8 @@ namespace DataManage
                                 list.Add(casedata);
                                 updateButton.IsEnabled = false;
                                 deleteButton.IsEnabled = false;
+                                exportButton.IsEnabled = false;
+
                             }
                             else
                             {
@@ -448,6 +467,7 @@ namespace DataManage
                     {
                         dg1.Items.Add(item);
                     }
+                    selectedFlag = true;
                 }
                 
             }
@@ -470,6 +490,7 @@ namespace DataManage
         // 删除数据
         private void BtnDelete(object sender, RoutedEventArgs e)
         {
+            
             bool flag = false;
             string sql = "delete from data where 1 = 2";
             for (int i = 0; i < dg1.Items.Count; i++)
@@ -512,18 +533,57 @@ namespace DataManage
             }
             
             flaseIdFlag = 1;
-            ShowAllData();
+            if (selectedFlag == true)
+            {
+                BtnSelect(null, null);
+                
+            }
+            else
+            {
+                ShowAllData();
+            }
             
             
+            
+        }
+
+        //滑动到底部
+        private void ScrollToEnd(ScrollViewer sv1)
+        {                    
+            if (scrollerFlag)
+            {
+                sv1.ScrollToEnd();
+            }           
+        }
+        public static void DoEvents()
+        {
+            var frame = new DispatcherFrame();
+
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
+                new DispatcherOperationCallback(
+                    delegate (object f)
+                    {
+                        ((DispatcherFrame)f).Continue = false;
+                        return null;
+                    }), frame);
+
+            Dispatcher.PushFrame(frame);
         }
         
         // 全选数据
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
-            //持续滑动
-            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
-            sv1.ScrollToVerticalOffset(sv1.ScrollableHeight);
             CheckBox headercb = (CheckBox)sender;
+            NotificationWindow data = new NotificationWindow("数据加载中!");
+            if (selectedFlag==false && headercb.IsChecked == true)
+            {                
+                data.Show();
+                scrollerFlag = true;
+                ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;                
+                ScrollToEnd(sv1);
+            }                     
+           
+            DoEvents();
             for (int i = 0; i < dg1.Items.Count; i++)
             {
                 //获取行
@@ -537,6 +597,11 @@ namespace DataManage
                     cb.IsChecked = headercb.IsChecked;
                 }                               
             }
+            if (data.IsActive)
+            {
+                data.Close();
+            }
+            
         }
               
         // 点击事件触发
@@ -651,7 +716,7 @@ namespace DataManage
                             /*MessageBox.Show("插入成功");*/
                         }
                         tx.Commit();
-                        //data.Close();
+                        /*data.Close();*/
                         MessageBox.Show("上传成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
@@ -728,6 +793,7 @@ namespace DataManage
 
             updateButton.IsEnabled = true;
             deleteButton.IsEnabled = true;
+            exportButton.IsEnabled = true;
 
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Clear();
@@ -738,15 +804,17 @@ namespace DataManage
             }
             inputPhase.SelectedIndex = 0;
 
-            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
-            sv1.ScrollChanged += DataGrid_ScrollChanged;
+           
             flaseIdFlag = 1;
+            selectedFlag = false;
             ShowAllData();
+
         }
 
         // 修改
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
+
             bool flag = false;
             int i = 0;
             for (i = 0; i < dg1.Items.Count; i++)
@@ -817,8 +885,15 @@ namespace DataManage
                 conn.Close();               
             }
             flaseIdFlag = 1;
-            ShowAllData();
-            
+            if(selectedFlag == true)
+            {
+                BtnSelect(null,null);
+            }
+            else
+            {
+                ShowAllData();
+            }
+
             return result;
         }
 
