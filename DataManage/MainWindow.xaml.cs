@@ -235,22 +235,22 @@ namespace DataManage
                 }                                                                            
             }
 
-            ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
-            sv1.ScrollChanged -= DataGrid_ScrollChanged;
-            sv1.ScrollChanged += DataGrid_ScrollChanged;
+            //ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
+            //sv1.ScrollChanged -= DataGrid_ScrollChanged;
+            //sv1.ScrollChanged += DataGrid_ScrollChanged;
             CurrentList = list;
-            dg1.Items.Clear();
-            foreach (caseData item in list)
-            {
-                dg1.Items.Add(item);
-            }
-            //dg1.ItemsSource = null;            
-            //dg1.ItemsSource = list;
-            if(dg1.Items.Count > 0)
-            {
-                dg1.ScrollIntoView(dg1.Items[0]);
-            }
-            
+            //dg1.Items.Clear();
+            //foreach (caseData item in list)
+            //{
+            //    dg1.Items.Add(item);
+            //}
+            dg1.ItemsSource = null;
+            dg1.ItemsSource = list;
+            //if(dg1.Items.Count > 0)
+            //{
+            //    dg1.ScrollIntoView(dg1.Items[0]);
+            //}
+
             // 显示记录条数
             SetNumber();
         }
@@ -467,21 +467,19 @@ namespace DataManage
 
                         }
                     }
-                    ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
-                    sv1.ScrollChanged -= DataGrid_ScrollChanged;
-                    dg1.Items.Clear();
-                    foreach (caseData item in list)
-                    {
-                        dg1.Items.Add(item);
-                    }
+                    //ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
+                    //sv1.ScrollChanged -= DataGrid_ScrollChanged;
+                    //dg1.Items.Clear();
+                    //foreach (caseData item in list)
+                    //{
+                    //    dg1.Items.Add(item);
+                    //}
                     selectedFlag = true;
+                    dg1.ItemsSource = null;
+                    dg1.ItemsSource = list;
                 }
                 
-            }
-            
-            //dg1.ItemsSource = null;
-            //dg1.ItemsSource = list;
-            
+            }            
         }
 
        
@@ -538,7 +536,6 @@ namespace DataManage
                     }
                 }
             }
-
             //MessageBox.Show(sql);
             if (flag)
             {                
@@ -652,7 +649,7 @@ namespace DataManage
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("获取选中数据：" + "失败：" + ex.Message);
+                    throw new Exception("全选数据：" + "失败：" + ex.Message);
                 }
                 conn.Close();
             }
@@ -1605,7 +1602,7 @@ namespace DataManage
             }
         }
 
-        //重置选择状态字段
+        //重置选择状态
         private void ResetChecked()
         {
             String sql = "update data set ischecked = false;";
@@ -1617,7 +1614,6 @@ namespace DataManage
                     using (SQLiteCommand command = new SQLiteCommand(sql, conn))
                     {
                         command.ExecuteNonQuery();
-
                     }
                 }
                 catch (Exception ex)
