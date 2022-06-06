@@ -150,7 +150,7 @@
                                                 <Setter Property="Background" Value="White"/>
                                             </Trigger>
                                         </Style.Triggers>
-                                        <EventSetter Event="MouseDown" Handler="Item_GotFocus"/>
+                                       <!-- <EventSetter Event="MouseDown" Handler="Item_GotFocus"/>-->
                                     </Style>
                                 </DataGrid.RowStyle>
 
@@ -179,7 +179,7 @@
                                             <Style TargetType="CheckBox">
                                                 <Setter Property="Tag" Value="{Binding Id}"></Setter>
                                                 <Setter Property="IsChecked" Value="{Binding IsChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                                                <EventSetter Event="Checked" Handler="CheckBox_Click_1"></EventSetter>
+                                                <EventSetter Event="Click" Handler="CheckBox_Click_1"></EventSetter>
                                             </Style>
                                         </DataGridCheckBoxColumn.ElementStyle>
 

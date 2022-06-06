@@ -63,6 +63,7 @@ namespace DataManage
             } 
             inputPhase.SelectedIndex = 0;
 
+            ResetChecked();
             ShowAllData();
 
             /*var Loads = this.Dispatcher.BeginInvoke(new Action(() =>
@@ -663,21 +664,21 @@ namespace DataManage
             }
         }
 
-        // 点击事件触发
-        private void Item_GotFocus(object sender, RoutedEventArgs e)
-        {
+        //// 点击事件触发
+        //private void Item_GotFocus(object sender, RoutedEventArgs e)
+        //{
 
-            //获取行
-            DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(dg1.SelectedIndex);
+        //    //获取行
+        //    DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(dg1.SelectedIndex);
 
-            if (neddrow != null)
-            {
-                //获取该行的某列
-                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+        //    if (neddrow != null)
+        //    {
+        //        //获取该行的某列
+        //        CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
 
-                cb.IsChecked = !cb.IsChecked;
-            }
-        }
+        //        cb.IsChecked = !cb.IsChecked;
+        //    }
+        //}
 
 
         // 向数据库中插入csv文件
@@ -843,7 +844,7 @@ namespace DataManage
             }
         }
 
-        // 刷新数据表
+        // 刷新数据
         private void BtnRefresh(object sender, RoutedEventArgs e)
         {
             inputTemperature.Text = "";
@@ -866,6 +867,7 @@ namespace DataManage
            
             flaseIdFlag = 1;
             selectedFlag = false;
+            ResetChecked();
             ShowAllData();
 
         }
@@ -1573,7 +1575,7 @@ namespace DataManage
 
         private void CheckBox_Click_1(object sender, RoutedEventArgs e)
         {
-            CheckBox cb = (CheckBox)sender;           
+            CheckBox cb = (CheckBox)sender;
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 try
@@ -1622,6 +1624,7 @@ namespace DataManage
                 }
                 conn.Close();
             }
+            
         }
     }
 }
