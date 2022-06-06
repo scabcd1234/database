@@ -137,8 +137,8 @@
                             <!--显示栏-->
                             <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
                               Margin="20,10,20,10" HorizontalAlignment="Center" Height="300"
-                              Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow"
-                                      EnableRowVirtualization="False" Cursor="Hand" >
+                              Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow" VirtualizingPanel.VirtualizationMode="Standard"
+                                      EnableRowVirtualization="True" Cursor="Hand" >
 
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">
@@ -173,11 +173,13 @@
                                             </DataTemplate>
                                         </DataGridCheckBoxColumn.HeaderTemplate>
 
+                                        
                                         <!--为该列的CheckBox Tag属性绑定值-->
                                         <DataGridCheckBoxColumn.ElementStyle>
                                             <Style TargetType="CheckBox">
                                                 <Setter Property="Tag" Value="{Binding Id}"></Setter>
-                                                
+                                                <Setter Property="IsChecked" Value="{Binding IsChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <EventSetter Event="Checked" Handler="CheckBox_Click_1"></EventSetter>
                                             </Style>
                                         </DataGridCheckBoxColumn.ElementStyle>
 
@@ -186,7 +188,7 @@
                                             <Style>
                                                 <Setter Property="CheckBox.VerticalAlignment"  Value="Center"></Setter>
                                                 <Setter Property="CheckBox.HorizontalAlignment"  Value="Center"></Setter>
-
+                                                
                                             </Style>
                                         </DataGridCheckBoxColumn.CellStyle>
 

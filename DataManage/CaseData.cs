@@ -17,5 +17,6 @@ namespace DataManage
         public double Ehkl { get; set; }
         public double Vhkl { get; set; }
         public double Distance { get; set; }
+        public Boolean IsChecked { get; set; }
     }
 }

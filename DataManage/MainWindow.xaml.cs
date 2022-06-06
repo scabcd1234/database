@@ -46,6 +46,8 @@ namespace DataManage
         public static bool selectedFlag = false;
 
         public static bool scrollerFlag = false; //是否还能滑动
+
+        public static List<caseData> CurrentList = new List<caseData>(); //当前数据集合
         public MainWindow()
         {
             InitializeComponent();
@@ -78,17 +80,17 @@ namespace DataManage
         private void DataGrid_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             
-            var scrollViewer = e.OriginalSource as ScrollViewer;
-            if (e.VerticalOffset != 0 && e.VerticalOffset == scrollViewer.ScrollableHeight)
-            {
-                index += pageSize;
-                GenerateData();
-                dg1.UpdateLayout();
-                if (scrollerFlag)
-                {
-                    ScrollToEnd(scrollViewer);
-                }
-            }          
+            //var scrollViewer = e.OriginalSource as ScrollViewer;
+            //if (e.VerticalOffset != 0 && e.VerticalOffset == scrollViewer.ScrollableHeight)
+            //{
+            //    index += pageSize;
+            //    GenerateData();
+            //    dg1.UpdateLayout();
+            //    if (scrollerFlag)
+            //    {
+            //        ScrollToEnd(scrollViewer);
+            //    }
+            //}          
         }
 
         // 产生数据
@@ -177,8 +179,9 @@ namespace DataManage
             
             string sql1 = "SELECT * FROM data " ;
             string sql2 = "";
-            string sql3 = " limit " + pageSize + " offset "+ index;
-            
+            //string sql3 = " limit " + pageSize + " offset "+ index;
+            string sql3 = "";
+
             /*if (inputPhase.Text.Trim() != "")
             {
                 sql2 += " and phase like '" + inputPhase.Text.Trim() + "%' ";
@@ -207,6 +210,7 @@ namespace DataManage
                                 casedata.Diff_plane = reader["diff_plane"].ToString();
                                 casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
                                 casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
+                                casedata.IsChecked = (Boolean)reader["ischecked"];
                                 if (reader["distance"].ToString() == "")
                                 {
                                     casedata.Distance = 0.00;
@@ -234,6 +238,7 @@ namespace DataManage
             ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;
             sv1.ScrollChanged -= DataGrid_ScrollChanged;
             sv1.ScrollChanged += DataGrid_ScrollChanged;
+            CurrentList = list;
             dg1.Items.Clear();
             foreach (caseData item in list)
             {
@@ -376,6 +381,7 @@ namespace DataManage
                                         casedata.Diff_plane = reader["diff_plane"].ToString();
                                         casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
                                         casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
+                                        casedata.IsChecked = (Boolean)reader["ischecked"];
                                         if (reader["distance"].ToString() == "")
                                         {
                                             casedata.Distance = 0.00;
@@ -396,6 +402,7 @@ namespace DataManage
                             conn.Close();
                         }
                     }
+                    CurrentList = list;
                     if (!HasData) // 未找到数据
                     {
                         if (MessageBox.Show("未找到查询数据，是否自动生成数据？", "提示信息", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -493,22 +500,48 @@ namespace DataManage
             
             bool flag = false;
             string sql = "delete from data where 1 = 2";
-            for (int i = 0; i < dg1.Items.Count; i++)
-            {
-                //获取行
-                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
+            //for (int i = 0; i < dg1.Items.Count; i++)
+            //{
+            //    //获取行
+            //    DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
 
-                //获取该行的某列
-                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
-                if (cb.IsChecked == true)
+            //    //获取该行的某列
+            //    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+            //    if (cb.IsChecked == true)
+            //    {
+            //        sql = sql + " or data.Id =" + cb.Tag;
+            //        flag = true;
+            //    }
+            //}
+            foreach(caseData item in CurrentList)
+            {
+                String presql = "select ischecked from data where id='" + item.Id + "';";
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
                 {
-                    sql = sql + " or data.Id =" + cb.Tag;
-                    flag = true;
-                }         
+                    using (SQLiteCommand command = new SQLiteCommand(presql, conn))
+                    {                        
+                        try
+                        {
+                            conn.Open();
+                            bool ischecked = (bool)command.ExecuteScalar();
+                            if (ischecked == true)
+                            {
+                                sql = sql + " or data.Id =" + item.Id;
+                                flag = true;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("获取选中数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
+                }
             }
 
+            //MessageBox.Show(sql);
             if (flag)
-            {
+            {                
                 using (SQLiteConnection conn = new SQLiteConnection(connStr))
                 {
                     using (SQLiteCommand command = new SQLiteCommand(sql, conn))
@@ -517,7 +550,8 @@ namespace DataManage
                         {
                             conn.Open();
                             command.ExecuteNonQuery();
-                            MessageBox.Show("删除成功", "提示信息", MessageBoxButton.OK,MessageBoxImage.Information);                            
+                            MessageBox.Show("删除成功", "提示信息", MessageBoxButton.OK,MessageBoxImage.Information);
+                            ResetChecked();
                         }
                         catch (Exception ex)
                         {
@@ -574,52 +608,80 @@ namespace DataManage
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             CheckBox headercb = (CheckBox)sender;
-            NotificationWindow data = new NotificationWindow("数据加载中!");
-            if (selectedFlag==false && headercb.IsChecked == true)
-            {                
-                data.Show();
-                scrollerFlag = true;
-                ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;                
-                ScrollToEnd(sv1);
-            }                     
-           
-            DoEvents();
-            for (int i = 0; i < dg1.Items.Count; i++)
-            {
-                //获取行
-                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
+            //NotificationWindow data = new NotificationWindow("数据加载中!");
+            //if (selectedFlag==false && headercb.IsChecked == true)
+            //{                
+            //    data.Show();
+            //    scrollerFlag = true;
+            //    ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;                
+            //    ScrollToEnd(sv1);
+            //}                     
 
-                if (neddrow != null)
+            //DoEvents();
+            //for (int i = 0; i < dg1.Items.Count; i++)
+            //{
+            //    //获取行
+            //    DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
+
+            //    if (neddrow != null)
+            //    {
+            //        //获取该行的某列
+            //        CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+
+            //        cb.IsChecked = headercb.IsChecked;
+            //    }                               
+            //}
+            //if (data.IsActive)
+            //{
+            //    data.Close();
+            //}
+            string sql = "update data  set ischecked = " + headercb.IsChecked + " where 1=2 ";
+            foreach (caseData item in CurrentList)
+            {
+                 sql = sql + " or data.Id =" + item.Id;
+            }
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
                 {
-                    //获取该行的某列
-                    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
-
-                    cb.IsChecked = headercb.IsChecked;
-                }                               
+                    conn.Open();                  
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("获取选中数据：" + "失败：" + ex.Message);
+                }
+                conn.Close();
             }
-            if (data.IsActive)
+            if (selectedFlag == true)
             {
-                data.Close();
+                BtnSelect(null, null);
             }
-            
+            else
+            {
+                ShowAllData();
+            }
         }
-              
+
         // 点击事件触发
         private void Item_GotFocus(object sender, RoutedEventArgs e)
         {
-            
-                //获取行
-                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(dg1.SelectedIndex);
 
-                if (neddrow != null)
-                {
-                    //获取该行的某列
-                    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+            //获取行
+            DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(dg1.SelectedIndex);
 
-                    cb.IsChecked = !cb.IsChecked;
-                }                                 
+            if (neddrow != null)
+            {
+                //获取该行的某列
+                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+
+                cb.IsChecked = !cb.IsChecked;
+            }
         }
- 
+
 
         // 向数据库中插入csv文件
         public void ImportCsv(string filePath, string fileName)
@@ -811,44 +873,64 @@ namespace DataManage
 
         }
 
-        // 修改
+        // 修改数据
         private void BtnUpdate(object sender, RoutedEventArgs e)
         {
 
             bool flag = false;
             int i = 0;
-            for (i = 0; i < dg1.Items.Count; i++)
-            {
-                //获取行
-                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
+            //for (i = 0; i < dg1.Items.Count; i++)
+            //{
+            //    //获取行
+            //    DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
                 
-                //获取该行的某列
-                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
-                if (cb.IsChecked == true)
-                {
-                    //MessageBox.Show(i.ToString());
-                    int updateId = Convert.ToInt32(cb.Tag);
+            //    //获取该行的某列
+            //    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+            //    if (cb.IsChecked == true)
+            //    {
+            //        //MessageBox.Show(i.ToString());
+            //        int updateId = Convert.ToInt32(cb.Tag);
                     
-                    caseData caseData = selectDataById(updateId);
-                    UpdateData updateData = new UpdateData(caseData);
-                    updateData.TransfEvent += Update_TransfEvent;
-                    updateData.ShowDialog();
-                    flag = true;
-                    break;
+            //        caseData caseData = selectDataById(updateId);
+            //        UpdateData updateData = new UpdateData(caseData);
+            //        updateData.TransfEvent += Update_TransfEvent;
+            //        updateData.ShowDialog();
+            //        flag = true;
+            //        break;
+            //    }
+            //}
+            foreach (caseData item in CurrentList)
+            {
+                String presql = "select ischecked from data where id='" + item.Id + "';";
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(presql, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            bool ischecked = (bool)command.ExecuteScalar();
+                            if (ischecked == true)
+                            {
+                                caseData caseData = selectDataById(item.Id);
+                                UpdateData updateData = new UpdateData(caseData);
+                                updateData.TransfEvent += Update_TransfEvent;
+                                updateData.ShowDialog();
+                                flag = true;
+                                break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("获取选中数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
                 }
             }
             if (flag)
-            {   
-                dg1.UpdateLayout();
-                //获取行
-                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
-                if (neddrow != null)
-                {
-                    //获取该行的某列
-                    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
-                    cb.IsChecked = true;
-                }
-               
+            {
+                ResetChecked();
             }
             else
             {
@@ -1060,27 +1142,54 @@ namespace DataManage
             fileDialog1.Filter = "Execl files (*.xlsx)|*.xlsx";//文件的类型
             fileDialog1.FilterIndex = 1;
             fileDialog1.FileName = "导出数据";
-            for (int i = 0; i < dg1.Items.Count; i++)
-            {
-                //获取行
-                DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
+            //for (int i = 0; i < dg1.Items.Count; i++)
+            //{
+            //    //获取行
+            //    DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
 
-                //获取该行的某列
-                CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
-                if (cb.IsChecked == true)
-                {                    
-                    int Id = Convert.ToInt32(cb.Tag);                    
-                    caseData casedata = selectDataById(Id);
-                    list.Add(casedata);
-                    flag = true;
-                }
-            }
-            if (flag)
+            //    //获取该行的某列
+            //    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
+            //    if (cb.IsChecked == true)
+            //    {                    
+            //        int Id = Convert.ToInt32(cb.Tag);                    
+            //        caseData casedata = selectDataById(Id);
+            //        list.Add(casedata);
+            //        flag = true;
+            //    }
+            //}
+            foreach (caseData item in CurrentList)
             {
+                String presql = "select ischecked from data where id='" + item.Id + "';";
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(presql, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            bool ischecked = (bool)command.ExecuteScalar();
+                            if (ischecked == true)
+                            {                               
+                                caseData casedata = selectDataById(item.Id);
+                                list.Add(casedata);
+                                flag = true;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("获取选中数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
+                }
+            }            
+            if (flag)
+            {               
                 if (fileDialog1.ShowDialog() == true)
                 {
                     String filename = fileDialog1.FileName;
                     exportXls(list, filename);
+                    ResetChecked();
                 }
                 else
                 {
@@ -1463,6 +1572,60 @@ namespace DataManage
 
             }
             return flag;
+        }
+
+        private void CheckBox_Click_1(object sender, RoutedEventArgs e)
+        {
+            CheckBox cb = (CheckBox)sender;           
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string sql = "";
+                    if (cb.IsChecked == true)
+                    {
+                        sql += "update data  set ischecked = true where id='" + cb.Tag + "';";
+                    }
+                    else
+                    {
+                        sql += "update data  set ischecked = false where id='" + cb.Tag + "';";
+                    }                                          
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        command.ExecuteNonQuery();
+                        
+                    }
+                }
+                catch (Exception ex)
+                {
+                   
+                }
+                conn.Close();
+            }
+        }
+
+        //重置选择状态字段
+        private void ResetChecked()
+        {
+            String sql = "update data set ischecked = false;";
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();                    
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        command.ExecuteNonQuery();
+
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+                conn.Close();
+            }
         }
     }
 }
