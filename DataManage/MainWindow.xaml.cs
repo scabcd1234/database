@@ -498,7 +498,7 @@ namespace DataManage
         {
             
             bool flag = false;
-            string sql = "delete from data where 1 = 2";
+            string sql = "delete from data where data.Id in (";                                   
             //for (int i = 0; i < dg1.Items.Count; i++)
             //{
             //    //获取行
@@ -512,7 +512,7 @@ namespace DataManage
             //        flag = true;
             //    }
             //}
-            foreach(caseData item in CurrentList)
+            foreach (caseData item in CurrentList)
             {
                 String presql = "select ischecked from data where id='" + item.Id + "';";
                 using (SQLiteConnection conn = new SQLiteConnection(connStr))
@@ -525,7 +525,7 @@ namespace DataManage
                             bool ischecked = (bool)command.ExecuteScalar();
                             if (ischecked == true)
                             {
-                                sql = sql + " or data.Id =" + item.Id;
+                                sql = sql + item.Id + ",";
                                 flag = true;
                             }
                         }
@@ -537,6 +537,7 @@ namespace DataManage
                     }
                 }
             }
+            sql = sql.Substring(0, sql.Length - 1) + ");";
             //MessageBox.Show(sql);
             if (flag)
             {                
@@ -633,11 +634,18 @@ namespace DataManage
             //{
             //    data.Close();
             //}
-            string sql = "update data  set ischecked = " + headercb.IsChecked + " where 1=2 ";
+
+            //string sql = "update data set ischecked = " + headercb.IsChecked + " where 1=2 ";
+            //foreach (caseData item in CurrentList)
+            //{
+            //     sql = sql + " or data.Id =" + item.Id;
+            //}
+            string sql = "update data set ischecked = " + headercb.IsChecked + " where data.Id in ( ";
             foreach (caseData item in CurrentList)
             {
-                 sql = sql + " or data.Id =" + item.Id;
+                sql = sql +item.Id+",";
             }
+            sql = sql.Substring(0, sql.Length - 1) + ");";
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 try
