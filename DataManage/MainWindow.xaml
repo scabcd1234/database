@@ -70,6 +70,7 @@
             
             <Setter Property="Height" Value="15"/>
         </Style>
+        
         <!---->
     </Window.Resources>
     
@@ -149,11 +150,20 @@
                                             <Trigger Property="ItemsControl.AlternationIndex" Value="1">
                                                 <Setter Property="Background" Value="White"/>
                                             </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="Background" Value="LightBlue"/>
+                                            </Trigger>
+                                            
+                                                
+                                           
                                         </Style.Triggers>
                                        <!-- <EventSetter Event="MouseDown" Handler="Item_GotFocus"/>-->
                                     </Style>
                                 </DataGrid.RowStyle>
 
+                                
+                                
+                                
                                 <DataGrid.ColumnHeaderStyle>
                                     <Style TargetType="DataGridColumnHeader">
                                         <Setter Property="HorizontalContentAlignment" Value="Center">
@@ -169,7 +179,7 @@
                                     <DataGridCheckBoxColumn>
                                         <DataGridCheckBoxColumn.HeaderTemplate >
                                             <DataTemplate>
-                                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding Id}" Click="CheckBox_Click"></CheckBox>
+                                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding Id}" Click="CheckBox_Click" Loaded="CheckBox_Loaded" ></CheckBox>
                                             </DataTemplate>
                                         </DataGridCheckBoxColumn.HeaderTemplate>
 
@@ -227,9 +237,133 @@
                         </Grid>
                     </TabItem>
 
-                    <TabItem Header="选项卡2" FontSize="12" Height="40">
+                    <TabItem  FontSize="15" Height="40">
+                        <TabItem.Header>
+                            <Label Content="选项卡2" MouseLeftButtonDown="multiClick" HorizontalAlignment="Stretch"/>
+                        </TabItem.Header>
                         <Grid Background="#FFE5E5E5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!--搜索栏-->
+                            <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top">
+                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                    <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="0,0,0,0" Style="{StaticResource showLabel}"></Label>
+                                    <ComboBox Name="multiInputPhase" Width="50" Margin="0,0,10,0" Style="{StaticResource selectComboBox}" SelectionChanged="multiInputPhase_SelectionChanged"></ComboBox>
+
+                                    <Label Content="请选择衍射面:" Style="{StaticResource showLabel}"></Label>
+                                    <ComboBox Name="multiInputDiff_plane" Width="70" Margin="0,0,10,0" Style="{StaticResource selectComboBox}"></ComboBox>
+                                    <Button Content="查询" MinWidth="60" Margin="0,0,10,0"  Click="multiBtnSelect" Style="{StaticResource textButton}"/>
+                                    <Button Content="刷新" MinWidth="60" Margin="0,0,10,0" Click="multiBtnRefresh" Style="{StaticResource textButton}"/>
+                                    <Label Content="总条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
+                                    <Label Name="multiALLNumber" Content="13000" Margin="0,0,10,0" Style="{StaticResource showLabel}"/>
+
+                                    <Label Content="α条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
+                                    <Label Name="multiFirstNumber" Content="6500" Margin="0,0,10,0" Style="{StaticResource showLabel}"/>
+
+                                    <Label Content="β条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
+                                    <Label Name="multiSecondNumber" Content="6500" Margin="0,0,10,0" Style="{StaticResource showLabel}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!--操作栏-->
+                            <Grid Grid.Row="1" Grid.Column="1" >
+                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                    <Button Content="修改" Name="multiUpdateButton" MinWidth="60" Margin="0,0,20,0" Click="multiBtnUpdate"  Style="{StaticResource textButton}" />
+                                    <Button Content="删除" Name="multiDeleteButton" MinWidth="60" Margin="0,0,20,0" Click="multiBtnDelete" Style="{StaticResource textButton}" />
+                                    <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="multiBtnAdd"  Style="{StaticResource textButton}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <!--显示栏-->
+                            <DataGrid Name="multiDg" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
+                              Margin="20,10,20,10" HorizontalAlignment="Center" Height="300"
+                              Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow" VirtualizingPanel.VirtualizationMode="Standard"
+                                      EnableRowVirtualization="True" Cursor="Hand" >
+
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                                <Setter Property="Background" Value="#DDDDDD"/>
+                                            </Trigger>
+                                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                                <Setter Property="Background" Value="White"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="Background" Value="LightBlue"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                        <!-- <EventSetter Event="MouseDown" Handler="Item_GotFocus"/>-->
+                                    </Style>
+                                </DataGrid.RowStyle>
+
+                                <DataGrid.ColumnHeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center">
+                                        </Setter>
+                                        <Setter Property="Background" Value="#f5f5f5"></Setter>
+                                        <Setter Property="Foreground" Value="Black"></Setter>
+                                        <Setter Property="BorderThickness" Value="0.5" />
+                                        <Setter Property="BorderBrush" Value="Gray" />
+                                    </Style>
+                                </DataGrid.ColumnHeaderStyle>
+
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn>
+                                        <DataGridCheckBoxColumn.HeaderTemplate >
+                                            <DataTemplate>
+                                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding Id}" Click="multiCheckBox_Click" Loaded="CheckBox_Loaded" ></CheckBox>
+                                            </DataTemplate>
+                                        </DataGridCheckBoxColumn.HeaderTemplate>
+
+                                        <!--为该列的CheckBox Tag属性绑定值-->
+                                        <DataGridCheckBoxColumn.ElementStyle>
+                                            <Style TargetType="CheckBox">
+                                                <Setter Property="Tag" Value="{Binding Id}"></Setter>
+                                                <Setter Property="IsChecked" Value="{Binding IsChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <EventSetter Event="Click" Handler="CheckBox_Click_1"></EventSetter>
+                                            </Style>
+                                        </DataGridCheckBoxColumn.ElementStyle>
+
+                                        <!--设置一点样式-->
+                                        <DataGridCheckBoxColumn.CellStyle >
+                                            <Style>
+                                                <Setter Property="CheckBox.VerticalAlignment"  Value="Center"></Setter>
+                                                <Setter Property="CheckBox.HorizontalAlignment"  Value="Center"></Setter>
+                                            </Style>
+                                        </DataGridCheckBoxColumn.CellStyle>
+
+                                    </DataGridCheckBoxColumn>
+                                    <DataGridTextColumn  Header="编号" Binding="{Binding Id}" Width="50" >
+                                        <!-- ElementStyle="{StaticResource ResourceKey=dgCell}" 在每一个DataGridTextColumn后面加上这个，使得表格的每一行都居中-->
+                                        <!-- 
+                                        <DataGridTextColumn.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" ></TextBlock>
+                                            </DataTemplate>
+                                        </DataGridTextColumn.HeaderTemplate>
+                                        -->
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="60" />
+                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Diff_plane}" Header="衍射面"  Width="80"/>
+                                    <DataGridTextColumn Binding="{Binding Ehkl}" Header="衍射弹性常数Ehkl（GPa）"  Width="170"/>
+                                    <DataGridTextColumn Binding="{Binding Vhkl}" Header="衍射弹性常数vhkl"  Width="160"/>
+
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </Grid>
+                    </TabItem>
+
+                    <TabItem Header="选项卡3" FontSize="15" Height="40">
+                        
                     </TabItem>
                 </TabControl>
 
