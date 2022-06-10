@@ -362,8 +362,130 @@
                         </Grid>
                     </TabItem>
 
-                    <TabItem Header="选项卡3" FontSize="15" Height="40">
-                        
+                    <TabItem  FontSize="15" Height="40">
+                        <TabItem.Header>
+                            <Label Content="选项卡3" MouseLeftButtonDown="singleClick" HorizontalAlignment="Stretch"/>
+                        </TabItem.Header>
+                        <Grid Background="#FFE5E5E5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!--搜索栏-->
+                            <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top">
+                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                    <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="0,0,0,0" Style="{StaticResource showLabel}"></Label>
+                                    <ComboBox Name="singleInputPhase" Width="50" Margin="0,0,10,0" Style="{StaticResource selectComboBox}"></ComboBox>
+
+                                    
+                                    <Button Content="查询" MinWidth="60" Margin="0,0,10,0"  Click="singleBtnSelect" Style="{StaticResource textButton}"/>
+                                    <Button Content="刷新" MinWidth="60" Margin="0,0,10,0" Click="singleBtnRefresh" Style="{StaticResource textButton}"/>
+                                    <Label Content="总条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
+                                    <Label Name="singleALLNumber" Content="13000" Margin="0,0,10,0" Style="{StaticResource showLabel}"/>
+
+                                    <Label Content="α条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
+                                    <Label Name="singleFirstNumber" Content="6500" Margin="0,0,10,0" Style="{StaticResource showLabel}"/>
+
+                                    <Label Content="β条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
+                                    <Label Name="singleSecondNumber" Content="6500" Margin="0,0,10,0" Style="{StaticResource showLabel}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!--操作栏-->
+                            <Grid Grid.Row="1" Grid.Column="1" >
+                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                    <Button Content="修改" Name="singleUpdateButton" MinWidth="60" Margin="0,0,20,0" Click="singleBtnUpdate"  Style="{StaticResource textButton}" />
+                                    <Button Content="删除" Name="singleDeleteButton" MinWidth="60" Margin="0,0,20,0" Click="singleBtnDelete" Style="{StaticResource textButton}" />
+                                    <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="singleBtnAdd"  Style="{StaticResource textButton}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <!--显示栏-->
+                            <DataGrid Name="singleDg" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
+                              Margin="20,10,20,10" HorizontalAlignment="Center" Height="300"
+                              Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow" VirtualizingPanel.VirtualizationMode="Standard"
+                                      EnableRowVirtualization="True" Cursor="Hand" >
+
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                                <Setter Property="Background" Value="#DDDDDD"/>
+                                            </Trigger>
+                                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                                <Setter Property="Background" Value="White"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="Background" Value="LightBlue"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                        <!-- <EventSetter Event="MouseDown" Handler="Item_GotFocus"/>-->
+                                    </Style>
+                                </DataGrid.RowStyle>
+
+                                <DataGrid.ColumnHeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center">
+                                        </Setter>
+                                        <Setter Property="Background" Value="#f5f5f5"></Setter>
+                                        <Setter Property="Foreground" Value="Black"></Setter>
+                                        <Setter Property="BorderThickness" Value="0.5" />
+                                        <Setter Property="BorderBrush" Value="Gray" />
+                                    </Style>
+                                </DataGrid.ColumnHeaderStyle>
+
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn>
+                                        <DataGridCheckBoxColumn.HeaderTemplate >
+                                            <DataTemplate>
+                                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding Id}" Click="singleCheckBox_Click" Loaded="CheckBox_Loaded" ></CheckBox>
+                                            </DataTemplate>
+                                        </DataGridCheckBoxColumn.HeaderTemplate>
+
+                                        <!--为该列的CheckBox Tag属性绑定值-->
+                                        <DataGridCheckBoxColumn.ElementStyle>
+                                            <Style TargetType="CheckBox">
+                                                <Setter Property="Tag" Value="{Binding Id}"></Setter>
+                                                <Setter Property="IsChecked" Value="{Binding IsChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <EventSetter Event="Click" Handler="CheckBox_Click_1"></EventSetter>
+                                            </Style>
+                                        </DataGridCheckBoxColumn.ElementStyle>
+
+                                        <!--设置一点样式-->
+                                        <DataGridCheckBoxColumn.CellStyle >
+                                            <Style>
+                                                <Setter Property="CheckBox.VerticalAlignment"  Value="Center"></Setter>
+                                                <Setter Property="CheckBox.HorizontalAlignment"  Value="Center"></Setter>
+                                            </Style>
+                                        </DataGridCheckBoxColumn.CellStyle>
+
+                                    </DataGridCheckBoxColumn>
+                                    <DataGridTextColumn  Header="编号" Binding="{Binding Id}" Width="50" >
+                                        <!-- ElementStyle="{StaticResource ResourceKey=dgCell}" 在每一个DataGridTextColumn后面加上这个，使得表格的每一行都居中-->
+                                        <!-- 
+                                        <DataGridTextColumn.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" ></TextBlock>
+                                            </DataTemplate>
+                                        </DataGridTextColumn.HeaderTemplate>
+                                        -->
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="60" />
+                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding C11}" Header="C11"  Width="80"/>
+                                    <DataGridTextColumn Binding="{Binding C12}" Header="C12"  Width="170"/>
+                                    <DataGridTextColumn Binding="{Binding C13}" Header="C13"  Width="160"/>
+                                    <DataGridTextColumn Binding="{Binding C33}" Header="C33"  Width="160"/>
+                                    <DataGridTextColumn Binding="{Binding C44}" Header="C44"  Width="160"/>
+                                    
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
                     </TabItem>
                 </TabControl>
 

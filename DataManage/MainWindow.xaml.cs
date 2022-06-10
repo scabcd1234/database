@@ -50,6 +50,9 @@ namespace DataManage
         public static List<caseData> CurrentList = new List<caseData>(); //当前数据集合
 
         public static List<caseData> MultiCurrentList = new List<caseData>(); //多晶体当前数据集合
+
+        public static List<SingleData> SingleCurrentList = new List<SingleData>(); //单晶体当前数据集合
+
         public static CheckBox cball;
         public MainWindow()
         {
@@ -1911,6 +1914,172 @@ namespace DataManage
             }
         }
 
+        // 单晶体页面点击事件
+        private void singleClick(object sender, MouseButtonEventArgs e)
+        {
+            List<String> phases = selectPhaseALL();
+            singleInputPhase.Items.Clear();
+            singleInputPhase.Items.Add("");
+            foreach (String phase in phases)
+            {
+                singleInputPhase.Items.Add(phase);
+            }
+            singleInputPhase.SelectedIndex = 0;
+            ShowSingleAllData();
+        }
 
+        // 展示所有的多晶体数据
+        private void ShowSingleAllData()
+        {
+            index = 0;
+            List<SingleData> list = new List<SingleData>();
+            string sql1 = "SELECT * FROM single_data ";
+            string sql2 = "";
+            string sql3 = "";
+            string sql = sql1 + sql2 + sql3;
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            int i = 1;
+                            while (reader.Read())
+                            {
+                                SingleData singleData = new SingleData();
+                                singleData.Id = Convert.ToInt32(reader["id"]);
+                                singleData.FlaseId = i;
+                                singleData.Phase = reader["phase"].ToString();
+                                singleData.Temperature = Convert.ToDouble(reader["temperature"]);
+                                if (reader["C11"].ToString() == "")
+                                {
+                                    singleData.C11 = 0.00;
+                                }
+                                else
+                                {
+                                    singleData.C11 = Convert.ToDouble(reader["C11"]);
+                                }
+                                if (reader["C12"].ToString() == "")
+                                {
+                                    singleData.C12 = 0.00;
+                                }
+                                else
+                                {
+                                    singleData.C12 = Convert.ToDouble(reader["C12"]);
+                                }
+                                if (reader["C13"].ToString() == "")
+                                {
+                                    singleData.C13 = 0.00;
+                                }
+                                else
+                                {
+                                    singleData.C13 = Convert.ToDouble(reader["C13"]);
+                                }
+                                if (reader["C33"].ToString() == "")
+                                {
+                                    singleData.C33 = 0.00;
+                                }
+                                else
+                                {
+                                    singleData.C33 = Convert.ToDouble(reader["C33"]);
+                                }
+                                if (reader["C44"].ToString() == "")
+                                {
+                                    singleData.C44 = 0.00;
+                                }
+                                else
+                                {
+                                    singleData.C44 = Convert.ToDouble(reader["C44"]);
+                                }
+
+                                /*singleData.IsChecked = (Boolean)reader["ischecked"]; */
+                                list.Add(singleData);
+                                i++;
+
+                            }
+                            /*MessageBox.Show("进来了");*/
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                }
+            }
+            SingleCurrentList = list;
+            singleDg.ItemsSource = null;
+            singleDg.ItemsSource = list;
+            // 显示单晶体的记录数
+            SetSingleNumber();
+        }
+        
+        // 显示单晶体的记录数
+        private void SetSingleNumber()
+        {
+            string sql = "select count(*) from single_data where 1 = 1";
+            string sql1 = sql + " and phase='α'";
+            string sql2 = sql + " and phase='β'";
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        singleALLNumber.Content = Convert.ToInt32(command.ExecuteScalar());
+                    }
+                    using (SQLiteCommand command = new SQLiteCommand(sql1, conn))
+                    {
+                        singleFirstNumber.Content = Convert.ToInt32(command.ExecuteScalar());
+                    }
+                    using (SQLiteCommand command = new SQLiteCommand(sql2, conn))
+                    {
+                        singleSecondNumber.Content = Convert.ToInt32(command.ExecuteScalar());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("查询失败", "");
+                    throw new Exception("查询数据失败：" + ex.Message);
+                }
+                conn.Close();
+
+            }
+        }
+
+        private void singleBtnSelect(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void singleBtnRefresh(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void singleBtnUpdate(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void singleBtnDelete(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void singleBtnAdd(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void singleCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
