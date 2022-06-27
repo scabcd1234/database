@@ -218,13 +218,13 @@
                                         -->
 
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="60" />
-                                    <DataGridTextColumn Binding="{Binding Phase_ratio}" Header="相比例（%）" Width="100"/>
-                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="50" />
+                                    <DataGridTextColumn Binding="{Binding Phase_ratio}" Header="相比例（%）" Width="90"/>
+                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding Diff_plane}" Header="衍射面"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding Ehkl}" Header="衍射弹性常数Ehkl（GPa）"  Width="170"/>
                                     <DataGridTextColumn Binding="{Binding Vhkl}" Header="衍射弹性常数vhkl"  Width="160"/>
-                                    <DataGridTextColumn Binding="{Binding Distance}" Header="晶面间距d"  Width="85">
+                                    <DataGridTextColumn Binding="{Binding Distance}" Header="晶面间距d"  Width="125">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="TextWrapping" Value="Wrap"/>
