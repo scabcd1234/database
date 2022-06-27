@@ -43,9 +43,11 @@ namespace DataManage
 
         public static int flaseIdFlag = 1;
 
-        public static bool selectedFlag = false;
+        public static bool selectedFlag = false; // 查询状态
 
-        public static bool scrollerFlag = false; //是否还能滑动
+        public static bool multiselectedFlag = false; // 多晶体查询状态
+
+        public static bool singleselectedFlag = false; // 单晶体查询状态
 
         public static List<caseData> CurrentList = new List<caseData>(); //当前数据集合
 
@@ -60,8 +62,7 @@ namespace DataManage
         }
       
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            
+        {            
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Add("");
             foreach (String phase in phases){              
@@ -70,107 +71,9 @@ namespace DataManage
             inputPhase.SelectedIndex = 0;
 
             ResetChecked();
-            ShowAllData();
-
-            /*var Loads = this.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                ShowAllData(); 
-            }));
-            Loads.Completed += new EventHandler(Loads_Completed);*/
-        }
-        //void Loads_Completed(object sender, EventArgs e)
-        //{
-        //    loading_text.Visibility = Visibility.Hidden;
-        //}
-
-        // 实现滚动监听
-        private void DataGrid_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            
-            //var scrollViewer = e.OriginalSource as ScrollViewer;
-            //if (e.VerticalOffset != 0 && e.VerticalOffset == scrollViewer.ScrollableHeight)
-            //{
-            //    index += pageSize;
-            //    GenerateData();
-            //    dg1.UpdateLayout();
-            //    if (scrollerFlag)
-            //    {
-            //        ScrollToEnd(scrollViewer);
-            //    }
-            //}          
-        }
-
-        // 产生数据
-        private void GenerateData() 
-        {
-            int size = (int)ALLNumber.Content;
-            if (index > size)
-            {
-                scrollerFlag = false;
-                return;
-            }
-
-            List<caseData> list = new List<caseData>();
-            
-            string sql = "SELECT * FROM data limit " + pageSize + " offset " + index;
-                       
-            //MessageBox.Show(sql);
-            using (SQLiteConnection conn = new SQLiteConnection(connStr))
-            {
-                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
-                {
-                    try
-                    {
-                        conn.Open();
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            
-                            int i = 1 + flaseIdFlag * pageSize;
-                            while (reader.Read())
-                            {
-                                caseData casedata = new caseData();
-                                casedata.Id = Convert.ToInt32(reader["id"]);
-                                casedata.FlaseId = i;
-                                casedata.Phase = reader["phase"].ToString();
-                                casedata.Phase_ratio = Convert.ToDouble(reader["phase_ratio"]);
-                                casedata.Temperature = Convert.ToDouble(reader["temperature"]);
-                                casedata.Diff_plane = reader["diff_plane"].ToString();
-                                casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
-                                casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
-                                if (reader["distance"].ToString() == "")
-                                {
-                                    casedata.Distance = 0.00;
-                                }
-                                else
-                                {
-                                    casedata.Distance = Convert.ToDouble(reader["distance"]);
-                                }
-                                list.Add(casedata);
-                                i++;
-                                
-                            }
-                            flaseIdFlag++;                           
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("查询数据失败：" + ex.Message);
-                    }
-                    conn.Close();
-                }
-            }
-
-            foreach(caseData item in list)
-            {
-                dg1.Items.Add(item);
-            }
-
-            //List<caseData> result = (List<caseData>)dg1.ItemsSource;
-            //result.AddRange(list);           
-            //dg1.ItemsSource = null;
-            //dg1.ItemsSource = result;
-
+            multiResetChecked();
+            singleResetChecked();
+            ShowAllData();   
         }
         
         // 显示原始数据
@@ -584,74 +487,14 @@ namespace DataManage
             else
             {
                 ShowAllData();
-            }
-            
-            
-            
+            }                                    
         }
 
-        //滑动到底部
-        private void ScrollToEnd(ScrollViewer sv1)
-        {                    
-            if (scrollerFlag)
-            {
-                sv1.ScrollToEnd();
-            }           
-        }
-        public static void DoEvents()
-        {
-            var frame = new DispatcherFrame();
 
-            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
-                new DispatcherOperationCallback(
-                    delegate (object f)
-                    {
-                        ((DispatcherFrame)f).Continue = false;
-                        return null;
-                    }), frame);
-
-            Dispatcher.PushFrame(frame);
-        }
-        
         // 全选数据
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
-            CheckBox headercb = (CheckBox)sender;
-            //NotificationWindow data = new NotificationWindow("数据加载中!");
-            //if (selectedFlag==false && headercb.IsChecked == true)
-            //{                
-            //    data.Show();
-            //    scrollerFlag = true;
-            //    ScrollViewer sv1 = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.dg1, 0), 0) as ScrollViewer;                
-            //    ScrollToEnd(sv1);
-            //}                     
-
-            //DoEvents();
-            //for (int i = 0; i < dg1.Items.Count; i++)
-            //{
-            //    //获取行
-            //    DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
-
-            //    if (neddrow != null)
-            //    {
-            //        //获取该行的某列
-            //        CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
-
-            //        cb.IsChecked = headercb.IsChecked;
-            //    }                               
-            //}
-            //if (data.IsActive)
-            //{
-            //    data.Close();
-            //}
-
-            //string sql = "update data set ischecked = " + headercb.IsChecked + " where 1=2 ";
-            //foreach (caseData item in CurrentList)
-            //{
-            //     sql = sql + " or data.Id =" + item.Id;
-            //}
-          
-
+            CheckBox headercb = (CheckBox)sender;          
             string sql = "update data set ischecked = " + headercb.IsChecked + " where data.Id in ( ";
             foreach (caseData item in CurrentList)
             {
@@ -1699,7 +1542,7 @@ namespace DataManage
                                 casedata.Diff_plane = reader["diff_plane"].ToString();
                                 casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
                                 casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
-                                /*casedata.IsChecked = (Boolean)reader["ischecked"]; */                              
+                                casedata.IsChecked = (Boolean)reader["ischecked"];
                                 list.Add(casedata);
                                 i++;
 
@@ -1806,7 +1649,7 @@ namespace DataManage
                                     casedata.Diff_plane = reader["diff_plane"].ToString();
                                     casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
                                     casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
-                                   /* casedata.IsChecked = (Boolean)reader["ischecked"];*/
+                                    casedata.IsChecked = (Boolean)reader["ischecked"];
                                     list.Add(casedata);
                                     i++;
                                 }
@@ -1820,6 +1663,7 @@ namespace DataManage
                     }
                 }
                 MultiCurrentList = list;
+                multiselectedFlag = true;
                 multiDg.ItemsSource = null;
                 multiDg.ItemsSource = list;
             }
@@ -1839,8 +1683,9 @@ namespace DataManage
             multiInputPhase.SelectedIndex = 0;
 
             flaseIdFlag = 1;
-            
-            ResetChecked();
+            multiselectedFlag = false;
+
+            multiResetChecked();
             ShowMlutiAllData();
             
         }
@@ -1850,19 +1695,170 @@ namespace DataManage
 
         }
 
+        //多晶体删除
         private void multiBtnDelete(object sender, RoutedEventArgs e)
         {
+            bool flag = false;
+            string sql = "delete from multi_data where multi_data.Id in (";            
+            foreach (caseData item in MultiCurrentList)
+            {
+                String presql = "select ischecked from multi_data where id='" + item.Id + "';";
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(presql, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            bool ischecked = (bool)command.ExecuteScalar();
+                            if (ischecked == true)
+                            {
+                                sql = sql + item.Id + ",";
+                                flag = true;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("获取选中数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
+                }
+            }
+            sql = sql.Substring(0, sql.Length - 1) + ");";
+            //MessageBox.Show(sql);
+            if (flag)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            command.ExecuteNonQuery();
+                            MessageBox.Show("删除成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
+                            ResetChecked();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("删除数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("请选择需要操作的数据", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
 
+            //cball.IsChecked = false;
+
+            if (multiselectedFlag == true)
+            {
+                multiBtnSelect(null, null);
+
+            }
+            else
+            {
+                ShowMlutiAllData();
+            }
         }
 
         private void multiBtnAdd(object sender, RoutedEventArgs e)
         {
 
         }
+        //多晶体重置选择状态
+        private void multiResetChecked()
+        {
+            String sql = "update multi_data set ischecked = false;";
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        command.ExecuteNonQuery();
 
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+                conn.Close();
+            }
+        }
+
+        // 多晶体全选数据
         private void multiCheckBox_Click(object sender, RoutedEventArgs e)
         {
+            CheckBox headercb = (CheckBox)sender;
+            string sql = "update multi_data set ischecked = " + headercb.IsChecked + " where multi_data.Id in ( ";
+            foreach (caseData item in MultiCurrentList)
+            {
+                sql = sql + item.Id + ",";
+            }
+            sql = sql.Substring(0, sql.Length - 1) + ");";
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("全选数据：" + "失败：" + ex.Message);
+                }
+                conn.Close();
+            }
+            if (multiselectedFlag == true)
+            {
+                multiBtnSelect(null, null);
+            }
+            else
+            {
+                ShowMlutiAllData();
+            }
+        }
+        // 多晶体点击事件
+        private void multiCheckBox_Click1(object sender, RoutedEventArgs e)
+        {           
+                CheckBox cb = (CheckBox)sender;
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    try
+                    {
+                        conn.Open();
+                        string sql = "";
+                        if (cb.IsChecked == true)
+                        {
+                            sql += "update multi_data  set ischecked = true where id='" + cb.Tag + "';";
 
+                        }
+                        else
+                        {
+                            sql += "update multi_data  set ischecked = false where id='" + cb.Tag + "';";
+                        }
+                        using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                        {
+                            command.ExecuteNonQuery();
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                    conn.Close();
+                }            
         }
 
         // 多晶体中的相改变事件
@@ -1914,6 +1910,8 @@ namespace DataManage
             }
         }
 
+
+
         // 单晶体页面点击事件
         private void singleClick(object sender, MouseButtonEventArgs e)
         {
@@ -1928,7 +1926,7 @@ namespace DataManage
             ShowSingleAllData();
         }
 
-        // 展示所有的多晶体数据
+        // 展示所有的单晶体数据
         private void ShowSingleAllData()
         {
             index = 0;
@@ -1995,7 +1993,7 @@ namespace DataManage
                                     singleData.C44 = Convert.ToDouble(reader["C44"]);
                                 }
 
-                                /*singleData.IsChecked = (Boolean)reader["ischecked"]; */
+                                singleData.IsChecked = (Boolean)reader["ischecked"];
                                 list.Add(singleData);
                                 i++;
 
@@ -2057,9 +2055,23 @@ namespace DataManage
 
         }
 
+        //单晶体刷新
         private void singleBtnRefresh(object sender, RoutedEventArgs e)
-        {
+        {            
+            List<String> phases = selectPhaseALL();
+            singleInputPhase.Items.Clear();
+            multiInputPhase.Items.Add("");
+            foreach (String phase in phases)
+            {
+                singleInputPhase.Items.Add(phase);
+            }
+            singleInputPhase.SelectedIndex = 0;
 
+            flaseIdFlag = 1;
+            singleselectedFlag = false;
+
+            singleResetChecked();
+            ShowSingleAllData();
         }
 
         private void singleBtnUpdate(object sender, RoutedEventArgs e)
@@ -2067,9 +2079,75 @@ namespace DataManage
 
         }
 
+        // 单晶体删除
         private void singleBtnDelete(object sender, RoutedEventArgs e)
         {
+            bool flag = false;
+            string sql = "delete from single_data where single_data.Id in (";
+            foreach (SingleData item in SingleCurrentList)
+            {
+                String presql = "select ischecked from single_data where id='" + item.Id + "';";
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(presql, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            bool ischecked = (bool)command.ExecuteScalar();
+                            if (ischecked == true)
+                            {
+                                sql = sql + item.Id + ",";
+                                flag = true;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("获取选中数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
+                }
+            }
+            sql = sql.Substring(0, sql.Length - 1) + ");";
+            //MessageBox.Show(sql);
+            if (flag)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            command.ExecuteNonQuery();
+                            MessageBox.Show("删除成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
+                            ResetChecked();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("删除数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("请选择需要操作的数据", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
 
+            cball.IsChecked = false;
+
+            if (singleselectedFlag == true)
+            {
+                singleBtnSelect(null, null);
+
+            }
+            else
+            {
+                ShowSingleAllData();
+            }
         }
 
         private void singleBtnAdd(object sender, RoutedEventArgs e)
@@ -2077,12 +2155,97 @@ namespace DataManage
 
         }
 
-        private void singleCheckBox_Click(object sender, RoutedEventArgs e)
+        //单晶体重置选择状态
+        private void singleResetChecked()
         {
+            String sql = "update single_data set ischecked = false;";
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        command.ExecuteNonQuery();
 
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+                conn.Close();
+            }
         }
 
-       
+        // 单晶体全选数据
+        private void singleCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            CheckBox headercb = (CheckBox)sender;
+            string sql = "update single_data set ischecked = " + headercb.IsChecked + " where single_data.Id in ( ";
+            foreach (SingleData item in SingleCurrentList)
+            {
+                sql = sql + item.Id + ",";
+            }
+            sql = sql.Substring(0, sql.Length - 1) + ");";
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("全选数据：" + "失败：" + ex.Message);
+                }
+                conn.Close();
+            }
+            if (singleselectedFlag == true)
+            {
+                singleBtnSelect(null, null);
+            }
+            else
+            {
+                ShowSingleAllData();
+            }
+        }
+        // 单晶体点击事件
+        private void singleCheckBox_Click1(object sender, RoutedEventArgs e)
+        {
+            CheckBox cb = (CheckBox)sender;
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string sql = "";
+                    if (cb.IsChecked == true)
+                    {
+                        sql += "update single_data  set ischecked = true where id='" + cb.Tag + "';";
+
+                    }
+                    else
+                    {
+                        sql += "update single_data  set ischecked = false where id='" + cb.Tag + "';";
+                    }
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        command.ExecuteNonQuery();
+
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+                conn.Close();
+            }
+        }
+        
 
         
     }

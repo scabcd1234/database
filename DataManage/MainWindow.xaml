@@ -328,7 +328,7 @@
                                             <Style TargetType="CheckBox">
                                                 <Setter Property="Tag" Value="{Binding Id}"></Setter>
                                                 <Setter Property="IsChecked" Value="{Binding IsChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                                                <EventSetter Event="Click" Handler="CheckBox_Click_1"></EventSetter>
+                                                <EventSetter Event="Click" Handler="multiCheckBox_Click1"></EventSetter>
                                             </Style>
                                         </DataGridCheckBoxColumn.ElementStyle>
 
@@ -452,7 +452,7 @@
                                             <Style TargetType="CheckBox">
                                                 <Setter Property="Tag" Value="{Binding Id}"></Setter>
                                                 <Setter Property="IsChecked" Value="{Binding IsChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                                                <EventSetter Event="Click" Handler="CheckBox_Click_1"></EventSetter>
+                                                <EventSetter Event="Click" Handler="singleCheckBox_Click1"></EventSetter>
                                             </Style>
                                         </DataGridCheckBoxColumn.ElementStyle>
 
