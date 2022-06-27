@@ -6,7 +6,7 @@
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:local="clr-namespace:DataManage"
         mc:Ignorable="d"
-        Title="数据管理平台"  Loaded="Window_Loaded" 
+        Title="数据管理平台"  Loaded="Window_Loaded" Width="1425" Height="750"
         WindowStartupLocation="CenterScreen">
     <!--WindowState="Maximized" -->
 
@@ -79,24 +79,28 @@
         <Viewbox Stretch="Fill" >
             <Grid>
                 <TabControl TabStripPlacement="Left">
-                    <TabItem Header="数据展示" FontSize="15" Height="40" >
+                    <TabItem FontSize="15" Height="40">
+                        <TabItem.Header>
+                            <Label Content="数据展示" MouseLeftButtonDown="multiClick" HorizontalAlignment="Stretch"/>
+                        </TabItem.Header>
+                        
                         <Grid Background="#22000000">
                             <!--三行一列-->
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="25"/>
                                 <RowDefinition Height="auto"/>
                                 
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="900"/>
                                
                             </Grid.ColumnDefinitions>
 
                             <!--搜索栏-->
                             <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top">
                                 
-                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                <StackPanel Orientation="Horizontal"  Margin="25,5,10,5">
                                     <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="0,0,0,0" Style="{StaticResource showLabel}"></Label>
                                     <ComboBox Name="inputPhase" Width="50" SelectionChanged="inputPhase_SelectionChanged" Margin="0,0,10,0" Style="{StaticResource selectComboBox}"></ComboBox>
 
@@ -125,7 +129,7 @@
                             
                             <!--操作栏-->
                             <Grid Grid.Row="1" Grid.Column="1" >
-                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                <StackPanel Orientation="Horizontal"  Margin="25,5,10,5">
                                     <Button Content="修改" Name="updateButton" MinWidth="60" Margin="0,0,20,0" Click="BtnUpdate"  Style="{StaticResource textButton}" />
                                     <Button Content="删除" Name="deleteButton" MinWidth="60" Margin="0,0,20,0" Click="BtnDelete" Style="{StaticResource textButton}" />
                                     <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="BtnAdd"  Style="{StaticResource textButton}" />
@@ -137,7 +141,7 @@
 
                             <!--显示栏-->
                             <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
-                              Margin="20,10,20,10" HorizontalAlignment="Center" Height="300"
+                              Margin="20,10,20,10" HorizontalAlignment="Center" Height="300" Width="850"
                               Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow" VirtualizingPanel.VirtualizationMode="Standard"
                                       EnableRowVirtualization="True" Cursor="Hand">
 
@@ -220,7 +224,7 @@
                                     <DataGridTextColumn Binding="{Binding Diff_plane}" Header="衍射面"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding Ehkl}" Header="衍射弹性常数Ehkl（GPa）"  Width="170"/>
                                     <DataGridTextColumn Binding="{Binding Vhkl}" Header="衍射弹性常数vhkl"  Width="160"/>
-                                    <DataGridTextColumn Binding="{Binding Distance}" Header="晶面间距d"  Width="100">
+                                    <DataGridTextColumn Binding="{Binding Distance}" Header="晶面间距d"  Width="85">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="TextWrapping" Value="Wrap"/>
@@ -234,8 +238,10 @@
 
                             </DataGrid>
                             
-                        </Grid>
+                        </Grid> 
                     </TabItem>
+                    
+                    
 
                     <TabItem  FontSize="15" Height="40">
                         <TabItem.Header>
@@ -243,17 +249,17 @@
                         </TabItem.Header>
                         <Grid Background="#FFE5E5E5">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="900"/>
                             </Grid.ColumnDefinitions>
 
                             <!--搜索栏-->
                             <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top">
-                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                <StackPanel Orientation="Horizontal"  Margin="25,5,10,5">
                                     <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="0,0,0,0" Style="{StaticResource showLabel}"></Label>
                                     <ComboBox Name="multiInputPhase" Width="50" Margin="0,0,10,0" Style="{StaticResource selectComboBox}" SelectionChanged="multiInputPhase_SelectionChanged"></ComboBox>
 
@@ -274,7 +280,7 @@
 
                             <!--操作栏-->
                             <Grid Grid.Row="1" Grid.Column="1" >
-                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                <StackPanel Orientation="Horizontal"  Margin="25,5,10,5">
                                     <Button Content="修改" Name="multiUpdateButton" MinWidth="60" Margin="0,0,20,0" Click="multiBtnUpdate"  Style="{StaticResource textButton}" />
                                     <Button Content="删除" Name="multiDeleteButton" MinWidth="60" Margin="0,0,20,0" Click="multiBtnDelete" Style="{StaticResource textButton}" />
                                     <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="multiBtnAdd"  Style="{StaticResource textButton}" />
@@ -283,7 +289,7 @@
 
                             <!--显示栏-->
                             <DataGrid Name="multiDg" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
-                              Margin="20,10,20,10" HorizontalAlignment="Center" Height="300"
+                              Margin="20,10,20,10" HorizontalAlignment="Center" Height="300" Width="850"
                               Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow" VirtualizingPanel.VirtualizationMode="Standard"
                                       EnableRowVirtualization="True" Cursor="Hand" >
 
@@ -341,7 +347,7 @@
                                         </DataGridCheckBoxColumn.CellStyle>
 
                                     </DataGridCheckBoxColumn>
-                                    <DataGridTextColumn  Header="编号" Binding="{Binding Id}" Width="50" >
+                                    <DataGridTextColumn  Header="编号" Binding="{Binding Id}"  MinWidth="70" >
                                         <!-- ElementStyle="{StaticResource ResourceKey=dgCell}" 在每一个DataGridTextColumn后面加上这个，使得表格的每一行都居中-->
                                         <!-- 
                                         <DataGridTextColumn.HeaderTemplate>
@@ -351,11 +357,11 @@
                                         </DataGridTextColumn.HeaderTemplate>
                                         -->
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="60" />
-                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="100"/>
-                                    <DataGridTextColumn Binding="{Binding Diff_plane}" Header="衍射面"  Width="80"/>
-                                    <DataGridTextColumn Binding="{Binding Ehkl}" Header="衍射弹性常数Ehkl（GPa）"  Width="170"/>
-                                    <DataGridTextColumn Binding="{Binding Vhkl}" Header="衍射弹性常数vhkl"  Width="160"/>
+                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" MinWidth="85.5" />
+                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  MinWidth="150"/>
+                                    <DataGridTextColumn Binding="{Binding Diff_plane}" Header="衍射面"  MinWidth="150"/>
+                                    <DataGridTextColumn Binding="{Binding Ehkl}" Header="衍射弹性常数Ehkl（GPa）"  MinWidth="170"/>
+                                    <DataGridTextColumn Binding="{Binding Vhkl}" Header="衍射弹性常数vhkl"  MinWidth="170"/>
 
                                 </DataGrid.Columns>
                             </DataGrid>
@@ -368,17 +374,17 @@
                         </TabItem.Header>
                         <Grid Background="#FFE5E5E5">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="25"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="900"/>
                             </Grid.ColumnDefinitions>
 
                             <!--搜索栏-->
                             <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top">
-                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                <StackPanel Orientation="Horizontal"  Margin="25,5,10,5">
                                     <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="0,0,0,0" Style="{StaticResource showLabel}"></Label>
                                     <ComboBox Name="singleInputPhase" Width="50" Margin="0,0,10,0" Style="{StaticResource selectComboBox}"></ComboBox>
 
@@ -398,7 +404,7 @@
 
                             <!--操作栏-->
                             <Grid Grid.Row="1" Grid.Column="1" >
-                                <StackPanel Orientation="Horizontal"  Margin="20,5,10,5">
+                                <StackPanel Orientation="Horizontal"  Margin="25,5,10,5">
                                     <Button Content="修改" Name="singleUpdateButton" MinWidth="60" Margin="0,0,20,0" Click="singleBtnUpdate"  Style="{StaticResource textButton}" />
                                     <Button Content="删除" Name="singleDeleteButton" MinWidth="60" Margin="0,0,20,0" Click="singleBtnDelete" Style="{StaticResource textButton}" />
                                     <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="singleBtnAdd"  Style="{StaticResource textButton}" />
@@ -407,7 +413,7 @@
 
                             <!--显示栏-->
                             <DataGrid Name="singleDg" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
-                              Margin="20,10,20,10" HorizontalAlignment="Center" Height="300"
+                              Margin="20,10,20,10" HorizontalAlignment="Center" Height="300"  Width="850"
                               Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow" VirtualizingPanel.VirtualizationMode="Standard"
                                       EnableRowVirtualization="True" Cursor="Hand" >
 
@@ -476,12 +482,12 @@
                                         -->
                                     </DataGridTextColumn>
                                     <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="60" />
-                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（K）"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（K）"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding C11}" Header="C11"  Width="80"/>
-                                    <DataGridTextColumn Binding="{Binding C12}" Header="C12"  Width="170"/>
-                                    <DataGridTextColumn Binding="{Binding C13}" Header="C13"  Width="160"/>
-                                    <DataGridTextColumn Binding="{Binding C33}" Header="C33"  Width="160"/>
-                                    <DataGridTextColumn Binding="{Binding C44}" Header="C44"  Width="160"/>
+                                    <DataGridTextColumn Binding="{Binding C12}" Header="C12"  Width="130"/>
+                                    <DataGridTextColumn Binding="{Binding C13}" Header="C13"  Width="140"/>
+                                    <DataGridTextColumn Binding="{Binding C33}" Header="C33"  Width="140"/>
+                                    <DataGridTextColumn Binding="{Binding C44}" Header="C44"  Width="142"/>
                                     
                                 </DataGrid.Columns>
                             </DataGrid>
