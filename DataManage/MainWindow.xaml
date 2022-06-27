@@ -79,7 +79,7 @@
         <Viewbox Stretch="Fill" >
             <Grid>
                 <TabControl TabStripPlacement="Left">
-                    <TabItem Header="数据展示" FontSize="15" Height="40">
+                    <TabItem Header="数据展示" FontSize="15" Height="40" >
                         <Grid Background="#22000000">
                             <!--三行一列-->
                             <Grid.RowDefinitions>
@@ -139,7 +139,7 @@
                             <DataGrid Name="dg1" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
                               Margin="20,10,20,10" HorizontalAlignment="Center" Height="300"
                               Grid.Row="2" Grid.Column="1" IsReadOnly="True" SelectionUnit="FullRow" VirtualizingPanel.VirtualizationMode="Standard"
-                                      EnableRowVirtualization="True" Cursor="Hand" >
+                                      EnableRowVirtualization="True" Cursor="Hand">
 
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">
@@ -476,7 +476,7 @@
                                         -->
                                     </DataGridTextColumn>
                                     <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="60" />
-                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（K）"  Width="100"/>
                                     <DataGridTextColumn Binding="{Binding C11}" Header="C11"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding C12}" Header="C12"  Width="170"/>
                                     <DataGridTextColumn Binding="{Binding C13}" Header="C13"  Width="160"/>
