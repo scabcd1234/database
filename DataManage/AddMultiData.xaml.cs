@@ -47,20 +47,9 @@ namespace DataManage
             {
                 phaseLabel.Visibility = Visibility.Visible;
                 phaseLabel.Content = "相不能为空！";
-            }else if (string.IsNullOrEmpty(Phase_ratio.Text.ToString()))
+            }else if (string.IsNullOrEmpty(Temperature.Text.ToString()))
             {
                 phaseLabel.Visibility = Visibility.Hidden;
-                Phase_ratioLabel.Visibility = Visibility.Visible;
-                Phase_ratioLabel.Content = "相比例不能为空！";
-            }
-            else if (isNotDouble(Phase_ratio.Text.ToString()))
-            {
-                Phase_ratioLabel.Visibility = Visibility.Visible;
-                Phase_ratioLabel.Content = "请输入double类型！";
-            }
-            else if (string.IsNullOrEmpty(Temperature.Text.ToString()))
-            {
-                Phase_ratioLabel.Visibility = Visibility.Hidden;
                 TemperatureLabel.Visibility = Visibility.Visible;
                 TemperatureLabel.Content = "温度不能为空！";
             }
@@ -97,23 +86,13 @@ namespace DataManage
                 VhklLabel.Visibility = Visibility.Visible;
                 VhklLabel.Content = "请输入double类型！";
             }
-            else if (string.IsNullOrEmpty(Distance.Text.ToString()))
-            {
-                VhklLabel.Visibility = Visibility.Hidden;
-                DistanceLabel.Visibility = Visibility.Visible;
-                DistanceLabel.Content = "晶面间距d不能为空！";
-            }
-            else if (isNotDouble(Distance.Text.ToString()))
-            {
-                DistanceLabel.Visibility = Visibility.Visible;
-                DistanceLabel.Content = "请输入double类型！";
-            }
+            
             else
             {
-                DistanceLabel.Visibility = Visibility.Hidden;
-                string sql = "replace into data (phase,phase_ratio,temperature,diff_plane,ehkl,vhkl,distance) values ('"
-                    + inputPhase.SelectedValue.ToString() + "','" + Phase_ratio.Text.Trim() + "','" + Temperature.Text.Trim() + "','" + inputDiff_plane.Text.Trim() + "','"
-                    + Ehkl.Text.Trim() + "','" + Vhkl.Text.Trim() + "','" + Distance.Text.Trim() + "');";
+                VhklLabel.Visibility = Visibility.Hidden;
+                string sql = "replace into multi_data (phase,temperature,diff_plane,ehkl,vhkl) values ('"
+                    + inputPhase.SelectedValue.ToString() + "','"  + Temperature.Text.Trim() + "','" + inputDiff_plane.Text.Trim() + "','"
+                    + Ehkl.Text.Trim() + "','" + Vhkl.Text.Trim() + "');";
                 //MessageBox.Show(sql);
                 TransfEvent(sql);//触发事件
                 this.Close();
@@ -162,27 +141,7 @@ namespace DataManage
             }
         }
 
-        // 相比例失去焦点
-        private void Phase_ratio_LostFocus(object sender, RoutedEventArgs e)
-        {
-            string temp = Phase_ratio.Text.ToString();
-            if (string.IsNullOrEmpty(temp))
-            {
-                Phase_ratioLabel.Visibility = Visibility.Visible;
-                Phase_ratioLabel.Content = "相比例不能为空！";
-            }
-            else if(isNotDouble(temp))
-            {
-                Phase_ratioLabel.Visibility = Visibility.Visible;
-                Phase_ratioLabel.Content = "请输入double类型！";
-
-            }
-            else
-            {
-                Phase_ratioLabel.Visibility = Visibility.Hidden;
-            }
-            
-        }
+        
 
         // 温度失去焦点
         private void Temperature_LostFocus(object sender, RoutedEventArgs e)
@@ -285,25 +244,7 @@ namespace DataManage
             }
         }
         
-        // 晶面间距d失去焦点
-        private void Distance_LostFocus(object sender, RoutedEventArgs e)
-        {
-            string temp = Distance.Text.ToString();
-            if (string.IsNullOrEmpty(temp))
-            {
-                DistanceLabel.Visibility = Visibility.Visible;
-                DistanceLabel.Content = "晶面间距d不能为空！";
-            }
-            else if (isNotDouble(temp))
-            {
-                DistanceLabel.Visibility = Visibility.Visible;
-                DistanceLabel.Content = "请输入double类型！";
-
-            }
-            else
-            {
-                DistanceLabel.Visibility = Visibility.Hidden;
-            }
-        }
+        
+       
     }
 }

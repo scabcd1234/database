@@ -218,13 +218,13 @@
                                         -->
 
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="60" />
-                                    <DataGridTextColumn Binding="{Binding Phase_ratio}" Header="相比例（%）" Width="100"/>
-                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="100"/>
+                                    <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="50" />
+                                    <DataGridTextColumn Binding="{Binding Phase_ratio}" Header="相比例（%）" Width="90"/>
+                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding Diff_plane}" Header="衍射面"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding Ehkl}" Header="衍射弹性常数Ehkl（GPa）"  Width="170"/>
                                     <DataGridTextColumn Binding="{Binding Vhkl}" Header="衍射弹性常数vhkl"  Width="160"/>
-                                    <DataGridTextColumn Binding="{Binding Distance}" Header="晶面间距d"  Width="85">
+                                    <DataGridTextColumn Binding="{Binding Distance}" Header="晶面间距d"  Width="125">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="TextWrapping" Value="Wrap"/>
@@ -281,9 +281,9 @@
                             <!--操作栏-->
                             <Grid Grid.Row="1" Grid.Column="1" >
                                 <StackPanel Orientation="Horizontal"  Margin="25,5,10,5">
-                                    <Button Content="修改" Name="multiUpdateButton" MinWidth="60" Margin="0,0,20,0" Click="multiBtnUpdate"  Style="{StaticResource textButton}" />
+                                    <Button Content="修改" Name="multiUpdateButton" MinWidth="60" Margin="0,0,20,0" Click="multiBtnUpdate"  Style="{StaticResource textButton}" Cursor="Hand" />
                                     <Button Content="删除" Name="multiDeleteButton" MinWidth="60" Margin="0,0,20,0" Click="multiBtnDelete" Style="{StaticResource textButton}" />
-                                    <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="multiBtnAdd"  Style="{StaticResource textButton}" />
+                                    <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="multiBtnAdd"  Style="{StaticResource textButton}" Cursor="Hand" />
                                 </StackPanel>
                             </Grid>
 
@@ -482,7 +482,7 @@
                                         -->
                                     </DataGridTextColumn>
                                     <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="60" />
-                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（K）"  Width="80"/>
+                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding C11}" Header="C11"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding C12}" Header="C12"  Width="130"/>
                                     <DataGridTextColumn Binding="{Binding C13}" Header="C13"  Width="140"/>
