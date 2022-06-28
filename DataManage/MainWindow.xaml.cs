@@ -775,6 +775,14 @@ namespace DataManage
             if (flag)
             {
                 ResetChecked();
+                if (selectedFlag == true)
+                {
+                    BtnSelect(null, null);
+                }
+                else
+                {
+                    ShowAllData();
+                }
             }
             else
             {
@@ -811,14 +819,7 @@ namespace DataManage
                 conn.Close();               
             }
             flaseIdFlag = 1;
-            if(selectedFlag == true)
-            {
-                BtnSelect(null,null);
-            }
-            else
-            {
-                ShowAllData();
-            }
+            
 
             return result;
         }
@@ -1727,6 +1728,15 @@ namespace DataManage
             if (flag)
             {
                 multiResetChecked();
+                if (multiselectedFlag == true)
+                {
+                    multiBtnSelect(null, null);
+
+                }
+                else
+                {
+                    ShowMlutiAllData();
+                }
             }
             else
             {
@@ -1772,6 +1782,7 @@ namespace DataManage
             }
 
         }
+
         // 修改数据事件
         int UpdateMuti_TransfEvent(caseData caseData)
         {
@@ -1872,15 +1883,7 @@ namespace DataManage
 
             //cball.IsChecked = false;
 
-            if (multiselectedFlag == true)
-            {
-                multiBtnSelect(null, null);
-
-            }
-            else
-            {
-                ShowMlutiAllData();
-            }
+            
         }
 
         //多晶体增加
@@ -2311,11 +2314,141 @@ namespace DataManage
             ShowSingleAllData();
         }
 
+        //单晶体修改
         private void singleBtnUpdate(object sender, RoutedEventArgs e)
         {
+            bool flag = false;
+            int i = 0;
+
+            foreach (SingleData item in SingleCurrentList)
+            {
+                String presql = "select ischecked from single_data where id='" + item.Id + "';";
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(presql, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            bool ischecked = (bool)command.ExecuteScalar();
+                            if (ischecked == true)
+                            {
+                                SingleData singleData = selectSingleDataById(item.Id);
+                                UpdateSingleData updateSingleData = new UpdateSingleData(singleData);
+                                updateSingleData.TransfEvent += UpdateSingle_TransfEvent;
+                                updateSingleData.ShowDialog();
+                                flag = true;
+                                break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("获取选中数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
+                }
+            }
+            if (flag)
+            { 
+                singleResetChecked();
+                if (singleselectedFlag == true)
+                {
+                    singleBtnSelect(null, null);
+                }
+                else
+                { 
+                    ShowSingleAllData();
+                }
+            }
+            else
+            {
+                MessageBox.Show("请选择需要操作的数据", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        // 通过ID查询多晶体数据
+        private SingleData selectSingleDataById(int id)
+        {
+            SingleData singleData = new SingleData();
+            string sql = "select * from single_data  where id = " + id;
+
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                singleData.Id = Convert.ToInt32(reader["id"]);
+                                singleData.Phase = reader["phase"].ToString();
+                                singleData.Temperature = Convert.ToDouble(reader["temperature"]);
+                                singleData.C11 = Convert.ToDouble(reader["C11"]);
+                                singleData.C12 = Convert.ToDouble(reader["C12"]);
+                                singleData.C13 = Convert.ToDouble(reader["C13"]);
+                                singleData.C33 = Convert.ToDouble(reader["C33"]);
+                                singleData.C44 = Convert.ToDouble(reader["C44"]);
+
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("查询失败123", "");
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                    return singleData;
+                }
+            }
 
         }
 
+        // 修改数据事件
+        int UpdateSingle_TransfEvent(SingleData singleData)
+        {
+            int result = 0;
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string sql = "update single_data  set phase = '" + singleData.Phase + "', temperature = " +
+                    singleData.Temperature + ", C11= " + singleData.C11 + ", C12 = " + singleData.C12 + ", C13 = " +
+                    singleData.C13 + ", C33 = " + singleData.C33 + ", C44 = " + singleData.C44 + 
+                    " where 1 = 1 and id = " + singleData.Id;
+
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        command.ExecuteNonQuery();
+                        MessageBox.Show("修改成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("表中已存在该实验条件，请重新输入！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    result = -1;
+                    //throw new Exception("修改数据失败：" + ex.Message);
+                }
+                conn.Close();
+            }
+            flaseIdFlag = 1;
+            if (singleselectedFlag == true)
+            {
+                singleBtnSelect(null, null);
+
+            }
+            else
+            {
+                ShowSingleAllData();
+            }
+
+            return result;
+        }
         // 单晶体删除
         private void singleBtnDelete(object sender, RoutedEventArgs e)
         {
