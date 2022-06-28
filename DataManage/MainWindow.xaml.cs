@@ -742,26 +742,7 @@ namespace DataManage
 
             bool flag = false;
             int i = 0;
-            //for (i = 0; i < dg1.Items.Count; i++)
-            //{
-            //    //获取行
-            //    DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
-                
-            //    //获取该行的某列
-            //    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
-            //    if (cb.IsChecked == true)
-            //    {
-            //        //MessageBox.Show(i.ToString());
-            //        int updateId = Convert.ToInt32(cb.Tag);
-                    
-            //        caseData caseData = selectDataById(updateId);
-            //        UpdateData updateData = new UpdateData(caseData);
-            //        updateData.TransfEvent += Update_TransfEvent;
-            //        updateData.ShowDialog();
-            //        flag = true;
-            //        break;
-            //    }
-            //}
+            
             foreach (caseData item in CurrentList)
             {
                 String presql = "select ischecked from data where id='" + item.Id + "';";
@@ -1005,21 +986,7 @@ namespace DataManage
             fileDialog1.Filter = "Execl files (*.xlsx)|*.xlsx";//文件的类型
             fileDialog1.FilterIndex = 1;
             fileDialog1.FileName = "导出数据";
-            //for (int i = 0; i < dg1.Items.Count; i++)
-            //{
-            //    //获取行
-            //    DataGridRow neddrow = (DataGridRow)dg1.ItemContainerGenerator.ContainerFromIndex(i);
-
-            //    //获取该行的某列
-            //    CheckBox cb = (CheckBox)dg1.Columns[0].GetCellContent(neddrow);
-            //    if (cb.IsChecked == true)
-            //    {                    
-            //        int Id = Convert.ToInt32(cb.Tag);                    
-            //        caseData casedata = selectDataById(Id);
-            //        list.Add(casedata);
-            //        flag = true;
-            //    }
-            //}
+            
             foreach (caseData item in CurrentList)
             {
                 String presql = "select ischecked from data where id='" + item.Id + "';";
@@ -1721,12 +1688,130 @@ namespace DataManage
             ShowMlutiAllData();
             
         }
-
+        
+        //多晶体修改
         private void multiBtnUpdate(object sender, RoutedEventArgs e)
         {
+            bool flag = false;
+            int i = 0;
 
+            foreach (caseData item in MultiCurrentList)
+            {
+                String presql = "select ischecked from multi_data where id='" + item.Id + "';";
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(presql, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            bool ischecked = (bool)command.ExecuteScalar();
+                            if (ischecked == true)
+                            {
+                                caseData caseData = selectMutiDataById(item.Id);
+                                UpdateMutiData updateMutiData = new UpdateMutiData(caseData);
+                                updateMutiData.TransfEvent += UpdateMuti_TransfEvent;
+                                updateMutiData.ShowDialog();
+                                flag = true;
+                                break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("获取选中数据：" + "失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
+                }
+            }
+            if (flag)
+            {
+                multiResetChecked();
+            }
+            else
+            {
+                MessageBox.Show("请选择需要操作的数据", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
+        // 通过ID查询多晶体数据
+        private caseData selectMutiDataById(int id)
+        {
+            caseData casedata = new caseData();
+            string sql = "select * from multi_data  where id = " + id;
+
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                casedata.Id = Convert.ToInt32(reader["id"]);
+                                casedata.Phase = reader["phase"].ToString();   
+                                casedata.Temperature = Convert.ToDouble(reader["temperature"]);
+                                casedata.Diff_plane = reader["diff_plane"].ToString();
+                                casedata.Ehkl = Convert.ToDouble(reader["ehkl"]);
+                                casedata.Vhkl = Convert.ToDouble(reader["vhkl"]);
+                                
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("查询失败123", "");
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                    return casedata;
+                }
+            }
+
+        }
+        // 修改数据事件
+        int UpdateMuti_TransfEvent(caseData caseData)
+        {
+            int result = 0;
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string sql = "update multi_data  set phase = '" + caseData.Phase  + "', temperature = " +
+                    caseData.Temperature + ", diff_plane = '" + caseData.Diff_plane + "', ehkl = '" + caseData.Ehkl + "', vhkl = " +
+                    caseData.Vhkl  + " where 1 = 1 and id = " + caseData.Id;
+
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        command.ExecuteNonQuery();
+                        MessageBox.Show("修改成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("表中已存在该实验条件，请重新输入！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    result = -1;
+                    //throw new Exception("修改数据失败：" + ex.Message);
+                }
+                conn.Close();
+            }
+            flaseIdFlag = 1;
+            if (multiselectedFlag == true)
+            {
+                multiBtnSelect(null, null);
+
+            }
+            else
+            {
+                ShowMlutiAllData();
+            }
+
+            return result;
+        }
         //多晶体删除
         private void multiBtnDelete(object sender, RoutedEventArgs e)
         {

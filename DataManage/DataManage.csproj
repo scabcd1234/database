@@ -123,6 +123,9 @@
       <DependentUpon>NotificationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="SingleData.cs" />
+    <Compile Include="UpdateMutiData.xaml.cs">
+      <DependentUpon>UpdateMutiData.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UpdateData.xaml.cs">
       <DependentUpon>UpdateData.xaml</DependentUpon>
     </Compile>
@@ -157,6 +160,10 @@
     <Page Include="NotificationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UpdateMutiData.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UpdateData.xaml">
       <SubType>Designer</SubType>
