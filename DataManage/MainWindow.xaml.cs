@@ -1738,7 +1738,7 @@ namespace DataManage
                             conn.Open();
                             command.ExecuteNonQuery();
                             MessageBox.Show("删除成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
-                            ResetChecked();
+                            multiResetChecked();
                         }
                         catch (Exception ex)
                         {
@@ -2050,9 +2050,99 @@ namespace DataManage
             }
         }
 
+        //单晶体搜索
         private void singleBtnSelect(object sender, RoutedEventArgs e)
         {
+            string sql = "SELECT * FROM single_data where 1 = 1";
+            
+            if (singleInputPhase.SelectedValue.ToString() == "")
+            {
+                MessageBox.Show("请选择相！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }            
+            else
+            {
+                if (singleInputPhase.SelectedValue.ToString() != "")
+                {
+                    sql = sql + " and phase='" + singleInputPhase.SelectedValue.ToString() + "'";
+                }               
+                List<SingleData> list = new List<SingleData>();
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            using (SQLiteDataReader reader = command.ExecuteReader())
+                            {
+                                int i = 1;
+                                while (reader.Read())
+                                {
 
+                                    SingleData singleData = new SingleData();
+                                    singleData.Id = Convert.ToInt32(reader["id"]);
+                                    singleData.FlaseId = i;
+                                    singleData.Phase = reader["phase"].ToString();
+                                    singleData.Temperature = Convert.ToDouble(reader["temperature"]);
+                                    if (reader["C11"].ToString() == "")
+                                    {
+                                        singleData.C11 = 0.00;
+                                    }
+                                    else
+                                    {
+                                        singleData.C11 = Convert.ToDouble(reader["C11"]);
+                                    }
+                                    if (reader["C12"].ToString() == "")
+                                    {
+                                        singleData.C12 = 0.00;
+                                    }
+                                    else
+                                    {
+                                        singleData.C12 = Convert.ToDouble(reader["C12"]);
+                                    }
+                                    if (reader["C13"].ToString() == "")
+                                    {
+                                        singleData.C13 = 0.00;
+                                    }
+                                    else
+                                    {
+                                        singleData.C13 = Convert.ToDouble(reader["C13"]);
+                                    }
+                                    if (reader["C33"].ToString() == "")
+                                    {
+                                        singleData.C33 = 0.00;
+                                    }
+                                    else
+                                    {
+                                        singleData.C33 = Convert.ToDouble(reader["C33"]);
+                                    }
+                                    if (reader["C44"].ToString() == "")
+                                    {
+                                        singleData.C44 = 0.00;
+                                    }
+                                    else
+                                    {
+                                        singleData.C44 = Convert.ToDouble(reader["C44"]);
+                                    }
+
+                                    singleData.IsChecked = (Boolean)reader["ischecked"];
+                                    list.Add(singleData);
+                                    i++;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("查询数据失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
+                }
+                SingleCurrentList = list;
+                singleselectedFlag = true;
+                singleDg.ItemsSource = null;
+                singleDg.ItemsSource = list;
+            }
         }
 
         //单晶体刷新
@@ -2060,7 +2150,7 @@ namespace DataManage
         {            
             List<String> phases = selectPhaseALL();
             singleInputPhase.Items.Clear();
-            multiInputPhase.Items.Add("");
+            singleInputPhase.Items.Add("");
             foreach (String phase in phases)
             {
                 singleInputPhase.Items.Add(phase);
