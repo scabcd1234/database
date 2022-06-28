@@ -794,6 +794,15 @@ namespace DataManage
             if (flag)
             {
                 ResetChecked();
+                if (selectedFlag == true)
+                {
+                    BtnSelect(null, null);
+
+                }
+                else
+                {
+                    ShowAllData();
+                }
             }
             else
             {
@@ -829,15 +838,7 @@ namespace DataManage
                 }
                 conn.Close();               
             }
-            flaseIdFlag = 1;
-            if(selectedFlag == true)
-            {
-                BtnSelect(null,null);
-            }
-            else
-            {
-                ShowAllData();
-            }
+            flaseIdFlag = 1;           
 
             return result;
         }
