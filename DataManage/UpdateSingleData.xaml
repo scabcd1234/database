@@ -111,9 +111,6 @@
                 <Button Content="确认修改" Name="add"  Grid.Row="7"  HorizontalAlignment="Left" 
                              Click="Button_Click"   HorizontalContentAlignment="Center" />
 
-
-
-
                 </Grid>
             </Viewbox>
 

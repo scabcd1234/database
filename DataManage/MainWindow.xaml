@@ -207,7 +207,7 @@
                                         </DataGridCheckBoxColumn.CellStyle>
 
                                     </DataGridCheckBoxColumn>
-                                    <DataGridTextColumn  Header="编号" Binding="{Binding Id}" Width="50" >
+                                    <DataGridTextColumn  Header="编号" Binding="{Binding FlaseId}" Width="50" >
                                         <!-- ElementStyle="{StaticResource ResourceKey=dgCell}" 在每一个DataGridTextColumn后面加上这个，使得表格的每一行都居中-->
                                         <!-- 
                                         <DataGridTextColumn.HeaderTemplate>
@@ -241,8 +241,6 @@
                         </Grid> 
                     </TabItem>
                     
-                    
-
                     <TabItem  FontSize="15" Height="40">
                         <TabItem.Header>
                             <Label Content="选项卡2" MouseLeftButtonDown="multiClick" HorizontalAlignment="Stretch"/>
@@ -347,7 +345,7 @@
                                         </DataGridCheckBoxColumn.CellStyle>
 
                                     </DataGridCheckBoxColumn>
-                                    <DataGridTextColumn  Header="编号" Binding="{Binding Id}"  MinWidth="70" >
+                                    <DataGridTextColumn  Header="编号" Binding="{Binding FlaseId}"  MinWidth="70" >
                                         <!-- ElementStyle="{StaticResource ResourceKey=dgCell}" 在每一个DataGridTextColumn后面加上这个，使得表格的每一行都居中-->
                                         <!-- 
                                         <DataGridTextColumn.HeaderTemplate>
@@ -471,7 +469,7 @@
                                         </DataGridCheckBoxColumn.CellStyle>
 
                                     </DataGridCheckBoxColumn>
-                                    <DataGridTextColumn  Header="编号" Binding="{Binding Id}" Width="50" >
+                                    <DataGridTextColumn  Header="编号" Binding="{Binding FlaseId}" Width="50" >
                                         <!-- ElementStyle="{StaticResource ResourceKey=dgCell}" 在每一个DataGridTextColumn后面加上这个，使得表格的每一行都居中-->
                                         <!-- 
                                         <DataGridTextColumn.HeaderTemplate>
