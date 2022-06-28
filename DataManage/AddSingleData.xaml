@@ -1,4 +1,4 @@
-﻿<Window x:Class="DataManage.AddMultiData"
+﻿<Window x:Class="DataManage.AddSingleData"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -19,7 +19,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="350"/>
@@ -79,26 +79,38 @@
 
                 </Grid.Resources>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="相 :" Margin="-20,5,0,0" VerticalAlignment="Top"/>
-                <ComboBox Name="inputPhase" Width="70"  SelectionChanged="inputPhase_SelectionChanged"  Style="{StaticResource selectComboBox}" LostFocus="inputPhase_LostFocus" ></ComboBox>
+                <ComboBox Name="inputPhase" Width="70" Style="{StaticResource selectComboBox}" LostFocus="inputPhase_LostFocus" ></ComboBox>
                 <Label Name="phaseLabel"  Grid.Column="2" Grid.Row="0" Margin="245,0,0,0" />
-                
+
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="温度（℃）:" Margin="-20,5,0,0"/>
                 <TextBox Grid.Row="1" Grid.Column="1"   Name="Temperature" LostFocus="Temperature_LostFocus" />
                 <Label Name="TemperatureLabel"  Grid.Column="2" Grid.Row="1" Margin="245,0,0,0" />
                 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="衍射面 :" Margin="-20,5,0,0"/>
-                <ComboBox Grid.Row="2" Grid.Column="1" Name="inputDiff_plane" Width="70" Style="{StaticResource selectComboBox}" LostFocus="inputDiff_plane_LostFocus" />
-                <Label Name="Diff_planeLabel"  Grid.Column="2" Grid.Row="2" Margin="245,0,0,0" />
+                <!--<TextBlock Grid.Row="3" Grid.Column="0" Text="衍射面 :" Margin="-20,5,0,0"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" Name="inputDiff_plane" Width="70" Style="{StaticResource selectComboBox}" LostFocus="inputDiff_plane_LostFocus" />
+                <Label Name="Diff_planeLabel"  Grid.Column="2" Grid.Row="3" Margin="245,0,0,0" />-->
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="衍射弹性常数Ehkl（GPa）:" Margin="-20,5,0,0"/>
-                <TextBox Grid.Row="3" Grid.Column="1"   Name="Ehkl" LostFocus="Ehkl_LostFocus" />
-                <Label Name="EhklLabel"  Grid.Column="2" Grid.Row="3" Margin="245,0,0,0" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="C11 :" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="2" Grid.Column="1"   Name="C11" LostFocus="C11_LostFocus" />
+                <Label Name="C1lLabel"  Grid.Column="2" Grid.Row="2" Margin="245,0,0,0" />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="C12 :" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="3"  Grid.Column="1" Name="C12" LostFocus="C12_LostFocus"  />
+                <Label Name="C12Label"  Grid.Column="2" Grid.Row="3" Margin="245,0,0,0" />
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="C13 :" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="4" Grid.Column="1"   Name="C13" LostFocus="C13_LostFocus" />
+                <Label Name="C13Label"  Grid.Column="2" Grid.Row="4" Margin="245,0,0,0" />
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="C33 :" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="5" Grid.Column="1"   Name="C33" LostFocus="C33_LostFocus" />
+                <Label Name="C33Label"  Grid.Column="2" Grid.Row="5" Margin="245,0,0,0" />
                 
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="衍射弹性常数vhkl :" Margin="-20,5,0,0"/>
-                <TextBox Grid.Row="4"  Grid.Column="1" Name="Vhkl" LostFocus="Vhkl_LostFocus"  />
-                <Label Name="VhklLabel"  Grid.Column="2" Grid.Row="4" Margin="245,0,0,0" />
-                 
-                <Button Content="增加" Name="add"  Grid.Row="5" 
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="C44 :" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="6" Grid.Column="1"   Name="C44" LostFocus="C44_LostFocus" />
+                <Label Name="C44Label"  Grid.Column="2" Grid.Row="6" Margin="245,0,0,0" />
+                
+                <Button Content="增加" Name="add"  Grid.Row="7" 
                         HorizontalAlignment="Left"  Click="Button_Click"   HorizontalContentAlignment="Center" />
 
 

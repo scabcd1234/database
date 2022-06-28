@@ -112,6 +112,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddSingleData.xaml.cs">
+      <DependentUpon>AddSingleData.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AddMultiData.xaml.cs">
       <DependentUpon>AddMultiData.xaml</DependentUpon>
     </Compile>
@@ -123,6 +126,10 @@
     <Compile Include="UpdateData.xaml.cs">
       <DependentUpon>UpdateData.xaml</DependentUpon>
     </Compile>
+    <Page Include="AddSingleData.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="AddMultiData.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

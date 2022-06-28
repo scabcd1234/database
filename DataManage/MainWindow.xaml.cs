@@ -1502,7 +1502,7 @@ namespace DataManage
         // 多晶体页面点击事件
         private void multiClick(object sender, MouseButtonEventArgs e)
         {
-            List<String> phases = selectPhaseALL();
+            List<String> phases = selectMutiPhaseALL();
             multiInputPhase.Items.Clear();
             multiInputPhase.Items.Add("");
             foreach (String phase in phases)
@@ -1511,6 +1511,38 @@ namespace DataManage
             }
             multiInputPhase.SelectedIndex = 0;
             ShowMlutiAllData();
+        }
+
+        //搜索所有的多晶体相
+        private List<String> selectMutiPhaseALL()
+        {
+
+            string sql = "select phase from multi_data group by phase ";
+            List<String> strs = new List<string>();
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                strs.Add(reader["phase"].ToString());
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("查询失败123", "");
+                        throw new Exception("查询数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                    return strs;
+                }
+            }
         }
 
         // 展示所有的多晶体数据
@@ -1673,7 +1705,7 @@ namespace DataManage
         private void multiBtnRefresh(object sender, RoutedEventArgs e)
         {
             multiInputDiff_plane.Items.Clear();
-            List<String> phases = selectPhaseALL();
+            List<String> phases = selectMutiPhaseALL();
             multiInputPhase.Items.Clear();
             multiInputPhase.Items.Add("");
             foreach (String phase in phases)
@@ -1738,7 +1770,7 @@ namespace DataManage
                             conn.Open();
                             command.ExecuteNonQuery();
                             MessageBox.Show("删除成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
-                            ResetChecked();
+                            multiResetChecked();
                         }
                         catch (Exception ex)
                         {
@@ -1766,10 +1798,40 @@ namespace DataManage
             }
         }
 
+        //多晶体增加
         private void multiBtnAdd(object sender, RoutedEventArgs e)
         {
-
+            AddMultiData addMultiData = new AddMultiData();
+            addMultiData.TransfEvent += Add_MutiTransfEvent;
+            addMultiData.ShowDialog();
         }
+
+        // 增加多晶体数据
+        void Add_MutiTransfEvent(String sql)
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        command.ExecuteNonQuery();
+                        MessageBox.Show("插入成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("插入数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                }
+            }
+            flaseIdFlag = 1;
+            ShowMlutiAllData();
+            
+        }
+
         //多晶体重置选择状态
         private void multiResetChecked()
         {
@@ -2050,9 +2112,99 @@ namespace DataManage
             }
         }
 
+        //单晶体搜索
         private void singleBtnSelect(object sender, RoutedEventArgs e)
         {
+            string sql = "SELECT * FROM single_data where 1 = 1";
+            
+            if (singleInputPhase.SelectedValue.ToString() == "")
+            {
+                MessageBox.Show("请选择相！", "提示信息", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }            
+            else
+            {
+                if (singleInputPhase.SelectedValue.ToString() != "")
+                {
+                    sql = sql + " and phase='" + singleInputPhase.SelectedValue.ToString() + "'";
+                }               
+                List<SingleData> list = new List<SingleData>();
+                using (SQLiteConnection conn = new SQLiteConnection(connStr))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            using (SQLiteDataReader reader = command.ExecuteReader())
+                            {
+                                int i = 1;
+                                while (reader.Read())
+                                {
 
+                                    SingleData singleData = new SingleData();
+                                    singleData.Id = Convert.ToInt32(reader["id"]);
+                                    singleData.FlaseId = i;
+                                    singleData.Phase = reader["phase"].ToString();
+                                    singleData.Temperature = Convert.ToDouble(reader["temperature"]);
+                                    if (reader["C11"].ToString() == "")
+                                    {
+                                        singleData.C11 = 0.00;
+                                    }
+                                    else
+                                    {
+                                        singleData.C11 = Convert.ToDouble(reader["C11"]);
+                                    }
+                                    if (reader["C12"].ToString() == "")
+                                    {
+                                        singleData.C12 = 0.00;
+                                    }
+                                    else
+                                    {
+                                        singleData.C12 = Convert.ToDouble(reader["C12"]);
+                                    }
+                                    if (reader["C13"].ToString() == "")
+                                    {
+                                        singleData.C13 = 0.00;
+                                    }
+                                    else
+                                    {
+                                        singleData.C13 = Convert.ToDouble(reader["C13"]);
+                                    }
+                                    if (reader["C33"].ToString() == "")
+                                    {
+                                        singleData.C33 = 0.00;
+                                    }
+                                    else
+                                    {
+                                        singleData.C33 = Convert.ToDouble(reader["C33"]);
+                                    }
+                                    if (reader["C44"].ToString() == "")
+                                    {
+                                        singleData.C44 = 0.00;
+                                    }
+                                    else
+                                    {
+                                        singleData.C44 = Convert.ToDouble(reader["C44"]);
+                                    }
+
+                                    singleData.IsChecked = (Boolean)reader["ischecked"];
+                                    list.Add(singleData);
+                                    i++;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("查询数据失败：" + ex.Message);
+                        }
+                        conn.Close();
+                    }
+                }
+                SingleCurrentList = list;
+                singleselectedFlag = true;
+                singleDg.ItemsSource = null;
+                singleDg.ItemsSource = list;
+            }
         }
 
         //单晶体刷新
@@ -2060,7 +2212,7 @@ namespace DataManage
         {            
             List<String> phases = selectPhaseALL();
             singleInputPhase.Items.Clear();
-            multiInputPhase.Items.Add("");
+            singleInputPhase.Items.Add("");
             foreach (String phase in phases)
             {
                 singleInputPhase.Items.Add(phase);
@@ -2150,8 +2302,37 @@ namespace DataManage
             }
         }
 
+        //单晶体增加
         private void singleBtnAdd(object sender, RoutedEventArgs e)
         {
+            AddSingleData addSingleData = new AddSingleData();
+            addSingleData.TransfEvent += Add_SingleTransfEvent;
+            addSingleData.ShowDialog();
+        }
+
+        // 增加多晶体数据
+        void Add_SingleTransfEvent(String sql)
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, conn))
+                {
+                    try
+                    {
+                        conn.Open();
+                        command.ExecuteNonQuery();
+                        MessageBox.Show("插入成功", "提示信息", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("插入数据失败：" + ex.Message);
+                    }
+                    conn.Close();
+                }
+            }
+            flaseIdFlag = 1;
+            ShowSingleAllData();
 
         }
 

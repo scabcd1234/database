@@ -283,7 +283,7 @@
                                 <StackPanel Orientation="Horizontal"  Margin="25,5,10,5">
                                     <Button Content="修改" Name="multiUpdateButton" MinWidth="60" Margin="0,0,20,0" Click="multiBtnUpdate"  Style="{StaticResource textButton}" />
                                     <Button Content="删除" Name="multiDeleteButton" MinWidth="60" Margin="0,0,20,0" Click="multiBtnDelete" Style="{StaticResource textButton}" />
-                                    <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="multiBtnAdd"  Style="{StaticResource textButton}" />
+                                    <Button Content="增加" MinWidth="60" Margin="0,0,20,0" Click="multiBtnAdd"  Style="{StaticResource textButton}" Cursor="Hand" />
                                 </StackPanel>
                             </Grid>
 
@@ -482,7 +482,7 @@
                                         -->
                                     </DataGridTextColumn>
                                     <DataGridTextColumn Binding="{Binding Phase}" Header="相" Width="60" />
-                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（K）"  Width="80"/>
+                                    <DataGridTextColumn Binding="{Binding Temperature}" Header="温度（℃）"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding C11}" Header="C11"  Width="80"/>
                                     <DataGridTextColumn Binding="{Binding C12}" Header="C12"  Width="130"/>
                                     <DataGridTextColumn Binding="{Binding C13}" Header="C13"  Width="140"/>
