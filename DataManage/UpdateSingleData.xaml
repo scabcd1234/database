@@ -1,0 +1,119 @@
+﻿<Window x:Class="DataManage.UpdateSingleData"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DataManage"
+        mc:Ignorable="d"
+        Title="修改数据"  WindowStartupLocation="CenterScreen"  Width="600" Height="390">
+        <Grid>
+            <Viewbox Stretch="Fill">
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="350"/>
+                    </Grid.ColumnDefinitions>
+                    <!--
+                    <DataGrid Name="Form" Grid.Row="0" Grid.Column="1">
+                        <Label Content="Label" HorizontalAlignment="Left" Margin="118,56,0,0" VerticalAlignment="Top"/>
+                    </DataGrid>
+                    -->
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="Width" Value="180"/>
+                            <Setter Property="Block.TextAlignment" Value="Right"/>
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="FontSize" Value="10"/>
+                            <Setter Property="Padding" Value="0,0,0,0"/>
+                            <Setter Property="Height" Value="15"/>
+
+                        </Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="Width" Value="70"/>
+                            <Setter Property="Margin" Value="170,5,0,0"/>
+                            <Setter Property="FontSize" Value="7"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        </Style>
+                    <Style TargetType="Button">
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                        <Setter Property="Margin" Value="160,10,0,5"/>
+                        <Setter Property="FontSize" Value="7"/>
+                        <Setter Property="Width" Value="50"/>
+                        <Setter Property="Height" Value="20"/>
+                    </Style>
+                        
+                    <XmlDataProvider x:Key="AllItem" />
+
+                    <!--下拉框(ComboBox)样式设定-->
+                    <Style x:Key="selectComboBox" TargetType="{x:Type ComboBox}">
+                        <Setter Property="BorderThickness" Value="0.5"/>
+                        <Setter Property="FontSize" Value="7"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Height" Value="15"/>
+                        <Setter Property="Margin" Value="60,5,0,0"/>
+                    </Style>
+
+                    <!--label样式设定-->
+                    <Style TargetType="Label">
+                        <Setter Property="VerticalAlignment" Value="Bottom"/>
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="Width" Value="180"/>
+                        <Setter Property="FontSize" Value="10"/>
+                        <Setter Property="Padding" Value="0,0,0,0"/>
+                        <Setter Property="Height" Value="15"/>
+                        <Setter Property="Visibility" Value="Visible"/>
+                    </Style>
+                        
+                </Grid.Resources>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="相 :" Margin="-20,5,0,0" VerticalAlignment="Top"/>
+                <ComboBox Name="Phase" Width="70"  Style="{StaticResource selectComboBox}"></ComboBox>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="温度（℃）:" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="1" Grid.Column="1"   Name="Temperature" LostFocus="Temperature_LostFocus" />
+                <Label Name="TemperatureLabel"  Grid.Column="2" Grid.Row="1" Margin="245,0,0,0" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="C11 :" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="2" Grid.Column="1"   Name="C11" LostFocus="C11_LostFocus" />
+                <Label Name="C11Label"  Grid.Column="2" Grid.Row="2" Margin="245,0,0,0" />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="C12 :" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="3" Grid.Column="1"   Name="C12" LostFocus="C12_LostFocus" />
+                <Label Name="C12Label"  Grid.Column="2" Grid.Row="3" Margin="245,0,0,0" />
+                
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="C13 :" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="4" Grid.Column="1"   Name="C13" LostFocus="C13_LostFocus" />
+                <Label Name="C13Label"  Grid.Column="2" Grid.Row="4" Margin="245,0,0,0" />
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="C33 :" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="5"  Grid.Column="1" Name="C33" LostFocus="C33_LostFocus"  />
+                <Label Name="C33Label"  Grid.Column="2" Grid.Row="5" Margin="245,0,0,0" />
+
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="C44 :" Margin="-20,5,0,0"/>
+                <TextBox Grid.Row="6" Grid.Column="1"   Name="C44" LostFocus="C44_LostFocus" />
+                <Label Name="C44Label"  Grid.Column="2" Grid.Row="6" Margin="245,0,0,0" />
+                    
+                <Button Content="确认修改" Name="add"  Grid.Row="7"  HorizontalAlignment="Left" 
+                             Click="Button_Click"   HorizontalContentAlignment="Center" />
+
+                </Grid>
+            </Viewbox>
+
+        </Grid>
+        
+</Window>
