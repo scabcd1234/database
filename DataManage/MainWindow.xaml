@@ -245,7 +245,7 @@
 
                     <TabItem  FontSize="15" Height="40">
                         <TabItem.Header>
-                            <Label Content="选项卡2" MouseLeftButtonDown="multiClick" HorizontalAlignment="Stretch"/>
+                            <Label Content="多晶体" MouseLeftButtonDown="multiClick" HorizontalAlignment="Stretch"/>
                         </TabItem.Header>
                         <Grid Background="#FFE5E5E5">
                             <Grid.RowDefinitions>
@@ -370,7 +370,7 @@
 
                     <TabItem  FontSize="15" Height="40">
                         <TabItem.Header>
-                            <Label Content="选项卡3" MouseLeftButtonDown="singleClick" HorizontalAlignment="Stretch"/>
+                            <Label Content="单晶体" MouseLeftButtonDown="singleClick" HorizontalAlignment="Stretch"/>
                         </TabItem.Header>
                         <Grid Background="#FFE5E5E5">
                             <Grid.RowDefinitions>
