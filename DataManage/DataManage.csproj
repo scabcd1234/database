@@ -220,6 +220,18 @@
   <ItemGroup>
     <Resource Include="loading.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="image\3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="image\2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="image\1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="image\3.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

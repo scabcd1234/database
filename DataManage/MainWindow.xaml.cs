@@ -62,7 +62,10 @@ namespace DataManage
         }
       
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {            
+        {
+            image.Source = new BitmapImage(new Uri(@"image\1.png", UriKind.Relative));
+            /*image1.Source = new BitmapImage(new Uri(@"image\3.ico", UriKind.Relative));*/
+
             List<String> phases = selectPhaseALL();
             inputPhase.Items.Add("");
             foreach (String phase in phases){              

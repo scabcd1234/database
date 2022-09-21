@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:DataManage"
         mc:Ignorable="d"
         Title="数据管理平台"  Loaded="Window_Loaded" Width="1425" Height="750"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" Icon="/image/3.ico">
     <!--WindowState="Maximized" -->
 
     <Window.Resources>
@@ -20,9 +20,9 @@
         <XmlDataProvider x:Key="AllItem" />
         <!--TextBlock样式设定-->
         <Style x:Key="dgCell" TargetType="{x:Type TextBlock}">
-        <Setter Property="Height" Value="15"/>
+            <Setter Property="Height" Value="15"/>
         </Style>
-        
+
         <!--输入框(TextBox)样式设定-->
         <Style x:Key="inputBox" TargetType="{x:Type TextBox}">
             <Setter Property="FontSize" Value="8"/>
@@ -67,39 +67,39 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>-->
-            
+
             <Setter Property="Height" Value="15"/>
         </Style>
-        
+
         <!---->
     </Window.Resources>
-    
-    
+
+
     <Grid>
         <Viewbox Stretch="Fill" >
             <Grid>
                 <TabControl TabStripPlacement="Left">
                     <TabItem FontSize="15" Height="40">
                         <TabItem.Header>
-                            <Label Content="数据展示" MouseLeftButtonDown="multiClick" HorizontalAlignment="Stretch"/>
+                            <Label Content="多相多晶体" MouseLeftButtonDown="multiClick" HorizontalAlignment="Stretch"/>
                         </TabItem.Header>
-                        
+
                         <Grid Background="#22000000">
                             <!--三行一列-->
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="auto"/>
-                                
+
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="900"/>
-                               
+
                             </Grid.ColumnDefinitions>
 
                             <!--搜索栏-->
                             <Grid Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top">
-                                
+
                                 <StackPanel Orientation="Horizontal"  Margin="25,5,10,5">
                                     <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="0,0,0,0" Style="{StaticResource showLabel}"></Label>
                                     <ComboBox Name="inputPhase" Width="50" SelectionChanged="inputPhase_SelectionChanged" Margin="0,0,10,0" Style="{StaticResource selectComboBox}"></ComboBox>
@@ -122,11 +122,11 @@
 
                                     <Label Content="β条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
                                     <Label Name="SecondNumber" Content="6500" Margin="0,0,10,0" Style="{StaticResource showLabel}"/>
-                                   
+
 
                                 </StackPanel>
                             </Grid>
-                            
+
                             <!--操作栏-->
                             <Grid Grid.Row="1" Grid.Column="1" >
                                 <StackPanel Orientation="Horizontal"  Margin="25,5,10,5">
@@ -157,17 +157,17 @@
                                             <Trigger Property="IsMouseOver" Value="true">
                                                 <Setter Property="Background" Value="LightBlue"/>
                                             </Trigger>
-                                            
-                                                
-                                           
+
+
+
                                         </Style.Triggers>
-                                       <!-- <EventSetter Event="MouseDown" Handler="Item_GotFocus"/>-->
+                                        <!-- <EventSetter Event="MouseDown" Handler="Item_GotFocus"/>-->
                                     </Style>
                                 </DataGrid.RowStyle>
 
-                                
-                                
-                                
+
+
+
                                 <DataGrid.ColumnHeaderStyle>
                                     <Style TargetType="DataGridColumnHeader">
                                         <Setter Property="HorizontalContentAlignment" Value="Center">
@@ -187,7 +187,7 @@
                                             </DataTemplate>
                                         </DataGridCheckBoxColumn.HeaderTemplate>
 
-                                        
+
                                         <!--为该列的CheckBox Tag属性绑定值-->
                                         <DataGridCheckBoxColumn.ElementStyle>
                                             <Style TargetType="CheckBox">
@@ -202,7 +202,7 @@
                                             <Style>
                                                 <Setter Property="CheckBox.VerticalAlignment"  Value="Center"></Setter>
                                                 <Setter Property="CheckBox.HorizontalAlignment"  Value="Center"></Setter>
-                                                
+
                                             </Style>
                                         </DataGridCheckBoxColumn.CellStyle>
 
@@ -237,13 +237,13 @@
                                 </DataGrid.Columns>
 
                             </DataGrid>
-                            
-                        </Grid> 
+
+                        </Grid>
                     </TabItem>
-                    
+
                     <TabItem  FontSize="15" Height="40">
                         <TabItem.Header>
-                            <Label Content="多晶体" MouseLeftButtonDown="multiClick" HorizontalAlignment="Stretch"/>
+                            <Label Content="单相多晶体" MouseLeftButtonDown="multiClick" HorizontalAlignment="Stretch"/>
                         </TabItem.Header>
                         <Grid Background="#FFE5E5E5">
                             <Grid.RowDefinitions>
@@ -386,7 +386,7 @@
                                     <Label Content="请选择相:"  HorizontalAlignment="Left"  Margin="0,0,0,0" Style="{StaticResource showLabel}"></Label>
                                     <ComboBox Name="singleInputPhase" Width="50" Margin="0,0,10,0" Style="{StaticResource selectComboBox}"></ComboBox>
 
-                                    
+
                                     <Button Content="查询" MinWidth="60" Margin="0,0,10,0"  Click="singleBtnSelect" Style="{StaticResource textButton}"/>
                                     <Button Content="刷新" MinWidth="60" Margin="0,0,10,0" Click="singleBtnRefresh" Style="{StaticResource textButton}"/>
                                     <Label Content="总条数:"  Margin="0,0,0,0" Style="{StaticResource showLabel}"/>
@@ -486,18 +486,32 @@
                                     <DataGridTextColumn Binding="{Binding C13}" Header="C13"  Width="140"/>
                                     <DataGridTextColumn Binding="{Binding C33}" Header="C33"  Width="140"/>
                                     <DataGridTextColumn Binding="{Binding C44}" Header="C44"  Width="142"/>
-                                    
+
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
                     </TabItem>
                 </TabControl>
 
+                <Image x:Name="image" Margin="17,146,932,63" Width="65px" Height="176px"/>
+                <!--<Image x:Name="image1" Margin="18,0,0,188" RenderTransformOrigin="2.743,0.271" Height="65" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="65">
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="1"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                </Image>-->
+                <!--<Image x:Name="image1" Margin="22,124,927,191" Width="65px" Height="65px" >-->
+                    
+                <!--</Image>-->
             </Grid>
         </Viewbox>
-        
-        
-        
+
+
+
 
 
 
